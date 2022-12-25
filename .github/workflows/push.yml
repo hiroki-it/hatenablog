@@ -3,7 +3,7 @@ name: push to hatena blog
 on:
   push:
     branches-ignore:
-      - master
+      - main
 
 jobs:
   push:
@@ -23,10 +23,14 @@ jobs:
           key: ${{ runner.os }}-go-blogsync-200423.0756
           restore-keys: |
             ${{ runner.os }}-go-blogsync-200423.0756
-      - name: Check out code into the Go module directory
-        uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
-      - run: git fetch origin master
+      - name: Git fetch
+      - run: |
+          git fetch origin main
 
       - name: Setup blogsync
         env:
