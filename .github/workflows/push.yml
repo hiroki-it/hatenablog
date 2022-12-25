@@ -23,15 +23,18 @@ jobs:
           key: ${{ runner.os }}-go-blogsync-200423.0756
           restore-keys: |
             ${{ runner.os }}-go-blogsync-200423.0756
+
       - name: Checkout
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
+      # mainブランチをフェッチする。
       - name: Git fetch
-      - run: |
+        run: |
           git fetch origin main
 
+      # blogsyncをセットアップする。
       - name: Setup blogsync
         env:
           BSY: ${{ secrets.BSY }}
@@ -41,6 +44,7 @@ jobs:
           fi
           echo -e ${BSY} > blogsync.yaml
 
+      # featureブランチとmainブランチの間に差分があれば、プッシュする。
       - name: push
         env:
           DOMAIN: ${{ secrets.DOMAIN }}
