@@ -1,0 +1,94 @@
+/* <system section="theme" selected="10328749687197818725"> */
+@import "https://usercss.blog.st-hatena.com/-/theme/10328749687197818725.css?version=93840d36b708887cd5b9a00d2898c5951f900ed2";
+/* </system> */
+
+/* <system section="background" selected="undefined"> */
+
+/* </system> */
+
+/* ブログヘッダー */
+#blog-title {
+    /*既存のデザインの色を変更する*/
+    background: #253243 !important;
+}
+
+/* ブログ全体の文字 */
+.entry-content {
+    font-size: 1.0em;
+}
+
+/* h1の文字 */
+.entry-content h1 {
+    font-size: 1.4em;
+    font-weight: bold;
+    background: #253243;
+    border-radius: 0.45em;
+    color: white;
+    padding: 0.7em;
+}
+
+/* h2の文字 */
+.entry-content h2 {
+    font-size: 1.3em;
+    font-weight: bold;
+    /* 背景：色 */
+    background: #d7d7d7;
+    /* 左線：太さ，色 */
+    border-left: 0.7em solid #253243;
+
+    /* 上外部余白：大きさ */
+    margin-top: 0.9em;
+    /* 内部余白：文字周り */
+    padding: 0.6em;
+}
+
+/* h3の文字 */
+.entry-content h3 {
+    font-size: 1.1em;
+    /*既存のデザインで色がついてしまうため、白くする*/
+    background: white;
+    /*既存のデザインを打ち消す*/
+    color: black;
+    /*既存のデザインが細すぎるので太くする*/
+    font-weight: 700;
+    /*既存のデザインを打ち消す*/
+    border-left: 0px;
+}
+
+/* h3のアイコン */
+.entry-content h3:before {
+    font-size: 1.1em;
+    /*アイコン色*/
+    color: #253243;
+    /*アイコンのユニコード*/
+    content: "\f138";
+    font-family: "FontAwesome", serif;
+    /*アイコンの右側にスペースを空ける*/
+    margin-right: 0.5em;
+}
+
+/* h4の文字 */
+.entry-content h4 {
+    font-size: 1.0em;
+    /*既存のデザインが太すぎるので細くする*/
+    font-weight: 400;
+    /*既存のデザインを打ち消す*/
+    border-bottom: 0px;
+}
+
+/* 画像 */
+.entry-content img {
+    /*画像を中央寄せする*/
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* コードブロック */
+.entry-content pre.code {
+    font-size: .8rem;
+    margin: 1.5rem 0;
+    padding: 1.5rem 0.5rem;
+    background-color: #364549;
+    color: #e3e3e3;
+}
