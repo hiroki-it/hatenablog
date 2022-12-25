@@ -1,0 +1,8 @@
+version: "3.8"
+
+services:
+  blogsync:
+    build: .
+    working_dir: /working_dir
+    volumes:
+      - ./:/working_dir
