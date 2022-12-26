@@ -1,5 +1,3 @@
-FILE_NAME:=
-
 # 投稿をプルする。
 .PHONY: pull
 pull:
