@@ -36,11 +36,15 @@ jobs:
         env:
           DOMAIN: ${{ secrets.DOMAIN }}
         run: |
-          diff=`git diff | wc -l`
+          diff=`git diff origin/main --name-only \
+            | grep dist/entry \
+            | wc -l`
+          
           if [ $diff -eq 0 ]; then
-          echo "差分が存在しないため，GitHub Actionsを終了しました．"
-          exit 0
+            echo "差分が存在しないため，GitHub Actionsを終了しました．"
+            exit 0
           fi
+          
           git diff origin/main --name-only \
-          | grep dist/entry \
-          | xargs -t -n1 ~/go/bin/blogsync push
+            | grep dist/entry \
+            | xargs -t -n1 ~/go/bin/blogsync push
