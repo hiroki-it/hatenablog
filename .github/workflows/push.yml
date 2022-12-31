@@ -3,7 +3,7 @@ name: Push to hatenablog
 on:
   push:
     branches:
-      - feature/**
+      - release/**
 
 jobs:
   push:
