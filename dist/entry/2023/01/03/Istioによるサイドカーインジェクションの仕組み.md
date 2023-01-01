@@ -1,0 +1,263 @@
+---
+Title: Istioによるサイドカーインジェクションの仕組み
+Category:
+- サービスメッシュ
+- Istio
+Draft: true
+---
+
+# 目次
+
+# はじめに
+
+今回は、サービスメッシュを実装するIstio⛵️に関する記事を投稿しました。
+
+執筆時点（2023/01/02）では、Istioが実装するサービメッシュには、『サイドカーメッシュ』と『アンビエントメッシュ』があります。
+
+サイドカーメッシュの仕組みの軸になっているものは、サイドカーコンテナである```istio-proxy```コンテナです。
+
+Istioは、KubernetesのPodの作成に応じて、```istio-proxy```コンテナを自動的にPod内にインジェクションすることができます。
+
+本記事では、サイドカーインジェクションの仕組みをもりもり布教しようと思います（沼のまわりに餌をまく）。
+
+<br>
+
+# 01. サイドカーによるサービスメッシュ
+
+## なぜサイドカーが必要なのか
+
+マイクロサービスアーキテクチャのシステムには、アーキテクチャ固有のインフラ領域の課題（例：サービスディスカバリーの必要性、マイクロサービス間通信の暗号化、テレメトリー収集、など）があります。
+
+一つの方法として、アプリエンジニアが各マイクロサービス内にインフラ領域の課題に関するロジックを実装すれば、それらを解決することができます。
+
+![service-mesh_layer](https://raw.githubusercontent.com/hiroki-it/tech-notebook/master/images/service-mesh_layer.png)
+
+しかし、アプリエンジニアはアプリ領域の課題に責務を持ち、インフラ領域の課題はインフラエンジニアは解決するようにした方が、互いに効率的に開発できます。
+
+そこで、インフラ領域の課題を解決するロジックをサイドカーとして切り分けます。
+
+![service-mesh_sidecar](https://raw.githubusercontent.com/hiroki-it/tech-notebook/master/images/service-mesh_sidecar.png)
+
+これにより、アプリエンジニアとインフラエンジニアの責務を分離できるようになります。
+
+またインフラ領域の共通ロジックとして、各マイクロサービスにサイドカーを提供できるため、単純性が高まります。
+
+> ℹ️ 参考：
+> 
+> - [https://atmarkit.itmedia.co.jp/ait/articles/2110/15/news007.html:title]
+> - [https://www.opsmx.com/blog/what-is-service-mesh-and-why-is-it-necessary/:title]
+
+## サイドカーメッシュ
+
+Istioのサイドカーメッシュは、サイドカーコンテナ（```istio-proxy```コンテナ）が稼働するデータプレーン、サイドカーを中央集権的に管理するIstiod（```discovery```コンテナ）が稼働するコントロールプレーン、からなります。
+
+> ℹ️ 参考：[https://istio.io/latest/docs/ops/deployment/architecture/:title]
+
+![istio_sidecar-mesh_architecture](https://raw.githubusercontent.com/hiroki-it/tech-notebook/master/images/istio_sidecar-mesh_architecture.png)
+
+
+<br>
+
+# 02. admission-controllersアドオンについて
+
+## admission-controllersアドオンとは
+
+IstioのPod内へのサイドカーインジェクションの前提知識として、admission-controllersアドオンを理解する必要があります。
+
+もし、admission-controllersアドオンをご存知の方は、飛ばしてください。
+
+kube-apiserverでは、admission-controllersアドオンとして有効化できます。
+
+有効化すると、認証ステップと認可ステップの後にmutating-admissionステップとvalidating-admissionステップを実行でき、アドオンの種類に応じた処理を挿入できます。
+
+クライアント（```kubectl```クライアント、Kubernetesリソース）からのリクエスト（例：Kubernetesリソースに対する作成/更新/削除、kube-apiserverからのプロキシへの転送）時に、各ステップでadmissionアドオンによる処理（例：アドオンビルトイン処理、独自処理）を発火させられます。
+
+> ℹ️ 参考：[https://www.amazon.com/dp/1492056472/:title]
+
+![kubernetes_admission-controllers_architecture](https://raw.githubusercontent.com/hiroki-it/tech-notebook/master/images/kubernetes_admission-controllers_architecture.png)
+
+## admission-controllersアドオンの種類
+
+admission-controllersアドオンには、たくさんの種類があります。
+
+IstioがPod内にサイドカーをインジェクションする時に使用しているアドオンは、『MutatingAdmissionWebhook』です。
+
+- CertificateApproval
+- CertificateSigning 
+- CertificateSubjectRestriction 
+- DefaultIngressClass 
+- DefaultStorageClass 
+- DefaultTolerationSeconds 
+- LimitRanger 
+- **MutatingAdmissionWebhook** 👈 これ！
+- NamespaceLifecycle 
+- PersistentVolumeClaimResize 
+- PodSecurity 
+- Priority 
+- ResourceQuota 
+- RuntimeClass 
+- ServiceAccount 
+- StorageObjectInUseProtection 
+- TaintNodesByCondition 
+- ValidatingAdmissionWebhook
+
+> ℹ️ 参考：[https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#which-plugins-are-enabled-by-default:title]
+
+## MutatingAdmissionWebhookアドオン
+
+### MutatingAdmissionWebhookアドオンとは
+
+MutatingAdmissionWebhookアドオンを使用すると、mutating-admissionステップ時に、リクエスト内容を変更する処理をフックできる。
+
+mutating-admissionステップ時に、webhookサーバーにAdmissionRequestを持つリクエストを送信し、レスポンスのAdmissionResponseに応じてリクエスト内容を動的に変更する。
+
+MutatingWebhookConfigurationで、MutatingAdmissionWebhookアドオンの発火条件やwebhookサーバーの宛先情報を設定する。
+
+MutatingWebhookConfigurationの具体的な設定値については、サイドカーインジェクションの仕組みの中で説明していきます。
+
+![mutating-admission-step](https://raw.githubusercontent.com/hiroki-it/tech-notebook/master/images/mutating-admission-step.png)
+
+> ℹ️ 参考：
+> 
+> - [https://medium.com/ibm-cloud/diving-into-kubernetes-mutatingadmissionwebhook-6ef3c5695f74:title]
+> - [https://gashirar.hatenablog.com/entry/2020/10/31/141357:title]
+
+### AdmissionReview、AdmissionRequest、AdmissionResponse
+
+AdmissionReviewは以下のようなJSONであり、kube-apiserverとwebhookサーバーの間でAdmissionRequestとAdmissionResponseを運ぶ。
+
+```yaml
+{
+  "apiVersion": "admission.k8s.io/v1",
+  "kind": "AdmissionReview",
+  # AdmissionRequest
+  "request": {},
+  # AdmissionResponse
+  "response": {}  
+}
+```
+
+AdmissionRequestは以下のようなJSONである。
+
+kube-apiserverがクライアントから受信した操作内容が持つことがわかる。
+
+例で挙げたAdmissionRequestでは、クライアントがDeploymentをCREATE操作するリクエストをkube-apiserverに送信したことがわかる。
+
+> ℹ️ 参考：[https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#request]
+
+```yaml
+{
+  "apiVersion": "admission.k8s.io/v1",
+  "kind": "AdmissionReview",
+  # AdmissionRequest
+  "request": {
+
+    # 〜 中略 〜
+
+    # 変更されるKubernetesリソースの種類を表す。
+    "resource": {
+      "group": "apps",
+      "version": "v1",
+      "resource": "deployments"
+    },
+    # kube-apiserverの操作の種類を表す。
+    "operation": "CREATE",
+
+    # 認証認可された操作の種類を表す。
+    "options": {
+      "apiVersion": "meta.k8s.io/v1",
+      "kind": "CreateOptions"
+    },
+
+    # 〜 中略 〜
+
+  }
+}
+```
+
+対してAdmissionResponseは、例えば以下のようなJSONである。
+
+AdmissionResponseに応じたマニフェスト変更処理を```patch```キーの値に持ち、これはbase64方式でエンコードされている。
+
+ℹ️ 参考：[https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#response:title]
+
+```yaml
+{
+  "apiVersion": "admission.k8s.io/v1",
+  "kind": "AdmissionReview",
+  # AdmissionResponse
+  "response": {
+    "uid": "<value from request.uid>",
+    # 宛先のwebhookサーバーが受信したか否かを表す。
+    "allowed": true,
+    # PathによるPatch処理を行う。
+    "patchType": "JSONPatch",
+    # Patch処理の対象となるKubernetesリソースと処理内容を表す。base64方式でエンコードされている。
+    "patch": "W3sib3AiOiAiYWRkIiwgInBhdGgiOiAiL3NwZWMvcmVwbGljYXMiLCAidmFsdWUiOiAzfV0="
+  }
+}
+```
+
+エンコード値をデコードしてみると、例えば以下のようなpatch処理が定義されている。
+
+例に挙げた```patch```キーでは、キー（spec.replicas）と値（3）の追加処理をリクエスト内容に加えさせるように、kube-apiserverにレスポンスしたことがわかる。
+
+```yaml
+# patchキーをbase64方式でデコードした場合
+[
+  {
+    "op": "add",
+    "path": "/spec/replicas",
+    "value": 3
+  }
+]
+```
+
+<br>
+
+# 03. ```istio-proxy```コンテナのインジェクション
+
+## 全体像
+
+前提知識を踏まえた上で、admission-controllersアドオンの仕組みの中で、```istio-proxy```コンテナがどのようにPodにインジェクションされるのかを見ていきましょう。
+
+最初に全体像をネタバレしてしまいます。
+
+![container-injection](https://raw.githubusercontent.com/hiroki-it/tech-notebook/master/images/container-injection.png)
+
+## （１）クライアント → kubeapiserver
+
+まずは、クライアントがkube-apiserverにリクエストを送信するところです。
+
+（１）クライアントが、Pod（Deployment、DaemonSet、StatefulSet、も含む）の作成リクエストをkube-apiserverに送信します。この時のリクエスト内容は、以下の通りとします。
+
+
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: foo-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: foo
+  template:
+    metadata:
+      labels:
+        app: foo
+    spec:
+      containers:
+      - name: foo
+        image: foo:1.0.0
+        ports:
+          - containerPort: 80
+```
+
+（２）kube-apiserverの認証ステップと認可ステップを経て、
+
+
+
+
+
