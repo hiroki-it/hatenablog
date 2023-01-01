@@ -1,9 +1,9 @@
-name: push to hatena blog
+name: Push to hatenablog
 
 on:
   push:
     branches:
-      - feature/**
+      - release/**
 
 jobs:
   push:
