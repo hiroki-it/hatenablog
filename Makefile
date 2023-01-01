@@ -8,4 +8,5 @@ pull:
 FILE_NAME=
 create-draft:
 	docker-compose run -T --rm blogsync post --title=${FILE_NAME} --draft hiroki-hasegawa.hatenablog.jp < ./draft/${FILE_NAME}.md
+	rm ./draft/${FILE_NAME}.md
 
