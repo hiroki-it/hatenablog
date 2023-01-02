@@ -19,5 +19,4 @@ push-post:
 	git push
 	git checkout main
 	git merge release/entry
-	git push
 	git checkout release/entry
