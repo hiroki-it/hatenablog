@@ -92,3 +92,9 @@
     background-color: #364549;
     color: #e3e3e3;
 }
+
+/* 引用文 */
+.entry-content blockquote {
+    font-size: 0.85em;
+}
+
