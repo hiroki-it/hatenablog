@@ -11,8 +11,13 @@ create-draft:
 	rm ./draft/${FILE_NAME}.md
 
 # 記事をプッシュする。
-.PHONY: push
-push:
+.PHONY: push-post
+push-post:
+	git checkout release/entry
 	git add ./dist/entry
 	git commit -m "update 記事を更新した。"
 	git push
+	git checkout main
+	git merge release/entry
+	git push
+	git checkout release/entry
