@@ -53,6 +53,10 @@
     font-weight: 700;
     /*既存のデザインを打ち消す*/
     border-left: 0px;
+    /*下線を引く*/
+    border-bottom: solid 0.1em #313131;
+    /*既存のデザインを打ち消す*/
+    border-radius: 0em;
 }
 
 /* h3のアイコン */
@@ -71,7 +75,7 @@
 .entry-content h4 {
     font-size: 1.0em;
     /*既存のデザインが太すぎるので細くする*/
-    font-weight: 400;
+    font-weight: 550;
     /*既存のデザインを打ち消す*/
     border-bottom: 0px;
 }
