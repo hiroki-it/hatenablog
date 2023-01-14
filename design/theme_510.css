@@ -53,9 +53,7 @@
     font-weight: 700;
     /*既存のデザインを打ち消す*/
     border-left: 0px;
-    /*下線を引く*/
     border-bottom: solid 0.1em #313131;
-    /*既存のデザインを打ち消す*/
     border-radius: 0em;
 }
 
@@ -90,7 +88,7 @@
 
 /* コードブロック */
 .entry-content pre.code {
-    font-size: 0.9rem;
+    font-size: 1.0rem;
     margin: 1.5rem 0;
     padding: 1.5rem 0.5rem;
     background-color: #364549;
