@@ -27,7 +27,7 @@ jobs:
           BSY: ${{ secrets.BSY }}
         run: |
           if !(type ~/go/bin/blogsync > /dev/null 2>&1); then
-            go install github.com/x-motemen/blogsync@v0.12.1;
+            go install github.com/x-motemen/blogsync@v0.13.0;
           fi
           echo -e ${BSY} > blogsync.yaml
 
