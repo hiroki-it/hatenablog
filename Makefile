@@ -18,5 +18,6 @@ push-post:
 	git commit -m "update 記事を更新した。"
 	git push
 	git checkout main
+	git push
 	git merge release/entry
 	git checkout release/entry
