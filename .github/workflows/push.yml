@@ -40,6 +40,8 @@ jobs:
             | grep dist/entry \
             | wc -l`
           
+          echo $diff
+
           if [ $diff -eq 0 ]; then
             echo "差分が存在しないため，GitHub Actionsを終了しました．"
             exit 0
