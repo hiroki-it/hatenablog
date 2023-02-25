@@ -86,6 +86,12 @@
     margin-right: auto;
 }
 
+/* インラインコード */
+.entry-content code {
+    color: black;
+    background-color: #E6E6E6
+}
+
 /* コードブロック */
 .entry-content pre.code {
     font-size: 1.0rem;
