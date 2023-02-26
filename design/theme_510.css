@@ -89,7 +89,8 @@
 /* インラインコード */
 .entry-content code {
     color: black;
-    background-color: #E6E6E6
+    border: 1px solid rgba(0,0,0,.08);
+    background-color: #00000008;
 }
 
 /* コードブロック */
