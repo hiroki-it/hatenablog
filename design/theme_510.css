@@ -100,12 +100,42 @@
     background-color: #364549;
     color: #e3e3e3;
 }
+
 /* コメントアウトの色 */
-.synComment { color: #7D8C93 }
+.synComment {
+    color: #7D8C93
+}
 
 
 /* 引用文 */
 .entry-content blockquote {
-    font-size: 0.85em;
+    font-size: 0.75em;
 }
 
+/* 目次 */
+.table-of-contents {
+    /* 枠内の余白(上右下左) */
+    padding: 15px 10px 15px 35px;
+    /* 文字サイズ */
+    font-size: 0.8em;
+    /* 線の種類と色 */
+    border: dotted 1px #777;
+    /* 背景 */
+    background: #f0f0f0;
+}
+
+.table-of-contents:before {
+    content: "記事の内容";
+    font-size: 1.4em;
+    /* 文字の太さ　通常はnormal */
+    font-weight: bold;
+    /* 文字の色 */
+    color: #000;
+}
+
+/* 目次のh4部分 */
+/* https://www.yukihy.com/entry/hatenablog-table-of-contents-custom */
+.table-of-contents ul ul {
+    /* 目次のh4を非表示 */
+    display: none;
+}
