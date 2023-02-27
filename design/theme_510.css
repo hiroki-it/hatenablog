@@ -139,3 +139,8 @@
     /* 目次のh4を非表示 */
     display: none;
 }
+
+/* 画像のキャプション */
+figure {
+    text-align: center;
+}
