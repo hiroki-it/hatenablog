@@ -21,3 +21,8 @@ push-post:
 	git push
 	git merge release/entry
 	git checkout release/entry
+
+# フォーマットを修正する。
+.PHONY: format
+format:
+	find ./* -name "*.md" -type f | xargs sed -i '' -e 's/）/) /g'  -e 's/（/ (/g'
