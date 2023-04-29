@@ -89,7 +89,7 @@
 /* インラインコード */
 .entry-content code {
     color: black;
-    border: 1px solid rgba(0,0,0,.08);
+    border: 1px solid rgba(0, 0, 0, .08);
     background-color: #00000008;
 }
 
@@ -133,6 +133,12 @@
     color: #000;
 }
 
+/* 目次のh2部分 */
+/* ulの数で階層が決まる */
+.table-of-contents ul {
+    /* 目次のh2の左横スペース */
+    margin-left: 0em;
+}
 /* 目次のh4部分 */
 /* https://www.yukihy.com/entry/hatenablog-table-of-contents-custom */
 .table-of-contents ul ul {
@@ -147,7 +153,7 @@ figure {
 
 /* 注意書きボックス */
 /* https://sigablog.com/entry/2021/04/04/074057 */
-.text-box{
+.text-box {
     /* ボックスの背景色 */
     background-color: #FFFCDB;
     /* ボックス内側の余白 */
@@ -161,7 +167,7 @@ figure {
 }
 
 /* 注意書きボックスのアイコン */
-.text-box:before{
+.text-box:before {
     position: absolute;
     font-family: "Font Awesome 5 Free", serif;
     /* アイコンの種類 */
@@ -182,4 +188,24 @@ figure {
 .entry-content table th {
     background-color: #313131;
     color: white;
+}
+
+
+/* サイドバーの目次の固定 */
+/* https://www.fuji-blo.com/entry/sticky */
+#content-inner {
+    display: flex;
+    justify-content: space-between;
+}
+
+#box2 {
+    display: flex;
+}
+
+.hatena-module:last-of-type {
+    /*safari対応*/
+    position: -webkit-sticky;
+    position: sticky;
+    /*ここで上からの距離を調整*/
+    top: 10px;
 }
