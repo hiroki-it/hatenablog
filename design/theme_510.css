@@ -177,3 +177,9 @@ figure {
     /* アイコンの色 */
     color: #ffa500;
 }
+
+/* テーブル一行目 */
+.entry-content table th {
+    background-color: #313131;
+    color: white;
+}
