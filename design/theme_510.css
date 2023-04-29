@@ -169,11 +169,11 @@ figure {
     font-weight: 900;
     /* アイコンの大きさ */
     font-size: 40px;
-    top: 50%;
+    /* アイコンの位置 */
+    top: 0.2em;
+    left: 0.3em;
     -webkit-transform: translateY(-50%);
     transform: translateY(-50%);
-    /* アイコン左側の余白 */
-    left: 0.6em;
     /* アイコンの色 */
     color: #ffa500;
 }
