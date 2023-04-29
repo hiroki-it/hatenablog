@@ -144,3 +144,36 @@
 figure {
     text-align: center;
 }
+
+/* 注意書きボックス */
+/* https://sigablog.com/entry/2021/04/04/074057 */
+.text-box{
+    /* ボックスの背景色 */
+    background-color: #FFFCDB;
+    /* ボックス内側の余白 */
+    padding: 16px 20px 16px 65px;
+    position: relative;
+    /* ボックス外側の余白 */
+    margin: 1em 0.5em 1em 0.5em;
+    display: block;
+    /* ボックスの枠線 */
+    border: 1px dashed #ffa500;
+}
+
+/* 注意書きボックスのアイコン */
+.text-box:before{
+    position: absolute;
+    font-family: "Font Awesome 5 Free", serif;
+    /* アイコンの種類 */
+    content: "\f0eb";
+    font-weight: 900;
+    /* アイコンの大きさ */
+    font-size: 40px;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+    /* アイコン左側の余白 */
+    left: 0.6em;
+    /* アイコンの色 */
+    color: #ffa500;
+}
