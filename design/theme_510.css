@@ -190,22 +190,25 @@ figure {
     color: white;
 }
 
+/* スマホでは無効化し、レスポンシブが壊れないようにする */
+@media(min-width: 767px){
 
-/* サイドバーの目次の固定 */
-/* https://www.fuji-blo.com/entry/sticky */
-#content-inner {
-    display: flex;
-    justify-content: space-between;
-}
+    /* サイドバーの目次の固定 */
+    /* https://www.fuji-blo.com/entry/sticky */
+    #content-inner {
+        display: flex;
+        justify-content: space-between;
+    }
 
-#box2 {
-    display: flex;
-}
+    #box2 {
+        display: flex;
+    }
 
-.hatena-module:last-of-type {
-    /*safari対応*/
-    position: -webkit-sticky;
-    position: sticky;
-    /*ここで上からの距離を調整*/
-    top: 10px;
+    .hatena-module:last-of-type {
+        /*safari対応*/
+        position: -webkit-sticky;
+        position: sticky;
+        /*ここで上からの距離を調整*/
+        top: 10px;
+    }
 }
