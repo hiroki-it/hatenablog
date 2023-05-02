@@ -38,7 +38,7 @@ ArgoCD公式から、コンポーネント図が公開されています。
 
 - 下位レイヤー向きにしか依存方向がなく、例えばドメインとインフラの間で依存性は逆転させていない。
 - レイヤーの種類とそれらの依存方向から、レイヤードアーキテクチャのような構成になっている。
-- 特にコアドメインレイヤーがコンポーネントに分割されており、マイクロサービスアーキテクチャを採用している。
+- 特にコアドメインレイヤーが独立したコンポーネントに分割されており、マイクロサービスアーキテクチャを採用している。
 
 ![argocd_architecture_layer.png](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/argocd_architecture_layer.png)
 
@@ -67,7 +67,7 @@ ArgoCDでは、マイクロサービスアーキテクチャの設計図にコ�
 コンポーネント図は依存方向 (そのコンポーネントがいずれのコンポーネントを使用するのか) に着目できます。
 <br>
 <br>
-そのため、これはマイクロサービス間の依存方向を視覚化するために有効なUML図です🙆🏻‍♂️
+そのため、これはマイクロサービス間の依存方向を視覚化するために有効化UML図と言えます🙆🏻‍♂️
 <br>
 <blockquote>
 ↪️：[https://microsoft.github.io/code-with-engineering-playbook/design/diagram-types/DesignDiagramsTemplates/componentDiagrams/:title]
