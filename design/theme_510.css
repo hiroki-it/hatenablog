@@ -184,10 +184,15 @@ figure {
     color: #ffa500;
 }
 
-/* テーブル一行目 */
+/* テーブルヘッダー */
 .entry-content table th {
     background-color: #313131;
     color: white;
+}
+
+/* HTMLでテーブルを定義した場合 */
+.entry-content table {
+    background: white;
 }
 
 /* スマホでは無効化し、レスポンシブが壊れないようにする */
