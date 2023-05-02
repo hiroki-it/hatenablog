@@ -14,7 +14,7 @@ create-draft:
 .PHONY: push-post
 push-post:
 	git checkout release/entry
-	git add ./dist/entry
+	git add ./dist
 	git commit -m "update 記事を更新した。"
 	git push
 	git checkout main
