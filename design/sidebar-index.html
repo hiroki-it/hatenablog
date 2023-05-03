@@ -2,15 +2,17 @@
 <!-- https://www.it-the-best.com/entry/hatenablogcustom-tableofcontents_1 -->
 <script>
     // 目次の要素を取得
-    var toc = $(".table-of-contents");
+    const toc = $(".table-of-contents");
     // 目次が存在する場合
     if (toc.length > 0) {
         // 目次のクローン生成
-        var toc_clone = toc.clone(true);
+        const toClone = toc.clone(true);
         // サイドバーの一番下のモジュール
-        var sidebar_last = $("#box2-inner>.hatena-module:last-child").last()
-        var tocHatenaModule = $(document.createElement("div")).addClass("hatena-module hatena-module-html").append($(document.createElement("div")).addClass("hatena-module-body").append(toc_clone))
+        const sidebarLast = $("#box2-inner>.hatena-module:last-child").last()
+        const tocHatenaModule = $(document.createElement("div"))
+            .addClass("hatena-module hatena-module-html")
+            .append($(document.createElement("div")).addClass("hatena-module-body").append(toClone))
         // サイドバーの一番下のモジュールに追加
-        sidebar_last.after(tocHatenaModule);
+        sidebarLast.after(tocHatenaModule);
     }
 </script>
