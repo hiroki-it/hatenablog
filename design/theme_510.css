@@ -101,6 +101,9 @@
     padding: 1.5rem 0.5rem;
     background-color: #364549;
     color: #e3e3e3;
+
+    /* コピーボタンの位置 */
+    position: relative;
 }
 
 /* コメントアウトの色 */
@@ -217,4 +220,43 @@ figure {
         /*ここで上からの距離を調整*/
         top: 10px;
     }
+}
+
+/* コピーボタン */
+.entry-content .copy-button {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    display: inline-block;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    background-color: #1e90ff;
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    text-decoration: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s, box-shadow 0.3s;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.entry-content pre.code:hover .copy-button {
+    opacity: 1;
+}
+
+.entry-content .copy-button:hover {
+    background-color: #2980b9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.entry-content .copy-button:focus {
+    outline: none;
+}
+
+.entry-content .copy-button:active {
+    box-shadow: none;
+    transform: translateY(2px);
 }
