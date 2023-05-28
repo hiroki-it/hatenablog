@@ -59,7 +59,7 @@
         }
 
         function appendLastmod(lastmod) {
-            var $container = $('<div></div>', {'class': 'lastmod'}).text(lastmod.replace(/T.*0/, " 更新"));
+            var $container = $('<div></div>', {'class': 'lastmod'}).text(lastmod.replace(/T.*0/, " 最終更新"));
             if ($('.entry-header > .date').get(0).tagName.toLowerCase() === 'span') {
                 $('.entry-title').before($container);
             } else {
