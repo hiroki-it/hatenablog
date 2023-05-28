@@ -262,3 +262,46 @@ figure {
     box-shadow: none;
     transform: translateY(2px);
 }
+
+/* 記事の作成日時 */
+.entry-date {
+    background-color: transparent;
+    padding: 5px 0px;
+    /*作成日の大きさ。色は指定していない*/
+    font-size: 15px;
+    display: inline;
+    color: black;
+}
+
+/* 記事の作成日時アイコン */
+.entry-date::before {
+    font-family: "Font Awesome 5 Free", serif;
+    /*作成日のアイコンの種類*/
+    content: '\f073';
+    font-weight: bold;
+    color: black;
+}
+
+/* 記事の最終更新日時 */
+.lastmod {
+    background-color: transparent;
+    padding: 5px 0px;
+    /*更新日の大きさ*/
+    font-size: 15px;
+    display: inline;
+    margin-left: 1em;
+    /*更新日の色*/
+    color: #FF0000;
+    font-weight: bold;
+}
+
+/* 記事の最終更新日時アイコン */
+.lastmod::before {
+    margin-right: 5px;
+    font-family: "Font Awesome 5 Free", serif;
+    /*更新日付のアイコンの種類*/
+    content: '\f01e';
+    /*更新日の色*/
+    color: black;
+    font-weight: bold;
+}

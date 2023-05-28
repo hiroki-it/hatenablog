@@ -1,6 +1,80 @@
 <!-- Font Awesome -->
 <link href="https://use.fontawesome.com/releases/v5.11.0/css/all.css" rel="stylesheet">
+
 <!-- Googleフォント -->
 <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
+
 <!-- 追従するサイドバー目次のためのJQuery -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+<!-- 記事の最終更新日時 -->
+<script>
+    ;(function ($) {
+
+        'use strict';
+
+        var urls = [], opts = {
+                cache: false,
+                dataType: 'xml'
+            }, p,
+
+            url = 'https://hiroki-hasegawa.hatenablog.jp/sitemap.xml';
+
+        function parseSitemapXML(url) {
+            var d = new $.Deferred;
+            $.ajax($.extend(opts, {
+                url: url
+            })).done(function (xml) {
+                $(xml).find('sitemap').each(function () {
+                    urls.push($(this).find('loc').text());
+                });
+                d.resolve();
+            }).fail(function () {
+                d.reject();
+            });
+            return d.promise();
+        }
+
+        function findURL(url) {
+            $.ajax($.extend(opts, {
+                url: url
+            })).done(function (xml) {
+                var isMatched = false;
+                $(xml).find('url').each(function () {
+                    var $this = $(this);
+                    if ($this.find('loc').text() === location.href) {
+                        isMatched = true;
+                        appendLastmod($this.find('lastmod').text());
+                        return false;
+                    }
+                });
+                if (!isMatched) nextURL();
+            }).fail(function () {
+            });
+        }
+
+        function nextURL() {
+            urls.shift();
+            if (urls.length) findURL(urls[0]);
+        }
+
+        function appendLastmod(lastmod) {
+            var $container = $('<div></div>', {'class': 'lastmod'}).text(lastmod.replace(/T.*0/, " 更新"));
+            if ($('.entry-header > .date').get(0).tagName.toLowerCase() === 'span') {
+                $('.entry-title').before($container);
+            } else {
+                $('.entry-date').append($container);
+            }
+        }
+
+        p = parseSitemapXML(url);
+
+        p.done(function () {
+            findURL(urls[0])
+        });
+
+        p.fail(function (error) {
+        });
+
+    })(jQuery);
+</script>
