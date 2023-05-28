@@ -270,7 +270,7 @@ figure {
     /*作成日の大きさ。色は指定していない*/
     font-size: 15px;
     display: inline;
-    color: black;
+    color: #333;
 }
 
 /* 記事の作成日時アイコン */
@@ -279,7 +279,7 @@ figure {
     /*作成日のアイコンの種類*/
     content: '\f073';
     font-weight: bold;
-    color: black;
+    color: #333;
 }
 
 /* 記事の最終更新日時 */
@@ -302,6 +302,6 @@ figure {
     /*更新日付のアイコンの種類*/
     content: '\f01e';
     /*更新日の色*/
-    color: black;
+    color: #333;
     font-weight: bold;
 }
