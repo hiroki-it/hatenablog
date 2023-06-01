@@ -1,5 +1,5 @@
 ---
-Title: 【ArgoCD🐙️】ArgoCDにおけるマルチテナント化の設計プラクティス
+Title: 【ArgoCD🐙️】ArgoCDにおけるマルチテナント化の設計手法とその仕組み
 Category:
   - ArgoCD
   - Microservices Architecture
@@ -21,21 +21,23 @@ Argoくんへの愛ゆえに思っています。
 
 ArgoCDの機能を使えば、プロダクト管理者が許可されていない他プロダクトをデプロイできないように、プロダクト別のテナントを作成できます。
 
-今回、そのマルチテナント化の設計プラクティスを記事で解説しました🚀
-
-なお、マルチテナントを設計する上で、ArgoCDの特に "argocd-server" と "application-controller" の責務を知る必要があり、こちらについては以下の記事で解説しております。
-
-[https://hiroki-hasegawa.hatenablog.jp/entry/2023/05/02/145115:embed]
+今回、そのマルチテナント化の設計手法を記事で解説しました🚀
 
 それでは、もりもり布教していきます😗
 
 <br>
 
-# 02. マルチテナントの種類
+# 02. マルチテナント化の設計手法の種類
+
+## ここで説明すること
 
 ArgoCD上にプロダクト別のテナントを作成する時、何を単位とすればよさそうでしょうか。
 
+前述した通り、テナントの意義は『プロダクト管理者が許可されていない他プロダクトをデプロイできないようにすること』です。
+
 ここでは、私が検討した単位の種類は以下の通りです。
+
+<br>
 
 ## 実Cluster単位
 
@@ -101,9 +103,49 @@ ArgoCD上にプロダクト別のテナントを作成する時、何を単位�
 
 そのため、実Cluster単位テナントのメリットを享受しつつ、また実Clusterが増えなくてよいです。
 
-前述の通り、私の状況ではArgoCDでデプロイしなければならないプロダクトの数が非常に多く、それぞれのArgoCDの影響範囲がプロダクトに限定できるため、採用になりました。
+前述の通り、私の状況ではArgoCDでデプロイしなければならないプロダクトの数が非常に多く、それぞれのArgoCDの影響範囲がプロダクトに限定できるため、**採用になりました**。
 
 ArgoCDの『Namespacedスコープモード』を有効化します。
+
+<br>
+
+# 02. Namespace単位のマルチテナントの仕組み
+
+## ここで説明すること
+
+Namespace単位のマルチテナントを採用した場合、ArgoCD上でどのようなことが起こるのか、その仕組みを説明していきます。
+
+なおこの仕組みを理解する上で、ArgoCDの特に "argocd-server" と "application-controller" の責務を知る必要があります。
+
+これらについては以下の記事で紹介しております。
+
+[https://hiroki-hasegawa.hatenablog.jp/entry/2023/05/02/145115:embed]
+
+<br>
+
+## 仕組みの概要
+
+ArgoCD用Clusterがあり、ここで動いているArgoCDは、dev環境とstg環境のプロダクト用Clusterにマニフェストをデプロイします。
+
+Cluster上には、Namespace (`foo`、`bar`、`baz`) があります。
+
+各プロダクト用Clusterの管理者は、SSOでArgoCDにログインします。
+
+この管理者は、各Namespace上のArgoCDを介して、担当するClusterにのみマニフェストをデプロイできます。
+
+また各プロダクトのArgoCDのApplicationは、プロダクトの実行環境別のClusterに対応しています。
+
+<br>
+
+## argocd-serverまわりの仕組み
+
+まず、argocd-serverです。
+
+ここでargocd-serverは、
+
+<br>
+
+## application-controllerまわりの仕組み
 
 <br>
 
@@ -112,3 +154,5 @@ ArgoCDの『Namespacedスコープモード』を有効化します。
 ArgoCDのマルチテナント設計にあたり、[`@toversus26`](https://twitter.com/toversus26) さんに有益なプラクティスをご教授いただきました。
 
 この場で感謝申し上げます🙇🏻‍
+
+<br>
