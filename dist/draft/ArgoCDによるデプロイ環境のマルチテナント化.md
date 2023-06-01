@@ -141,11 +141,16 @@ Cluster上には、Namespace (`foo`、`bar`、`baz`) があります。
 
 まず、argocd-serverです。
 
+Namespace単位でテナントを分割する場合、argocd-serverの『Namespacedスコープモード』を有効化します。
+
 ここでargocd-serverは、
 
 <br>
 
 ## application-controllerまわりの仕組み
+
+Namespace単位でテナントを分割する場合、argocd-serverと同様にして、application-controllerの『Namespacedスコープモード』を有効化します。
+
 
 <br>
 
