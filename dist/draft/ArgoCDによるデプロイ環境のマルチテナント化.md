@@ -115,7 +115,7 @@ ArgoCDの『Namespacedスコープモード』を有効化します。
 
 Namespace単位のマルチテナントを採用した場合、ArgoCD上でどのようなことが起こるのか、その仕組みを説明していきます。
 
-なおこの仕組みを理解する上で、ArgoCDの特に "argocd-server" と "application-controller" の責務を知る必要があります。
+なおこの仕組みを理解する上で、ArgoCDの特に "argocd-server" "application-controller" "dex-server" の責務を知る必要があります。
 
 これらについては以下の記事で紹介しております。
 
@@ -139,17 +139,33 @@ Cluster上には、Namespace (`foo`、`bar`、`baz`) があります。
 
 ## argocd-serverまわりの仕組み
 
+わかりやすいように、Namespaceの`foo`のみに着目します。
+
 まず、argocd-serverです。
 
 Namespace単位でテナントを分割する場合、argocd-serverの『Namespacedスコープモード』を有効化します。
 
-ここでargocd-serverは、
+#### 【１】
+
+各プロダクト用Clusterの管理者がSSOでログインします。
+
+#### 【２】
+
+argocd-serverは、IDプロバイダーにSSOの認証フェーズをIDプロバイダーに委譲します。
+
+[https://hiroki-hasegawa.hatenablog.jp/entry/2023/05/02/145115#04-application-controllerredis-server:embed]
+
+#### 【３】
+
+この時、dex-server認可リクエストを作成
 
 <br>
 
 ## application-controllerまわりの仕組み
 
-Namespace単位でテナントを分割する場合、argocd-serverと同様にして、application-controllerの『Namespacedスコープモード』を有効化します。
+わかりやすいように、argocd-serverの説明と同様にNamespaceの`foo`のみに着目します。
+
+Namespace単位でテナントを分割する場合、argocd-serverと同様にapplication-controllerの『Namespacedスコープモード』を有効化します。
 
 
 <br>
