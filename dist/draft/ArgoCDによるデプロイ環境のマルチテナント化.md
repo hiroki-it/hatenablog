@@ -113,11 +113,11 @@ ArgoCDの『Namespacedスコープモード』を有効化します。
 
 ## ここで説明すること
 
-Namespace単位のマルチテナントを採用した場合、ArgoCD上でどのようなことが起こるのか、その仕組みを説明していきます。
+Namespace単位のマルチテナントを採用した場合、ArgoCD上でどのようなことが起こるのか、その仕組みとNamespacedスコープモードの設定方法を説明していきます。
 
 なおこの仕組みを理解する上で、ArgoCDの特に "argocd-server" "application-controller" "dex-server" の責務を知る必要があります。
 
-これらについては以下の記事で紹介しております。
+これらのコンポーネントついては以下の記事で全体像を紹介しており、より詳しく知りたい場合はご覧いただけると🙇🏻‍♂️
 
 [https://hiroki-hasegawa.hatenablog.jp/entry/2023/05/02/145115:embed]
 
@@ -129,11 +129,19 @@ ArgoCD用Clusterがあり、ここで動いているArgoCDは、dev環境とstg�
 
 Cluster上には、Namespace (`foo`、`bar`、`baz`) があります。
 
-各プロダクト用Clusterの管理者は、SSOでArgoCDにログインします。
+#### 【１】
 
-この管理者は、各Namespace上のArgoCDを介して、担当するClusterにのみマニフェストをデプロイできます。
+各プロダクト用Clusterの管理者は、SSOでargocd-serverにログインします。
 
-また各プロダクトのArgoCDのApplicationは、プロダクトの実行環境別のClusterに対応しています。
+#### 【２】
+
+argocd-serverは、各プロダクト用Clusterの管理者のApplicationの認可スコープを制御します。
+
+なお各プロダクトのArgoCDのApplicationは、プロダクトの実行環境別のClusterに対応しています。
+
+#### 【３】
+
+各プロダクト用Clusterの管理者は、各Namespace上のArgoCDを介して、担当するClusterにのみマニフェストをデプロイできます。
 
 <br>
 
@@ -151,9 +159,7 @@ Namespace単位でテナントを分割する場合、argocd-serverの『Namespa
 
 #### 【２】
 
-argocd-serverは、IDプロバイダーにSSOの認証フェーズをIDプロバイダーに委譲します。
-
-[https://hiroki-hasegawa.hatenablog.jp/entry/2023/05/02/145115#04-application-controllerredis-server:embed]
+argocd-serverは、IDプロバイダーにSSOの認証フェーズをIDプロバイダーに委譲するために、dex-serverをコールします。
 
 #### 【３】
 
@@ -166,7 +172,6 @@ argocd-serverは、IDプロバイダーにSSOの認証フェーズをIDプロバ
 わかりやすいように、argocd-serverの説明と同様にNamespaceの`foo`のみに着目します。
 
 Namespace単位でテナントを分割する場合、argocd-serverと同様にapplication-controllerの『Namespacedスコープモード』を有効化します。
-
 
 <br>
 
