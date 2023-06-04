@@ -17,6 +17,11 @@
     font-size: 1.0em;
 }
 
+/* ブログタイトル */
+.entry-title {
+    font-size: 1.45em;
+}
+
 /* h1の文字 */
 .entry-content h1 {
     font-size: 1.4em;

@@ -117,7 +117,9 @@ Namespace単位のマルチテナントを採用した場合、ArgoCD上でど�
 
 なおこの仕組みを理解する上で、ArgoCDの特に "argocd-server" "application-controller" "dex-server" の責務を知る必要があります。
 
-これらのコンポーネントついては以下の記事で全体像を紹介しており、より詳しく知りたい場合はご覧いただけると🙇🏻‍♂️
+これらのコンポーネントついて、今回は簡単にしか説明していません😢
+
+詳しく知りたい方は、以下の記事で全体像を紹介してますので、よろしくどうぞ🙇🏻‍♂️
 
 [https://hiroki-hasegawa.hatenablog.jp/entry/2023/05/02/145115:embed]
 
@@ -155,15 +157,54 @@ Namespace単位でテナントを分割する場合、argocd-serverの『Namespa
 
 #### 【１】
 
-各プロダクト用Clusterの管理者がSSOでログインします。
+各プロダクトCluster管理者がダッシュボード (argocd-server) にSSOを使用してログインしようとします。
 
 #### 【２】
 
-argocd-serverは、IDプロバイダーにSSOの認証フェーズをIDプロバイダーに委譲するために、dex-serverをコールします。
+argocd-serverは、認証フェーズをIDプロバイダーに委譲するために、dex-serverをコールします。
 
 #### 【３】
 
-この時、dex-server認可リクエストを作成
+dex-serverは、認可リクエストを作成します。
+
+#### 【４】
+
+dex-serverは、前の手順で作成した認可リクエストをIDプロバイダーに送信します。
+
+#### 【５】
+
+IDプロバイダー側でSSOの認証フェーズを実施します。
+
+IDプロバイダーは、コールバックURL (`<ArgoCDのドメイン名>/api/dex/callback`) を指定して、認可レスポンスを送信します。
+
+#### 【６】
+
+認可レスポンスは、argocd-serverを介して、dex-serverに届きます。
+
+ConfigMap (argocd-rbac-cm) を参照し、IDプロバイダーから取得したユーザーやグループに、ArgoCD系リソースに関する認可スコープを付与します。
+
+ここでは、developerロールにはdevというAppProjectに属するArgoCD系リソースにのみ、またmaintainerロールには全てのAppProjectの操作を許可しています。
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-rbac-cm
+  namespace: argocd
+data:
+  # デフォルトのロール
+  policy.default: role:readonly
+  policy.csv: |
+    # ロールと認可スコープを定義する
+    p, role:developer, *, *, dev/*, allow
+    p, role:maintainer, *, *, dev/*, allow
+    p, role:maintainer, *, *, prd/*, allow
+
+    # グループにロールを紐付ける
+    g, developers, role:developer
+    g, maintainers, role:maintainer
+  scopes: "[groups]"
+```
 
 <br>
 
