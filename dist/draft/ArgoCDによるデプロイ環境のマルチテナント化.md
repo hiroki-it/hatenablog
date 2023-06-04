@@ -195,7 +195,7 @@ data:
   # デフォルトのロール
   policy.default: role:readonly
   policy.csv: |
-    # ロールと認可スコープを定義する
+    # ロールとArgoCD系リソースの認可スコープを定義する
     p, role:developer, *, *, dev/*, allow
     p, role:maintainer, *, *, dev/*, allow
     p, role:maintainer, *, *, prd/*, allow
