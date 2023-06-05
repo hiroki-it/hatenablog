@@ -196,13 +196,11 @@ data:
   policy.default: role:readonly
   policy.csv: |
     # ロールとArgoCD系リソースの認可スコープを定義する
-    p, role:developer, *, *, dev/*, allow
-    p, role:maintainer, *, *, dev/*, allow
-    p, role:maintainer, *, *, prd/*, allow
+    p, role:foo-product, *, *, tes/*, allow
+    p, role:foo-product, *, *, stg/*, allow
 
     # グループにロールを紐付ける
-    g, developers, role:developer
-    g, maintainers, role:maintainer
+    g, developers, role:foo-product
   scopes: "[groups]"
 ```
 
