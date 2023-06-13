@@ -49,7 +49,7 @@ Terraformのディレクトリ構成と`tfstate`ファイル分割の設計パ�
 
 # 謝辞
 
-今回のTerraformの設計パターンの収集にあたり、同じ職場の [@tozastation](https://twitter.com/tozastation) さんの実装方法も参考にさせていただきました。
+今回のTerraformの設計パターンの収集にあたり、現場でお世話になっている [@tozastation](https://twitter.com/tozastation) さんの実装方法も参考にさせていただきました。
 
 この場で感謝申し上げます🙇🏻‍
 
