@@ -28,16 +28,24 @@ $ asdf install
 
 <br>
 
-## 整形
+## マークダウンの静的解析
 
-1. インストールする。
+### インストール
 
 ```bash
 $ yarn
 ```
 
-2. フォーマッターを実行する。
+### 整形
+
+フォーマッターを実行する。
 
 ```bash
 $ yarn prettier -w --no-bracket-spacing **/*.md
+```
+
+### 校閲
+
+```bash
+$ yarn textlint * 
 ```
