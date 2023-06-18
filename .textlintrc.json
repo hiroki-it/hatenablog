@@ -1,0 +1,12 @@
+{
+  "plugins": {},
+  "filters": {},
+  "rules": {
+    "preset-ja-technical-writing": {
+      "ja-no-mixed-period": false,
+      "ja-no-weak-phrase": false,
+      "no-unmatched-pair": false,
+      "sentence-length": false
+    }
+  }
+}
