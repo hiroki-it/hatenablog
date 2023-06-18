@@ -26,3 +26,5 @@ push-post:
 .PHONY: format
 format:
 	find ./* -name "*.md" -type f | xargs sed -i '' -e 's/）/) /g'  -e 's/（/ (/g'
+	yarn prettier -w --no-bracket-spacing **/*.md
+	yarn textlint *
