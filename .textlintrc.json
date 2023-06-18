@@ -5,6 +5,9 @@
     "preset-ja-technical-writing": {
       "ja-no-mixed-period": false,
       "ja-no-weak-phrase": false,
+      "no-doubled-joshi": {
+        "allow": ["が", "に"]
+      },
       "no-unmatched-pair": false,
       "sentence-length": false
     }
