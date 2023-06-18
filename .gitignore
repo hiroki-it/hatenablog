@@ -1,2 +1,8 @@
+# blogsync
 blogsync.yaml
+
+# yarnのローカルパッケージ
 **/node_modules
+
+# yarnコマンドのログ
+**.log

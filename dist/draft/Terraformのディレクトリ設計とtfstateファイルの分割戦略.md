@@ -17,17 +17,62 @@ Category:
 
 さて最近の業務で、全プロダクト基盤開発チームがAWSをコード化するために使っているTerraform 🌏のリポジトリを、丸々リプレイスしました。
 
-このリポジトリでは、ディレクトリ構成と`tfstate`ファイル分割の設計方針が決まっておらず、結果1つの`tfstate`ファイルで様々なAWSリソースの状態を管理してしまっていました。
-
-そのため、全プロダクト基盤開発チームの各メンバーは、『`terraform plan`で自分の作業とは無関係な状態差分が出てしまう』という状況に悩んでいました。
-
-そこで課題解決のために、ディレクトリ構成と`tfstate`ファイル分割の設計パターンをざっと整理し、その上で適切な新設計を提案/実装しました。
+この時、ディレクトリ構成と`tfstate`ファイル分割の設計パターンをざっと整理し、その上で適切な新設計を採用しました。
 
 今回は、この設計パターンを記事で紹介しました。
 
 なお、クラウドプロバイダーの中でも、AWS向けの説明となってしまうことをご容赦ください。
 
 それでは、もりもり布教していきます😗
+
+<br>
+
+# 02. なぜ`tfstate`ファイルを分割するのか
+
+そもそも、なぜ`tfstate`ファイルを分割する必要があるのか。
+
+様々なインフラコンポーネントを単一の`tfstate`ファイルで状態を管理すると、1回の`terraform`コマンド全ての状態を操作できて楽です。
+
+その一方で、自身の作業ブランチ以外でインフラコンポーネントの状態を変更しかけていると、`terraform`コマンドで`target`オプションが必要になります。
+
+```mermaid
+%%{init: { 'themeVariables': { 'commitLabelFontSize': '13px' }}}%%
+gitGraph
+   commit id: "8c8e6"
+   commit id: "0e3c3"
+     branch feature/foo
+     checkout feature/foo
+     commit id: "4e9e8"
+     commit id: "fooさんがApply"
+   checkout main
+     branch feature/bar
+     commit id: "barさんがPlan"
+   checkout main
+   commit id: "e74d6"
+     branch feature/baz
+     commit id: "bazさんがPlan"
+```
+
+この時に`tfstate`ファイルをいい感じに分割すると、まるで暗黙的に`target`オプションがついたように、他の作業ブランチの影響を受けずに`terraform`コマンドを実行できます。
+
+<br>
+
+# 03. `tfstate`ファイルの粒度に基づくディレクトリ分割
+
+まず、Terraformのディレクトリ構成はtfstateファイルの粒度に基づいて分割する。
+
+```yaml
+repository/
+├── foo/
+│   ├── backend.tf # バックエンド内の/foo/terraform.tfstate
+│   ...
+│
+├── bar/
+│   ├── backend.tf # バックエンド内の/bar/terraform.tfstate
+│   ...
+│
+...
+```
 
 <br>
 
@@ -39,11 +84,15 @@ Terraformのディレクトリ構成と`tfstate`ファイル分割の設計パ�
 
 そのため、あらゆる要件を抽象化した設計パターンを考えることは不可能だと思っています😇
 
-もし、この記事を参考に設計してくださる方は、設計パターンを現場に落とし込んで解釈いただけると幸いです。
-
 > 「自分を信じても…信頼に足る仲間を信じても…誰にもわからない…」([`@nwiizo`](https://twitter.com/nwiizo), 2023)
 >
 > [https://syu-m-5151.hatenablog.com/entry/2023/05/19/154346:title]
+
+もし、この記事を参考に設計してくださる方は、設計パターンを現場に落とし込んで解釈いただけると幸いです。
+
+なお、`tfstate`ファイルの分割の考え方は以下の書籍にも記載されていますので、ぜひご一読いただけると🙇🏻‍
+
+> ↪️：[isbn:1098116747:title]
 
 <br>
 

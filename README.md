@@ -47,5 +47,5 @@ $ yarn prettier -w --no-bracket-spacing **/*.md
 ### 校閲
 
 ```bash
-$ yarn textlint * 
+$ yarn textlint *
 ```
