@@ -57,6 +57,14 @@ gitGraph
 
 <br>
 
+# 04. `tfstate`ファイル間の依存関係について
+
+[@tmknom](https://twitter.com/tmknom) さんも、ソフトウェアエンジニアリングを知識の土台に置いてました。
+
+<iframe class="speakerdeck-iframe" frameborder="0" src="https://speakerdeck.com/player/ba0d8c6b4ecf47b0877998580d00f51b?slide=49" title="Terraform Module Designs" allowfullscreen="true" style="border: 0px; background: padding-box padding-box rgba(0, 0, 0, 0.1); margin: 0px; padding: 0px; border-radius: 6px; box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 40px; width: 100%; height: auto; aspect-ratio: 560 / 314;" data-ratio="1.78343949044586"></iframe>
+
+<br>
+
 # 03. `tfstate`ファイルの粒度に基づくディレクトリ分割
 
 まず、Terraformのディレクトリ構成はtfstateファイルの粒度に基づいて分割する。
@@ -98,7 +106,10 @@ Terraformのディレクトリ構成と`tfstate`ファイル分割の設計パ�
 
 # 謝辞
 
-今回のTerraformの設計パターンの収集にあたり、現場でお世話になっている [@tozastation](https://twitter.com/tozastation) さんの実装方法も参考にさせていただきました。
+今回のTerraformの設計パターンの収集にあたり、現場でお世話になっている以下の方々の実装方法を参考にさせていただきました。
+
+- [@kiyo_12_07](https://twitter.com/kiyo_12_07)
+- [@tozastation](https://twitter.com/tozastation)
 
 この場で感謝申し上げます🙇🏻‍
 
