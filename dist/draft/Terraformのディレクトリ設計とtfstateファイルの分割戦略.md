@@ -106,9 +106,10 @@ Terraformのディレクトリ構成と`tfstate`ファイル分割の設計パ�
 
 # 謝辞
 
-今回のTerraformの設計パターンの収集にあたり、現場でお世話になっている以下の方々の実装方法を参考にさせていただきました。
+今回のTerraformの設計パターンの収集にあたり、以下の方々からの意見や実装方法も参考にさせていただきました。
 
 - [@kiyo_12_07](https://twitter.com/kiyo_12_07)
+- [@masasuzu](https://twitter.com/masasuz)
 - [@tozastation](https://twitter.com/tozastation)
 
 この場で感謝申し上げます🙇🏻‍
