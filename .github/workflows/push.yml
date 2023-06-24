@@ -35,11 +35,10 @@ jobs:
       - name: Exec blogsync push
         env:
           DOMAIN: ${{ secrets.DOMAIN }}
-        run: |          
-          if ! git diff --quiet origin/main --name-only | grep dist/entry ; then
-            git diff origin/main --name-only \
-              | grep dist/entry \
-              | xargs -t -n1 ~/go/bin/blogsync push
+        run: |
+          DIFF=$(git diff --quiet origin/main --name-only | grep dist/entry)
+          if $DIFF ; then
+            xargs -t -n1 ~/go/bin/blogsync push $DIFF
           else
             echo "差分がないため、GitHub Actionsを終了しました。"
             exit 0
