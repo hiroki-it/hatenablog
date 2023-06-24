@@ -1,5 +1,5 @@
 ---
-Title: 【Terraform👨🏻‍🚀】Terraformのtfstateファイル分割とディレクトリ構成の設計パターン
+Title: 【Terraform🧑🏻‍🚀】Terraformのtfstateファイル分割とディレクトリ構成の設計パターン
 Category:
   - AWS
   - Terraform
@@ -15,7 +15,7 @@ Category:
 
 前世の俺が徳を積まなかったせいで、Mitchell Hashimoto として現世に生まれることができなった。
 
-さて最近の業務で、全プロダクト基盤開発チームがAWSをコード化するために使っているTerraform👨🏻‍🚀のリポジトリを、丸々リプレイスしました。
+さて最近の業務で、全プロダクト基盤開発チームがAWSをコード化するために使っているTerraform🧑🏻‍🚀のリポジトリを、丸々リプレイスしました。
 
 この時、ディレクトリ構成と`tfstate`ファイル分割の設計パターンをざっと整理し、その上で適切な新設計を採用しました。
 
