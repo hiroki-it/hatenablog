@@ -146,9 +146,9 @@ flowchart TD
 
 例えば、AWSリソースからなるプロダクトをいくつかの`tfstate`ファイル (`foo-tfstate`、`bar-tfstate`) に分割したと仮定します。
 
-`foo-tfstate`では、VPCの状態を持っているとします。
+`foo-tfstate`ファイルでは、VPCの状態を持っているとします。
 
-`bar-tfstate`は`foo-tfstate`が持つVPCに依存することとなり、依存関係図は以下の通りです。
+`bar-tfstate`ファイルは`foo-tfstate`ファイルが持つVPCに依存することとなり、依存関係図は以下の通りです。
 
 ```mermaid
 %%{init:{'theme':'natural'}}%%
@@ -172,18 +172,29 @@ repository/
 │
 ├── bar/
 │   ├── backend.tf # バックエンド内の/bar/terraform.tfstate
-│   ├── remote_state.tf # 他のtfstateファイルに依存する
-│   ├── resource.tf # fooのtfstateファイルから参照した状態を使用する
+│   ├── remote_state.tf # terraform_remote_stateブロックを使用し、foo-tfstateファイルに依存する
+│   ├── resource.tf
 │   ├── provider.tf
 │   ...
 │
 ...
 ```
 
-`bar-tfstate`が`foo-tfstate`に依存するために必要な実装は、以下の通りです。
+バックエンド内のディレクトリ構成は以下の通りです。
+
+```yaml
+bucket/
+├── foo
+│   └── terraform.tfstate
+│
+└── bar
+└── terraform.tfstate
+```
+
+`bar-tfstate`ファイルが`foo-tfstate`ファイルに依存するために必要な実装は、以下の通りです。
 
 ```terraform
-# VPCの状態は、foo-tfstateで持つ
+# VPCの状態は、foo-tfstateファイルで持つ
 data "terraform_remote_state" "foo" {
 
   backend = "s3"
@@ -196,10 +207,10 @@ data "terraform_remote_state" "foo" {
 }
 
 
-# barリソースの状態は、bar-tfstateで持つ
+# barリソースの状態は、bar-tfstateファイルで持つ
 resource "example" "bar" {
 
-  # barリソースは、foo-tfstateのVPCに依存する
+  # barリソースは、foo-tfstateファイルのVPCに依存する
   vpc_id = data.terraform_remote_state.foo.outputs.vpc_id
 
   ...
@@ -207,7 +218,7 @@ resource "example" "bar" {
 ```
 
 ```terraform
-# VPCの状態は、foo-tfstateで持つ
+# VPCの状態は、foo-tfstateファイルで持つ
 output "vpc_id" {
   value = aws_vpc.vpc.id
 }
@@ -256,18 +267,29 @@ repository/
 │
 ├── bar/
 │   ├── backend.tf # バックエンド内の/bar/terraform.tfstate
-│   ├── data.tf # dataブロックを使用し、fooのtfstateファイルから状態を参照する
-│   ├── resource.tf # fooのtfstateファイルから参照した状態を使用する
+│   ├── data.tf # dataブロックを使用し、foo-tfstateファイルに依存する
+│   ├── resource.tf
 │   ├── provider.tf
 │   ...
 │
 ...
 ```
 
-`bar-tfstate`が`foo-tfstate`に依存するために必要な実装は、以下の通りです。
+バックエンド内のディレクトリ構成は以下の通りです。
+
+```yaml
+bucket/
+├── foo
+│   └── terraform.tfstate
+│
+└── bar
+└── terraform.tfstate
+```
+
+`bar-tfstate`ファイルが`foo-tfstate`ファイルに依存するために必要な実装は、以下の通りです。
 
 ```terraform
-# VPCの状態は、foo-tfstateで持つ
+# VPCの状態は、foo-tfstateファイルで持つ
 data "aws_vpc" "foo" {
 
   filter {
@@ -276,10 +298,10 @@ data "aws_vpc" "foo" {
   }
 }
 
-# barリソースの状態は、bar-tfstateで持つ
+# barリソースの状態は、bar-tfstateファイルで持つ
 resource "example" "bar" {
 
-  # barリソースは、foo-tfstateのVPCに依存する
+  # barリソースは、foo-tfstateファイルのVPCに依存する
   vpc_id     = data.aws_vpc.foo.id
 }
 ```
