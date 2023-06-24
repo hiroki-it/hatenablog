@@ -68,7 +68,6 @@ flowchart TB
     subgraph aws
         Foo[foo-tfstate]
         Bar[bar-tfstate]
-        Baz[baz-tfstate]
     end
 ```
 
@@ -84,11 +83,9 @@ repository/
 │   ├── backend.tf # リモートバックエンド内の/foo/terraform.tfstate
 │   ...
 │
-├── bar/
-│   ├── backend.tf # リモートバックエンド内の/bar/terraform.tfstate
-│   ...
-│
-...
+└── bar/
+    ├── backend.tf # リモートバックエンド内の/bar/terraform.tfstate
+    ...
 ```
 
 <br>
@@ -99,11 +96,11 @@ repository/
 
 ```yaml
 bucket/
-├── foo
+├── foo/
 │   └── terraform.tfstate
 │
-└── bar
-└── terraform.tfstate
+└── bar/
+    └── terraform.tfstate
 ```
 
 <br>
@@ -114,9 +111,9 @@ bucket/
 
 `tfstate`ファイル間で依存関係がある場合には、依存関係図を考える必要があります。
 
-例えば、AWSリソースからなるプロダクトをいくつかの`tfstate`ファイル (`foo-tfstate`、`bar-tfstate`、`baz-tfstate`) に分割したと仮定します。
+例えば、AWSリソースからなるプロダクトをいくつかの`tfstate`ファイル (`foo-tfstate`、`bar-tfstate`) に分割したと仮定します。
 
-この時、`foo-tfstate` ➡︎ `bar-tfstate` ➡︎ `baz-tfstate` の方向に依存関係があると、依存関係図は以下の通りです。
+この時、`foo-tfstate` ➡︎ `bar-tfstate` の方向に依存関係があると、依存関係図は以下の通りです。
 
 ```mermaid
 %%{init:{'theme':'natural'}}%%
@@ -124,9 +121,8 @@ flowchart TD
     subgraph aws
         Foo[foo-tfstate]
         Bar[bar-tfstate]
-        Baz[baz-tfstate]
     end
-    Foo -. 依存 .-> Bar -. 依存 .-> Baz
+    Foo -. 依存 .-> Bar
 ```
 
 <br>
@@ -176,13 +172,13 @@ repository/
 │   ├── provider.tf
 │   ...
 │
-├── bar/
-│   ├── backend.tf # リモートバックエンド内の/bar/terraform.tfstate
-│   ├── remote_state.tf # terraform_remote_stateブロックを使用し、foo-tfstateファイルに依存する
-│   ├── resource.tf
-│   ├── provider.tf
-│   ...
-│
+└── bar/
+    ├── backend.tf # リモートバックエンド内の/bar/terraform.tfstate
+    ├── remote_state.tf # terraform_remote_stateブロックを使用し、foo-tfstateファイルに依存する
+    ├── resource.tf
+    ├── provider.tf
+    ...
+
 ...
 ```
 
@@ -228,8 +224,8 @@ bucket/
 ├── foo
 │   └── terraform.tfstate
 │
-└── bar
-└── terraform.tfstate
+└── bar #
+    └── terraform.tfstate
 ```
 
 <br>
@@ -273,13 +269,13 @@ repository/
 │   ├── provider.tf
 │   ...
 │
-├── bar/
-│   ├── backend.tf # リモートバックエンド内の/bar/terraform.tfstate
-│   ├── data.tf # dataブロックを使用し、foo-tfstateファイルに依存する
-│   ├── resource.tf
-│   ├── provider.tf
-│   ...
-│
+└── bar/
+    ├── backend.tf # リモートバックエンド内の/bar/terraform.tfstate
+    ├── data.tf # dataブロックを使用し、foo-tfstateファイルに依存する
+    ├── resource.tf
+    ├── provider.tf
+    ...
+
 ...
 ```
 
@@ -291,7 +287,7 @@ bucket/
 │   └── terraform.tfstate
 │
 └── bar
-└── terraform.tfstate
+    └── terraform.tfstate
 ```
 
 `bar-tfstate`ファイルが`foo-tfstate`ファイルに依存するために必要な実装は、以下の通りです。
