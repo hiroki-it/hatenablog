@@ -13,7 +13,7 @@ Category:
 
 # 01. はじめに
 
-前世の俺が徳を積まなかったせいで、Mitchell Hashimoto として現世に生まれることができなった。
+前世の俺が徳を積まなかったせいで、Mitchell Hashimoto として現世に生まれることができませんした😭
 
 さて最近の業務で、全プロダクト基盤開発チームがAWSを構築運用するために使っているTerraform🧑🏻‍🚀のリポジトリを、丸々リプレイスしました。
 
@@ -413,9 +413,9 @@ Terraformの`tfstate`ファイルの分割手法をもりもり布教しまし�
 
 今回、Terraformの分割手法の収集にあたり、以下の方々からの意見や実装方法も参考にさせていただきました。
 
-- [@kiyo_12_07](https://twitter.com/kiyo_12_07)
-- [@masasuzu](https://twitter.com/masasuz)
-- [@tozastation](https://twitter.com/tozastation)
+- [`@kiyo_12_07`](https://twitter.com/kiyo_12_07)
+- [`@masasuzu`](https://twitter.com/masasuz)
+- [`@tozastation`](https://twitter.com/tozastation)
 
 (アルファベット順)
 
