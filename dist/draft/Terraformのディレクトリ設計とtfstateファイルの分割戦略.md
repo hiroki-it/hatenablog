@@ -170,7 +170,7 @@ repository/
 ...
 ```
 
-`bar-tfstate`が`foo-tfstate`に必要な実装は、以下の通りです。
+`bar-tfstate`が`foo-tfstate`に依存するために必要な実装は、以下の通りです。
 
 ```terraform
 # VPCの状態は、foo-tfstateで持つ
@@ -210,6 +210,69 @@ output "vpc_id" {
 ### `data`ブロックによる依存とは
 
 他の方法として、`data`ブロックがあります。
+
+`data`ブロックは、`tfstate`ファイルが自身以外 (例：コンソール画面、他の`tfstate`ファイル) で作成されたAWSリソースの状態を参照するために使用できる。
+
+- `output`ブロックが不要で可読性が高い。
+
+一方で以下のデメリットがあります。
+
+- 依存先のAWSリソースごとに`data`ブロックを定義する必要がある。
+
+### 依存関係図とディレクトリ構成
+
+`data`ブロックも同様にして、AWSリソースからなるプロダクトをいくつかの`tfstate`ファイル (`foo-tfstate`、`bar-tfstate`) に分割したと仮定します。
+
+依存関係図は以下の通りです。
+
+```mermaid
+%%{init:{'theme':'natural'}}%%
+flowchart TD
+    subgraph bucket
+        Foo[foo-tfstate]
+        Bar[bar-tfstate]
+    end
+    Bar -. VPCの状態に依存 .-> Foo
+```
+
+ディレクトリ構成は、`tfstate`ファイルの粒度に合わせて、以下の通りです。
+
+```yaml
+repository/
+├── foo/
+│   ├── backend.tf # バックエンド内の/foo/terraform.tfstate
+│   ├── provider.tf
+│   ...
+│
+├── bar/
+│   ├── backend.tf # バックエンド内の/bar/terraform.tfstate
+│   ├── data.tf # dataブロックを使用し、fooのtfstateファイルから状態を参照する
+│   ├── resource.tf # fooのtfstateファイルから参照した状態を使用する
+│   ├── provider.tf
+│   ...
+│
+...
+```
+
+`bar-tfstate`が`foo-tfstate`に依存するために必要な実装は、以下の通りです。
+
+```terraform
+# VPCの状態は、foo-tfstateで持つ
+data "aws_vpc" "foo" {
+
+  filter {
+    name   = "tag:Name"
+    values = ["<foo-tfstateが持つVPCの名前>"]
+  }
+}
+
+# barリソースの状態は、bar-tfstateで持つ
+resource "example" "bar" {
+
+  # barリソースは、foo-tfstateのVPCに依存する
+  vpc_id     = data.aws_vpc.foo.id
+}
+```
 
 <br>
 
