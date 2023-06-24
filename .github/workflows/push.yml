@@ -38,7 +38,7 @@ jobs:
         run: |
           DIFF=$(git diff origin/main --name-only --relative dist/entry)
           echo $DIFF
-          if [ $DIFF="" ] ; then
+          if [ -z $DIFF ] ; then
             echo "差分がないため、GitHub Actionsを終了しました。"
             exit 0
           else
