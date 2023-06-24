@@ -96,13 +96,13 @@ repository/
 
 リモートバックエンド内のディレクトリ構成も、Terraformのディレクトリ構成とおおよそ同じである方がわかりやすいです。
 
-```yaml
+```bash
 bucket/
 ├── foo/
 │   └── terraform.tfstate
 │
 └── bar/
-└── terraform.tfstate
+    └── terraform.tfstate
 ```
 
 <br>
@@ -227,12 +227,12 @@ output "vpc_id" {
 
 リモートバックエンド内のディレクトリ構成は以下の通りです。
 
-```yaml
+```bash
 bucket/
 ├── foo
 │   └── terraform.tfstate
 │
-└── bar #
+└── bar
     └── terraform.tfstate
 ```
 
@@ -291,13 +291,13 @@ repository/
 
 リモートバックエンド内のディレクトリ構成は以下の通りです。
 
-```yaml
+```bash
 bucket/
 ├── foo
 │   └── terraform.tfstate
 │
 └── bar
-└── terraform.tfstate
+    └── terraform.tfstate
 ```
 
 `bar-tfstate`ファイルが`foo-tfstate`ファイルに依存するために必要な実装は、以下の通りです。
@@ -324,13 +324,13 @@ resource "example" "bar" {
 
 リモートバックエンド内のディレクトリ構成は以下の通りです。
 
-```yaml
+```bash
 bucket/
 ├── foo
 │   └── terraform.tfstate
 │
 └── bar
-└── terraform.tfstate
+    └── terraform.tfstate
 ```
 
 <br>
@@ -358,7 +358,7 @@ bucket/
     <td>リポジトリのディレクトリ最下層</td><td>実行環境別</td><td align=center>`⭕️`</td>
   </tr>
   <tr>
-    <td rowspan="6">任意</td><td rowspan="7">リポジトリのディレクトリ中間層</td><td>同じテナント内のプロダクト別</td>
+    <td rowspan="6">任意</td><td rowspan="7">リポジトリのディレクトリ中間層</td><td>同じテナント内のプロダクト別</td><td></td>
   </tr>
   <tr>
     <td>運用チーム責務範囲別</td><td align=center>`⭕️`</td>
@@ -367,10 +367,10 @@ bucket/
     <td>プロダクトのサブコンポーネント別</td><td align=center>`⭕️`</td>
   </tr>
   <tr>
-    <td>AWSリソースの種類別</td>
+    <td>AWSリソースの種類別</td><td></td>
   </tr>
   <tr>
-    <td>AWSリソースの状態の変更頻度別</td>
+    <td>AWSリソースの状態の変更頻度別</td><td></td>
   </tr>
   <tr>
     <td>運用チーム責務範囲別とプロダクトのサブコンポーネント別の組み合わせ</td><td align=center>`⭕️`</td>
@@ -390,9 +390,9 @@ Terraformの`tfstate`ファイルの分割手法をもりもり布教しまし�
 
 そのため、あらゆる要件を抽象化した分割手法を考えることは不可能だと思っています😇
 
-> 「自分を信じても…信頼に足る仲間を信じても…誰にもわからない…」([`@nwiizo`](https://twitter.com/nwiizo), 2023)
->
-> [https://syu-m-5151.hatenablog.com/entry/2023/05/19/154346:title]
+> 「自分を信じても…信頼に足る仲間を信じても…誰にもわからない…」([`@nwiizo`](https://twitter.com/nwiizo), 2023, https://syu-m-5151.hatenablog.com/entry/2023/05/19/154346:title)
+
+<br>
 
 もし、この記事を参考に設計してくださる方は、分割手法を現場に落とし込んで解釈いただけると幸いです。
 
