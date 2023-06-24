@@ -36,7 +36,7 @@ jobs:
         env:
           DOMAIN: ${{ secrets.DOMAIN }}
         run: |          
-          if ! git diff --quiet origin/main ; then
+          if ! git diff --quiet origin/main --name-only | grep dist/entry ; then
             git diff origin/main --name-only \
               | grep dist/entry \
               | xargs -t -n1 ~/go/bin/blogsync push
