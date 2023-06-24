@@ -38,7 +38,7 @@ jobs:
         run: |
           DIFF=$(git diff --quiet origin/main --name-only | grep dist/entry)
           if $DIFF ; then
-            xargs -t -n1 ~/go/bin/blogsync push $DIFF
+            ~/go/bin/blogsync push $DIFF
           else
             echo "差分がないため、GitHub Actionsを終了しました。"
             exit 0
