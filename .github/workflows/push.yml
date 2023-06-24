@@ -37,7 +37,7 @@ jobs:
           DOMAIN: ${{ secrets.DOMAIN }}
         run: |
           DIFF=$(git diff --quiet origin/main --name-only | grep dist/entry)
-          if $DIFF ; then
+          if [ -v $DIFF ] ; then
             ~/go/bin/blogsync push $DIFF
           else
             echo "差分がないため、GitHub Actionsを終了しました。"
