@@ -36,7 +36,7 @@ jobs:
         env:
           DOMAIN: ${{ secrets.DOMAIN }}
         run: |
-          DIFF=$(git diff --quiet origin/main --name-only | grep dist/entry)
+          DIFF=$(git diff origin/main --name-only | grep dist/entry)
           if [ -v $DIFF ] ; then
             ~/go/bin/blogsync push $DIFF
           else

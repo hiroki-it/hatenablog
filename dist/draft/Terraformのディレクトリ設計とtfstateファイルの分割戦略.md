@@ -1,5 +1,5 @@
 ---
-Title: 【Terraform🧑🏻‍🚀】Terraformのtfstateファイル分割とディレクトリ構成の設計パターン
+Title: 【Terraform🧑🏻‍🚀】Terraformのtfstateファイルの分割手法
 Category:
   - AWS
   - Terraform
@@ -17,9 +17,9 @@ Category:
 
 さて最近の業務で、全プロダクト基盤開発チームがAWSをコード化するために使っているTerraform🧑🏻‍🚀のリポジトリを、丸々リプレイスしました。
 
-この時、ディレクトリ構成と`tfstate`ファイル分割の設計パターンをざっと整理し、その上で適切な新設計を採用しました。
+この時、`tfstate`ファイルの分割手法をざっと整理し、その上で適切な新設計を採用しました。
 
-今回は、この設計パターンを記事で紹介しました。
+今回は、これを記事で紹介しました。
 
 なお、クラウドプロバイダーの中でもAWS向けの説明となってしまうことをご容赦ください。
 
@@ -43,41 +43,11 @@ Category:
 
 <br>
 
-# 03. Terraformのディレクトリ構成
+# 03. `tfstate`ファイル分割
 
-## 分割方法
+## `tfstate`ファイルの分割
 
-大前提として、Terraformのディレクトリ構成は、`tfstate`ファイルの粒度に基づいて分割しましょう。
-
-```yaml
-repository/
-├── foo/
-│   ├── backend.tf # バックエンド内の/foo/terraform.tfstate
-│   ...
-│
-├── bar/
-│   ├── backend.tf # バックエンド内の/bar/terraform.tfstate
-│   ...
-│
-...
-```
-
-また、バックエンド内のディレクトリ構成も、Terraformのディレクトリ構成とおおよそ同じである方がわかりやすいです。
-
-```yaml
-bucket/
-├── foo
-│   └── terraform.tfstate
-│
-└── bar
-└── terraform.tfstate
-```
-
-<br>
-
-## `tfstate`ファイルの境目
-
-それでは、`tfstate`ファイルの境目はどのようにして見つければよいのでしょうか。
+それでは、`tfstate`ファイルの分割の境目はどのようにして見つければよいのでしょうか。
 
 これを見つけるコツは、**他の状態にできるだけ依存しないリソースの関係**に注目することだと考えています。
 
@@ -100,6 +70,40 @@ flowchart TB
         Bar[bar-tfstate]
         Baz[baz-tfstate]
     end
+```
+
+<br>
+
+## リポジトリのディレクトリ構成
+
+リポジトリのディレクトリ構成は、`tfstate`ファイルの粒度に基づいて分割しましょう。
+
+```yaml
+repository/
+├── foo/
+│   ├── backend.tf # リモートバックエンド内の/foo/terraform.tfstate
+│   ...
+│
+├── bar/
+│   ├── backend.tf # リモートバックエンド内の/bar/terraform.tfstate
+│   ...
+│
+...
+```
+
+<br>
+
+## リモートバックエンドのディレクトリ構成
+
+リモートバックエンド内のディレクトリ構成も、Terraformのディレクトリ構成とおおよそ同じである方がわかりやすいです。
+
+```yaml
+bucket/
+├── foo
+│   └── terraform.tfstate
+│
+└── bar
+└── terraform.tfstate
 ```
 
 <br>
@@ -142,7 +146,7 @@ flowchart TD
 - 別途`output`ブロックの定義が必要になり、可読性が低くなる。
 - 依存先と依存元の間でTerraformのバージョンに差がありすぎると、`tfstate`ファイル間で互換性がなくなり、`terraform_remote_state`ブロックで状態を参照できない場合がある。
 
-### 依存関係図とディレクトリ構成
+### 依存関係図
 
 例えば、AWSリソースからなるプロダクトをいくつかの`tfstate`ファイル (`foo-tfstate`、`bar-tfstate`) に分割したと仮定します。
 
@@ -160,35 +164,26 @@ flowchart TD
     Bar -. VPCの状態に依存 .-> Foo
 ```
 
+### リポジトリのディレクトリ構成
+
 ディレクトリ構成は、`tfstate`ファイルの粒度に合わせて、以下の通りです。
 
 ```yaml
 repository/
 ├── foo/
-│   ├── backend.tf # バックエンド内の/foo/terraform.tfstate
+│   ├── backend.tf # リモートバックエンド内の/foo/terraform.tfstate
 │   ├── output.tf # 他のtfstateファイルから依存される
 │   ├── provider.tf
 │   ...
 │
 ├── bar/
-│   ├── backend.tf # バックエンド内の/bar/terraform.tfstate
+│   ├── backend.tf # リモートバックエンド内の/bar/terraform.tfstate
 │   ├── remote_state.tf # terraform_remote_stateブロックを使用し、foo-tfstateファイルに依存する
 │   ├── resource.tf
 │   ├── provider.tf
 │   ...
 │
 ...
-```
-
-バックエンド内のディレクトリ構成は以下の通りです。
-
-```yaml
-bucket/
-├── foo
-│   └── terraform.tfstate
-│
-└── bar
-└── terraform.tfstate
 ```
 
 `bar-tfstate`ファイルが`foo-tfstate`ファイルに依存するために必要な実装は、以下の通りです。
@@ -222,6 +217,19 @@ resource "example" "bar" {
 output "vpc_id" {
   value = aws_vpc.vpc.id
 }
+```
+
+### リモートバックエンドのディレクトリ構成
+
+リモートバックエンド内のディレクトリ構成は以下の通りです。
+
+```yaml
+bucket/
+├── foo
+│   └── terraform.tfstate
+│
+└── bar
+└── terraform.tfstate
 ```
 
 <br>
@@ -261,12 +269,12 @@ flowchart TD
 ```yaml
 repository/
 ├── foo/
-│   ├── backend.tf # バックエンド内の/foo/terraform.tfstate
+│   ├── backend.tf # リモートバックエンド内の/foo/terraform.tfstate
 │   ├── provider.tf
 │   ...
 │
 ├── bar/
-│   ├── backend.tf # バックエンド内の/bar/terraform.tfstate
+│   ├── backend.tf # リモートバックエンド内の/bar/terraform.tfstate
 │   ├── data.tf # dataブロックを使用し、foo-tfstateファイルに依存する
 │   ├── resource.tf
 │   ├── provider.tf
@@ -275,7 +283,7 @@ repository/
 ...
 ```
 
-バックエンド内のディレクトリ構成は以下の通りです。
+リモートバックエンド内のディレクトリ構成は以下の通りです。
 
 ```yaml
 bucket/
@@ -306,6 +314,19 @@ resource "example" "bar" {
 }
 ```
 
+### リモートバックエンドのディレクトリ構成
+
+リモートバックエンド内のディレクトリ構成は以下の通りです。
+
+```yaml
+bucket/
+├── foo
+│   └── terraform.tfstate
+│
+└── bar
+    └── terraform.tfstate
+```
+
 <br>
 
 ## 05. 分割パターン
@@ -320,17 +341,17 @@ resource "example" "bar" {
 
 # おわりに
 
-Terraformのディレクトリ構成と`tfstate`ファイル分割の設計パターンをもりもり布教しました。
+Terraformの`tfstate`ファイルの分割手法をもりもり布教しました。
 
 ただ正直なところ、Terraformの開発現場の具体的な要件は千差万別であり、特に`tfstate`ファイル間の依存関係は様々です。
 
-そのため、あらゆる要件を抽象化した設計パターンを考えることは不可能だと思っています😇
+そのため、あらゆる要件を抽象化した分割手法を考えることは不可能だと思っています😇
 
 > 「自分を信じても…信頼に足る仲間を信じても…誰にもわからない…」([`@nwiizo`](https://twitter.com/nwiizo), 2023)
 >
 > [https://syu-m-5151.hatenablog.com/entry/2023/05/19/154346:title]
 
-もし、この記事を参考に設計してくださる方は、設計パターンを現場に落とし込んで解釈いただけると幸いです。
+もし、この記事を参考に設計してくださる方は、分割手法を現場に落とし込んで解釈いただけると幸いです。
 
 なお、`tfstate`ファイルの分割の考え方は以下の書籍にも記載されていますので、ぜひご一読いただけると🙇🏻‍
 
@@ -340,7 +361,7 @@ Terraformのディレクトリ構成と`tfstate`ファイル分割の設計パ�
 
 # 謝辞
 
-今回のTerraformの設計パターンの収集にあたり、以下の方々からの意見や実装方法も参考にさせていただきました。
+今回、Terraformの分割手法の収集にあたり、以下の方々からの意見や実装方法も参考にさせていただきました。
 
 - [@kiyo_12_07](https://twitter.com/kiyo_12_07)
 - [@masasuzu](https://twitter.com/masasuz)
