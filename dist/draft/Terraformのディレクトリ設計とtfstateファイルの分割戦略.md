@@ -37,6 +37,8 @@ Category:
 
 ![terraform_architecture_same-tfstate](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/terraform_architecture_same-tfstate.png)
 
+<br>
+
 この時に`tfstate`ファイルをいい感じに分割すると、まるで暗黙的に`target`オプションがついたように、他の作業ブランチの影響を受けずに`terraform`コマンドを実行できます。
 
 ![terraform_architecture_different-tfstate](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/terraform_architecture_different-tfstate.png)
@@ -393,7 +395,7 @@ Terraformの`tfstate`ファイルの分割手法をもりもり布教しまし�
 そのため、あらゆる要件を抽象化した分割手法を考えることは不可能だと思っています😇
 
 > 「自分を信じても…信頼に足る仲間を信じても…誰にもわからない…」
-> 
+>
 > ([`@nwiizo`](https://twitter.com/nwiizo), 2023, https://syu-m-5151.hatenablog.com/entry/2023/05/19/154346:title)
 
 <br>
