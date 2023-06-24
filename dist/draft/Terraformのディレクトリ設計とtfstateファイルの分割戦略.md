@@ -186,8 +186,6 @@ repository/
     ├── resource.tf
     ├── provider.tf
     ...
-
-...
 ```
 
 `bar-tfstate`ファイルが`foo-tfstate`ファイルに依存するために必要な実装は、以下の通りです。
@@ -291,8 +289,6 @@ repository/
     ├── resource.tf
     ├── provider.tf
     ...
-
-...
 ```
 
 リモートバックエンド内のディレクトリ構成は以下の通りです。
@@ -350,7 +346,7 @@ bucket/
 <table>
 <thead>
   <tr>
-    <th>必須 / 任意</th><th>階層</th><th>パターン</th><th>おすすめ</th>
+    <th>必須<br>または<br>任意</th><th>階層</th><th>パターン</th><th>おすすめ</th>
   </tr>
 </thead>
 <tbody>
@@ -358,7 +354,7 @@ bucket/
     <td rowspan="3">必須</td>
   </tr>
   <tr>
-    <td>リポジトリ自体 / リポジトリのディレクトリ最上層</td><td>クラウドプロバイダーのアカウント別</td><td align=center><code>⭕️</code></td>
+    <td>リポジトリ自体<br>または<br>リポジトリのディレクトリ最上層</td><td>クラウドプロバイダーのアカウント別</td><td align=center><code>⭕️</code></td>
   </tr>
   <tr>
     <td>リポジトリのディレクトリ最下層</td><td>実行環境別</td><td align=center><code>⭕️</code></td>
