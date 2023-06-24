@@ -43,7 +43,7 @@ Category:
 
 <br>
 
-# 03. `tfstate`ファイル分割
+# 03. `tfstate`ファイルの分割
 
 ## `tfstate`ファイルの分割
 
@@ -73,7 +73,9 @@ flowchart TB
 
 <br>
 
-## リポジトリのディレクトリ構成
+## `tfstate`ファイルの分割に基づいた他の構成
+
+### リポジトリのディレクトリ構成
 
 リポジトリのディレクトリ構成は、`tfstate`ファイルの粒度に基づいて分割しましょう。
 
@@ -90,7 +92,7 @@ repository/
 
 <br>
 
-## リモートバックエンドのディレクトリ構成
+### リモートバックエンドのディレクトリ構成
 
 リモートバックエンド内のディレクトリ構成も、Terraformのディレクトリ構成とおおよそ同じである方がわかりやすいです。
 
@@ -100,8 +102,14 @@ bucket/
 │   └── terraform.tfstate
 │
 └── bar/
-    └── terraform.tfstate
+└── terraform.tfstate
 ```
+
+<br>
+
+###
+
+[05. 分割手法]() リモートバックエンド自体を別々にする
 
 <br>
 
@@ -244,7 +252,7 @@ bucket/
 
 - 依存先のAWSリソースごとに`data`ブロックを定義する必要がある。
 
-### 依存関係図とディレクトリ構成
+### 依存関係図
 
 `data`ブロックも同様にして、AWSリソースからなるプロダクトをいくつかの`tfstate`ファイル (`foo-tfstate`、`bar-tfstate`) に分割したと仮定します。
 
@@ -259,6 +267,8 @@ flowchart TD
     end
     Bar -. VPCの状態に依存 .-> Foo
 ```
+
+### リポジトリのディレクトリ構成
 
 ディレクトリ構成は、`tfstate`ファイルの粒度に合わせて、以下の通りです。
 
@@ -287,7 +297,7 @@ bucket/
 │   └── terraform.tfstate
 │
 └── bar
-    └── terraform.tfstate
+└── terraform.tfstate
 ```
 
 `bar-tfstate`ファイルが`foo-tfstate`ファイルに依存するために必要な実装は、以下の通りです。
@@ -320,16 +330,53 @@ bucket/
 │   └── terraform.tfstate
 │
 └── bar
-    └── terraform.tfstate
+└── terraform.tfstate
 ```
 
 <br>
 
-## 05. 分割パターン
+# 05. 分割手法パターン
 
-<div class="text-box">
-社内で意見を聞くと、`tfstate`ファイル分割は、Terraformのコードを変更する開発者が少ないような小規模開発 (例：数人しかコードに触らない) ではメリットが少なく、反対に変更する人が増えていくほどメリットが大きくなる印象がありました。
-</div>
+## 全体像
+
+階層ごとにいくつかの分割パターンがあると考えています。
+
+<table>
+<thead>
+  <tr>
+    <th>必須 / 任意</th><th>階層</th><th>パターン</th><th>おすすめ</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td rowspan="3">必須</td>
+  </tr>
+  <tr>
+    <td>リポジトリ自体 / リポジトリのディレクトリ最上層</td><td>クラウドプロバイダーのアカウント別</td><td align=center>`⭕️`</td>
+  </tr>
+  <tr>
+    <td>リポジトリのディレクトリ最下層</td><td>実行環境別</td><td align=center>`⭕️`</td>
+  </tr>
+  <tr>
+    <td rowspan="6">任意</td><td rowspan="7">リポジトリのディレクトリ中間層</td><td>同じテナント内のプロダクト別</td>
+  </tr>
+  <tr>
+    <td>運用チーム責務範囲別</td><td align=center>`⭕️`</td>
+  </tr>
+  <tr>
+    <td>プロダクトのサブコンポーネント別</td><td align=center>`⭕️`</td>
+  </tr>
+  <tr>
+    <td>AWSリソースの種類別</td>
+  </tr>
+  <tr>
+    <td>AWSリソースの状態の変更頻度別</td>
+  </tr>
+  <tr>
+    <td>運用チーム責務範囲別とプロダクトのサブコンポーネント別の組み合わせ</td><td align=center>`⭕️`</td>
+  </tr>
+</tbody>
+</table>
 
 <br>
 
@@ -349,9 +396,12 @@ Terraformの`tfstate`ファイルの分割手法をもりもり布教しまし�
 
 もし、この記事を参考に設計してくださる方は、分割手法を現場に落とし込んで解釈いただけると幸いです。
 
-なお、`tfstate`ファイルの分割の考え方は以下の書籍にも記載されていますので、ぜひご一読いただけると🙇🏻‍
+なお、`tfstate`ファイルの分割の考え方は、”State File Isolation” というテーマで以下の書籍にも記載されていますので、ぜひご一読いただけると🙇🏻‍
 
-> ↪️：[isbn:1098116747:title]
+> ↪️：
+>
+> - [isbn:1098116747:title]
+> - [https://www.oreilly.com/library/view/terraform-up-and/9781098116736/ch03.html:title]
 
 <br>
 
