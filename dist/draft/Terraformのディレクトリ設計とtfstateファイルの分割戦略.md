@@ -352,19 +352,19 @@ bucket/
     <td rowspan="3">必須</td>
   </tr>
   <tr>
-    <td>リポジトリ自体 / リポジトリのディレクトリ最上層</td><td>クラウドプロバイダーのアカウント別</td><td align=center>`⭕️`</td>
+    <td>リポジトリ自体 / リポジトリのディレクトリ最上層</td><td>クラウドプロバイダーのアカウント別</td><td align=center><code>⭕️</code></td>
   </tr>
   <tr>
-    <td>リポジトリのディレクトリ最下層</td><td>実行環境別</td><td align=center>`⭕️`</td>
+    <td>リポジトリのディレクトリ最下層</td><td>実行環境別</td><td align=center><code>⭕️</code></td>
   </tr>
   <tr>
     <td rowspan="6">任意</td><td rowspan="7">リポジトリのディレクトリ中間層</td><td>同じテナント内のプロダクト別</td><td></td>
   </tr>
   <tr>
-    <td>運用チーム責務範囲別</td><td align=center>`⭕️`</td>
+    <td>運用チーム責務範囲別</td><td align=center><code>⭕️</code></td>
   </tr>
   <tr>
-    <td>プロダクトのサブコンポーネント別</td><td align=center>`⭕️`</td>
+    <td>プロダクトのサブコンポーネント別</td><td align=center><code>⭕️</code></td>
   </tr>
   <tr>
     <td>AWSリソースの種類別</td><td></td>
@@ -373,7 +373,7 @@ bucket/
     <td>AWSリソースの状態の変更頻度別</td><td></td>
   </tr>
   <tr>
-    <td>運用チーム責務範囲別とプロダクトのサブコンポーネント別の組み合わせ</td><td align=center>`⭕️`</td>
+    <td>運用チーム責務範囲別とプロダクトのサブコンポーネント別の組み合わせ</td><td align=center><code>⭕️</code></td>
   </tr>
 </tbody>
 </table>
@@ -390,7 +390,9 @@ Terraformの`tfstate`ファイルの分割手法をもりもり布教しまし�
 
 そのため、あらゆる要件を抽象化した分割手法を考えることは不可能だと思っています😇
 
-> 「自分を信じても…信頼に足る仲間を信じても…誰にもわからない…」([`@nwiizo`](https://twitter.com/nwiizo), 2023, https://syu-m-5151.hatenablog.com/entry/2023/05/19/154346:title)
+> 「自分を信じても…信頼に足る仲間を信じても…誰にもわからない…」
+> 
+> ([`@nwiizo`](https://twitter.com/nwiizo), 2023, https://syu-m-5151.hatenablog.com/entry/2023/05/19/154346:title)
 
 <br>
 
