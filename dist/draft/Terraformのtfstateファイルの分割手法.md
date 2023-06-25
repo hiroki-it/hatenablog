@@ -51,11 +51,11 @@ Category:
 
 それでは、`tfstate`ファイルの分割の境目はどのようにして見つければよいのでしょうか。
 
-これを見つけるコツは、**他の状態にできるだけ依存しないリソースの関係**に注目することだと考えています。
+これを見つけるコツは、『他の状態にできるだけ依存しないリソースの関係』に注目することだと考えています。
 
-本記事では、`tfstate`ファイルが他の`tfstate`ファイルの状態を使用する場合、それを『**依存**』と表現することとします。
+本記事では、`tfstate`ファイルが他の`tfstate`ファイルの状態を使用する場合、それを『依存』と表現することとします。
 
-これは、オブジェクト指向でいうところの『**依存**』と同じような考え方と思っていただいてよいです
+これは、オブジェクト指向でいうところの『依存』と同じような考え方と思っていただいてよいです
 
 例えば、AWSリソースからなるプロダクトをいくつかの`tfstate`ファイル (`foo-tfstate`、`bar-tfstate`、`baz-tfstate`) に分割したと仮定します。
 
@@ -141,9 +141,9 @@ flowchart TD
 
 ### `terraform_remote_state`ブロックによる依存
 
-`tfstate`ファイルが他の`tfstate`ファイルに依存する方法として、`terraform_remote_state`ブロックがあります。
+**以降は、こちらを使用して依存関係を実装します。**
 
-**今回はこちらを使用して、依存関係を実装します。**
+`tfstate`ファイルが他の`tfstate`ファイルに依存する方法として、`terraform_remote_state`ブロックがあります。
 
 `terraform_remote_state`ブロックを使用する場合、以下のメリットがあります。
 
@@ -372,7 +372,7 @@ bucket/
 </table>
 <br>
 
-# 06. 最上層ディレクトリの構成
+# 06. 最上層ディレクトリの構成 (必須)
 
 ## クラウドプロバイダーのアカウント別
 
@@ -381,6 +381,16 @@ bucket/
 ### 依存関係図
 
 依存関係図は以下の通りです。
+
+(例)
+
+以下のプロバイダーを使用したい状況と仮定します。
+
+- aws
+- アプリ/インフラ監視プロバイダー (NewRelic、Datadog、など)
+- ジョブ監視プロバイダー (Healthchecks)
+- インシデント管理プロバイダー (PagerDuty)
+- CDNプロバイダー (Akami、Cloudflare)
 
 ```mermaid
 %%{init:{'theme':'natural'}}%%
@@ -413,6 +423,10 @@ flowchart LR
 クラウドプロバイダー別に分割した`tfstate`ファイルを異なるリポジトリで管理する場合です。
 
 `tfstate`ファイルの分割に基づいて、ディレクトリ構成例は以下の通りです。
+
+(例)
+
+同上の状況です。
 
 ```sh
 aws-repository/
@@ -460,6 +474,10 @@ aws-repository/
 
 `tfstate`ファイルの分割に基づいて、ディレクトリ構成例は以下の通りです。
 
+(例)
+
+同上の状況です。
+
 ```sh
 repository/
 ├── aws/
@@ -503,6 +521,10 @@ repository/
 
 `tfstate`ファイルの分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
 
+(例)
+
+同上の状況です。
+
 ```sh
 aws-bucket/
 └── terraform.tfstate # AWSの状態を持つ
@@ -534,6 +556,10 @@ aws-bucket/
 
 `tfstate`ファイルの分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
 
+(例)
+
+同上の状況です。
+
 ```sh
 bucket/
 ├── aws
@@ -555,7 +581,7 @@ bucket/
 
 <br>
 
-# 07. 最下層ディレクトリの構成
+# 07. 最下層ディレクトリの構成 (必須)
 
 ## 実行環境別
 
@@ -563,12 +589,20 @@ bucket/
 
 ### 依存関係図
 
+(例)
+
+以下の実行環境を構築したい状況と仮定します。
+
+- tes (検証環境)
+- stg (ユーザー受け入れ環境)
+- prd (本番環境)
+
 ```mermaid
 %%{init:{'theme':'natural'}}%%
 flowchart TB
     subgraph aws
-        subgraph dev-bucket
-            Dev[tfstate]
+        subgraph tes-bucket
+            Tes[tfstate]
         end
         subgraph stg-bucket
             Stg[tfstate]
@@ -583,25 +617,31 @@ flowchart TB
 
 #### 異なるリポジトリの場合
 
+**以降は、こちらを使用して依存関係を実装します。**
+
 クラウドプロバイダー別に`tfstate`ファイルを分割することは必須としているため、その上でディレクトリ構成を考えます。
 
 `tfstate`ファイルの分割に基づいて、ディレクトリ構成例は以下の通りです。
 
+(例)
+
+同上の状況です。
+
 ```sh
 aws-repository/
 ├── provider.tf
-├── dev/ # 検証環境
+├── tes/ # 検証環境
 │   ├── backend.tfvars # aws用バックエンド内のterraform.tfstate
 │   ...
 │
-├── stg/ # ステージング環境
+├── stg/ # ユーザー受け入れ環境
 └── prd/ # 本番環境
 ```
 
 ```sh
 <newrelic、datadog>-repository/
 ├── provider.tf
-├── dev/
+├── tes/
 ├── stg/
 └── prd/
 ```
@@ -609,7 +649,7 @@ aws-repository/
 ```sh
 <healthchecks>-repository/
 ├── provider.tf
-├── dev/
+├── tes/
 ├── stg/
 └── prd/
 ```
@@ -617,7 +657,7 @@ aws-repository/
 ```sh
 <pagerduty>-repository/
 ├── provider.tf
-├── dev/
+├── tes/
 ├── stg/
 └── prd/
 ```
@@ -625,7 +665,7 @@ aws-repository/
 ```sh
 <akamai、cloudflare>-repository/
 ├── provider.tf
-├── dev/
+├── tes/
 ├── stg/
 └── prd/
 ```
@@ -636,33 +676,37 @@ aws-repository/
 
 `tfstate`ファイルの分割に基づいて、ディレクトリ構成例は以下の通りです。
 
+(例)
+
+同上の状況です。
+
 ```sh
 repository/
 ├── aws/
-│   ├── dev/ # 検証環境
+│   ├── tes/ # 検証環境
 │   │   ├── backend.tfvars # aws用バックエンド内のterraform.tfstate
 │   │   ...
 │   │
-│   ├── stg/ # ステージング環境
+│   ├── stg/ # ユーザー受け入れ環境
 │   └── prd/ # 本番環境
 │
 ├── <newrelic、datadog>/
-│   ├── dev/
+│   ├── tes/
 │   ├── stg/
 │   └── prd/
 │
 ├── <healthchecks>/
-│   ├── dev/
+│   ├── tes/
 │   ├── stg/
 │   └── prd/
 │
 ├── <pagerduty>/
-│   ├── dev/
+│   ├── tes/
 │   ├── stg/
 │   └── prd/
 │
 └── <akamai、cloudflare>/
-    ├── dev/
+    ├── tes/
     ├── stg/
     └── prd/
 ```
@@ -675,75 +719,143 @@ repository/
 
 `tfstate`ファイルの分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
 
-なお、**AWSアカウントごとに異なる実行環境を構築しているか、単一のAWSアカウント内に全実行環境を構築しているか、はここでは関係ありません。**
+(例)
+
+同上の状況です。
 
 ```sh
-dev-aws-bucket/
+tes-aws-bucket/
 └── terraform.tfstate # AWSの状態を持つ
 ```
 
 ```sh
-dev-<newrelic、datadog>-bucket/
+tes-<newrelic、datadog>-bucket/
 └── terraform.tfstate # NewRelic、Datadog、の状態を持つ
 ```
 
 ```sh
-dev-<healthchecks>-bucket/
+tes-<healthchecks>-bucket/
 └── terraform.tfstate # Healthchecksの状態を持つ
 ```
 
 ```sh
-dev-<pagerduty>-bucket/
+tes-<pagerduty>-bucket/
 └── terraform.tfstate # PagerDutyの状態を持つ
 ```
 
 ```sh
-dev-<akamai、cloudflare>-bucket/
+tes-<akamai、cloudflare>-bucket/
 └── terraform.tfstate # Akamai、Cloudflare、の状態を持つ
 ```
 
-#### 同じリモートバックエンドの場合
+#### 同じリモートバックエンド x AWSアカウントごと異なる実行環境 の場合
 
-各クラウドプロバイダーの`tfstate`ファイルを、同じリモートバックエンドで管理します。
+**以降は、こちらを使用してディレクトリを構成します。**
+
+各クラウドプロバイダーの`tfstate`ファイルを同じリモートバックエンドで管理します。
+
+また、AWSアカウントごとに異なる実行環境を構築していると仮定します。
 
 `tfstate`ファイルの分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
+
+(例)
+
+同上の状況です。
+
+```sh
+tes-bucket/
+├── aws/
+│   └── terraform.tfstate # AWSの状態を持つ
+│
+├── <newrelic、datadog>/
+│   └── terraform.tfstate # NewRelic、Datadog、の状態を持つ
+│
+├── <healthchecks>/
+│   └── terraform.tfstate # Healthchecksの状態を持つ
+│
+├── <pagerduty>/
+│   └── terraform.tfstate # PagerDutyの状態を持つ
+│
+└── <akamai、cloudflare>/
+    └── terraform.tfstate # Akamai、Cloudflare、の状態を持つ
+```
+
+#### 同じリモートバックエンド x 単一のAWSアカウント内に全ての実行環境 の場合
+
+各クラウドプロバイダーの`tfstate`ファイルを同じリモートバックエンドで管理します。
+
+また、単一のAWSアカウント内に全実行環境を構築しているとします。
+
+`tfstate`ファイルの分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
+
+(例)
+
+同上の状況です。
 
 ```sh
 bucket/
 ├── aws/
-│   ├── dev/ # 検証環境
+│   ├── tes/ # 検証環境
 │   │   └── terraform.tfstate # AWSの状態を持つ
 │   │
-│   ├── stg/ # ステージング環境
+│   ├── stg/ # ユーザー受け入れ環境
 │   └── prd/ # 本番環境
 │
 ├── <newrelic、datadog>/
-│   ├── dev/
+│   ├── tes/
 │   │   └── terraform.tfstate # NewRelic、Datadog、の状態を持つ
 │   │
 │   ├── stg/
 │   └── prd/
 │
 ├── <healthchecks>/
-│   ├── dev/
+│   ├── tes/
 │   │   └── terraform.tfstate # Healthchecksの状態を持つ
 │   │
 │   ├── stg/
 │   └── prd/
 │
 ├── <pagerduty>/
-│   ├── dev/
+│   ├── tes/
 │   │   └── terraform.tfstate # PagerDutyの状態を持つ
 │   │
 │   ├── stg/
 │   └── prd/
 │
 └── <akamai、cloudflare>/
-    ├── dev/
+    ├── tes/
     │   └── terraform.tfstate # Akamai、Cloudflare、の状態を持つ
     │
     ├── stg/
     └── prd/
+```
+
+<br>
+
+# 08. 中間層ディレクトリの構成 (任意)
+
+## 同じテナントのプロダクト別
+
+同じテナント (例：同じAWSアカウントの同じVPC) 内に複数のプロダクトがある場合に、プロダクト別で`tfstate`ファイルを分割し、ディレクトリも分割します。
+
+### 依存関係図
+
+```mermaid
+%%{init:{'theme':'natural'}}%%
+flowchart TB
+    subgraph aws
+        subgraph tes-bucket
+            Foo[foo-product-tfstate]-..->Network
+            Bar[bar-product-tfstate]-..->Network
+            Network[network-tfstate]
+        end
+    subgraph stg-bucket
+        Stg[tfstate]
+    end
+    subgraph prd-bucket
+        Prd[tfstate]
+    end
+    end
 ```
 
 <br>
