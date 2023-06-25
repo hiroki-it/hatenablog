@@ -415,8 +415,6 @@ flowchart LR
     Aws -..-> PagerDuty
 ```
 
-
-
 ### リポジトリのディレクトリ構成
 
 #### 異なるリポジトリの場合
@@ -487,7 +485,7 @@ repository/
 │   ├── output.tf # 他のtfstateファイルから依存される
 │   ├── provider.tf
 │   ...
-│ 
+│
 ├── <pagerduty>/
 │    ├── backend.tf # バックエンド内のpagerduty用terraform.tfstate
 │    ├── output.tf # 他のtfstateファイルから依存される
@@ -532,8 +530,6 @@ aws-bucket/
 └── terraform.tfstate # Akamai、Cloudflare、の状態を持つ
 ```
 
-
-
 ### 同じリモートバックエンドの場合
 
 ```
@@ -554,8 +550,6 @@ bucket/
     └── terraform.tfstate
 
 ```
-
-
 
 <br>
 
