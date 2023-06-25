@@ -376,7 +376,7 @@ bucket/
 
 ## クラウドプロバイダーのアカウント別
 
-最上層ディレクトリは、プロバイダーのアカウント別の`tfstate`ファイルに基づいて、ディレクトリを分割します。
+クラウドプロバイダーのアカウント別に`tfstate`ファイルを分割し、最上層ディレクトリもこれに基づいて分割します。
 
 ### 依存関係図
 
@@ -410,7 +410,7 @@ flowchart LR
 
 #### 異なるリポジトリの場合
 
-クラウドプロバイダー別の`tfstate`ファイルを異なるリポジトリで管理する場合です。
+クラウドプロバイダー別に分割した`tfstate`ファイルを異なるリポジトリで管理する場合です。
 
 `tfstate`ファイルの分割に基づいて、ディレクトリ構成例は以下の通りです。
 
@@ -456,7 +456,7 @@ aws-repository/
 
 #### 同じリポジトリの場合
 
-クラウドプロバイダー別の`tfstate`ファイルを同じリポジトリで管理する場合です。
+クラウドプロバイダー別に分割した`tfstate`ファイルを同じリポジトリで管理する場合です。
 
 `tfstate`ファイルの分割に基づいて、ディレクトリ構成例は以下の通りです。
 
@@ -559,6 +559,193 @@ bucket/
 
 ## 実行環境別
 
+実行環境別に`tfstate`ファイルを分割し、最下層ディレクトリもこれに基づいて分割します。
+
+### 依存関係図
+
+```mermaid
+%%{init:{'theme':'natural'}}%%
+flowchart TB
+    subgraph aws
+        subgraph dev-bucket
+            Dev[tfstate]
+        end
+        subgraph stg-bucket
+            Stg[tfstate]
+        end
+        subgraph prd-bucket
+            Prd[tfstate]
+        end
+    end
+```
+
+### リポジトリのディレクトリ構成
+
+#### 異なるリポジトリの場合
+
+クラウドプロバイダー別に`tfstate`ファイルを分割することは必須としているため、その上でディレクトリ構成を考えます。
+
+`tfstate`ファイルの分割に基づいて、ディレクトリ構成例は以下の通りです。
+
+```sh
+aws-repository/
+├── provider.tf
+├── dev/ # 検証環境
+│   ├── backend.tfvars # aws用バックエンド内のterraform.tfstate
+│   ...
+│
+├── stg/ # ステージング環境
+└── prd/ # 本番環境
+```
+
+```sh
+<newrelic、datadog>-repository/
+├── provider.tf
+├── dev/
+├── stg/
+└── prd/
+```
+
+```sh
+<healthchecks>-repository/
+├── provider.tf
+├── dev/
+├── stg/
+└── prd/
+```
+
+```sh
+<pagerduty>-repository/
+├── provider.tf
+├── dev/
+├── stg/
+└── prd/
+```
+
+```sh
+<akamai、cloudflare>-repository/
+├── provider.tf
+├── dev/
+├── stg/
+└── prd/
+```
+
+#### 同じリポジトリの場合
+
+クラウドプロバイダー別に`tfstate`ファイルを分割することは必須としているため、その上でディレクトリ構成を考えます。
+
+`tfstate`ファイルの分割に基づいて、ディレクトリ構成例は以下の通りです。
+
+```sh
+repository/
+├── aws/
+│   ├── dev/ # 検証環境
+│   │   ├── backend.tfvars # aws用バックエンド内のterraform.tfstate
+│   │   ...
+│   │
+│   ├── stg/ # ステージング環境
+│   └── prd/ # 本番環境
+│
+├── <newrelic、datadog>/
+│   ├── dev/
+│   ├── stg/
+│   └── prd/
+│
+├── <healthchecks>/
+│   ├── dev/
+│   ├── stg/
+│   └── prd/
+│
+├── <pagerduty>/
+│   ├── dev/
+│   ├── stg/
+│   └── prd/
+│
+└── <akamai、cloudflare>/
+    ├── dev/
+    ├── stg/
+    └── prd/
+```
+
+### リモートバックエンドのディレクトリ構成
+
+#### 異なるリモートバックエンドの場合
+
+実行環境別の`tfstate`ファイルを、異なるリモートバックエンドで管理します。
+
+`tfstate`ファイルの分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
+
+なお、**AWSアカウントごとに異なる実行環境を構築しているか、単一のAWSアカウント内に全実行環境を構築しているか、はここでは関係ありません。**
+
+```sh
+dev-aws-bucket/
+└── terraform.tfstate # AWSの状態を持つ
+```
+
+```sh
+dev-<newrelic、datadog>-bucket/
+└── terraform.tfstate # NewRelic、Datadog、の状態を持つ
+```
+
+```sh
+dev-<healthchecks>-bucket/
+└── terraform.tfstate # Healthchecksの状態を持つ
+```
+
+```sh
+dev-<pagerduty>-bucket/
+└── terraform.tfstate # PagerDutyの状態を持つ
+```
+
+```sh
+dev-<akamai、cloudflare>-bucket/
+└── terraform.tfstate # Akamai、Cloudflare、の状態を持つ
+```
+
+#### 同じリモートバックエンドの場合
+
+各クラウドプロバイダーの`tfstate`ファイルを、同じリモートバックエンドで管理します。
+
+`tfstate`ファイルの分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
+
+```sh
+bucket/
+├── aws/
+│   ├── dev/ # 検証環境
+│   │   └── terraform.tfstate # AWSの状態を持つ
+│   │
+│   ├── stg/ # ステージング環境
+│   └── prd/ # 本番環境
+│
+├── <newrelic、datadog>/
+│   ├── dev/
+│   │   └── terraform.tfstate # NewRelic、Datadog、の状態を持つ
+│   │
+│   ├── stg/
+│   └── prd/
+│
+├── <healthchecks>/
+│   ├── dev/
+│   │   └── terraform.tfstate # Healthchecksの状態を持つ
+│   │
+│   ├── stg/
+│   └── prd/
+│
+├── <pagerduty>/
+│   ├── dev/
+│   │   └── terraform.tfstate # PagerDutyの状態を持つ
+│   │
+│   ├── stg/
+│   └── prd/
+│
+└── <akamai、cloudflare>/
+    ├── dev/
+    │   └── terraform.tfstate # Akamai、Cloudflare、の状態を持つ
+    │
+    ├── stg/
+    └── prd/
+```
+
 <br>
 
 # おわりに
@@ -569,12 +756,6 @@ Terraformの`tfstate`ファイルの分割手法をもりもり布教しまし�
 
 そのため、あらゆる要件を抽象化した分割手法を考えることは不可能だと思っています😇
 
-> 「自分を信じても…信頼に足る仲間を信じても…誰にもわからない…」
->
-> ([`@nwiizo`](https://twitter.com/nwiizo), 2023, https://syu-m-5151.hatenablog.com/entry/2023/05/19/154346:title)
-
-<br>
-
 もし、この記事を参考に設計してくださる方は、分割手法を現場に落とし込んで解釈いただけると幸いです。
 
 なお、`tfstate`ファイルの分割の考え方は、”State File Isolation” というテーマで以下の書籍にも記載されていますので、ぜひご一読いただけると🙇🏻‍
@@ -583,6 +764,14 @@ Terraformの`tfstate`ファイルの分割手法をもりもり布教しまし�
 >
 > - [isbn:1098116747:title]
 > - [https://www.oreilly.com/library/view/terraform-up-and/9781098116736/ch03.html:title]
+
+<br>
+
+最後に、お友達の記事内の言葉を引用しておきます。
+
+> 「自分を信じても…信頼に足る仲間を信じても…誰にもわからない…」
+>
+> ([`@nwiizo`](https://twitter.com/nwiizo), 2023, https://syu-m-5151.hatenablog.com/entry/2023/05/19/154346:title)
 
 <br>
 
