@@ -386,18 +386,16 @@ bucket/
 
 以下のプロバイダーを使用したい状況と仮定します。
 
+また、ユースケース次第で依存関係が変わるため、ここでは相互に依存があると仮定します。
+
 - aws
 - アプリ/インフラ監視プロバイダー (NewRelic、Datadog、など)
 - ジョブ監視プロバイダー (Healthchecks)
 - インシデント管理プロバイダー (PagerDuty)
-- CDNプロバイダー (Akami、Cloudflare)
 
 ```mermaid
 %%{init:{'theme':'natural'}}%%
 flowchart LR
-    subgraph akamai / cloudflare
-        Akamai_Cloudflare[tfstate]
-    end
     subgraph pagerduty
         PagerDuty["tfstate"]
     end
@@ -410,10 +408,12 @@ flowchart LR
     subgraph aws
         Aws[tfstate]
     end
-    Aws -..-> Newrelic_Datadog
-    Aws -..-> Akamai_Cloudflare
-    Aws -..-> Healthchecks
-    Aws -..-> PagerDuty
+    Aws -...-> Newrelic_Datadog
+    Aws -...-> Healthchecks
+    Aws -...-> PagerDuty
+    Newrelic_Datadog -...-> Aws
+    Healthchecks -...-> Aws
+    PagerDuty -...-> Aws
 ```
 
 ### リポジトリのディレクトリ構成
@@ -431,6 +431,7 @@ flowchart LR
 ```sh
 aws-repository/
 ├── backend.tf # バックエンド内のaws用terraform.tfstate
+├── output.tf # 他のtfstateファイルから依存される
 ├── remote_state.tf # 他のtfstateファイルに依存する
 ├── provider.tf
 ...
@@ -440,6 +441,7 @@ aws-repository/
 <newrelic、datadog>-repository/
 ├── backend.tf # バックエンド内のnewrelic、datadog用terraform.tfstate
 ├── output.tf # 他のtfstateファイルから依存される
+├── remote_state.tf # 他のtfstateファイルに依存する
 ├── provider.tf
 ...
 ```
@@ -448,6 +450,7 @@ aws-repository/
 <healthchecks>-repository/
 ├── backend.tf # healthchecks用バックエンド内のterraform.tfstate
 ├── output.tf # 他のtfstateファイルから依存される
+├── remote_state.tf # 他のtfstateファイルに依存する
 ├── provider.tf
 ...
 ```
@@ -456,14 +459,7 @@ aws-repository/
 <pagerDuty>-repository/
 ├── backend.tf # pagerduty用バックエンド内のterraform.tfstate
 ├── output.tf # 他のtfstateファイルから依存される
-├── provider.tf
-...
-```
-
-```sh
-<akamai、cloudflare>-repository/
-├── backend.tf # akamai、cloudflare用バックエンド内のterraform.tfstate
-├── output.tf # 他のtfstateファイルから依存される
+├── remote_state.tf # 他のtfstateファイルに依存する
 ├── provider.tf
 ...
 ```
@@ -482,6 +478,7 @@ aws-repository/
 repository/
 ├── aws/
 │   ├── backend.tf # バックエンド内のaws用terraform.tfstate
+│   ├── output.tf # 他のtfstateファイルから依存される
 │   ├── remote_state.tf # 他のtfstateファイルに依存する
 │   ├── provider.tf
 │   ...
@@ -489,26 +486,23 @@ repository/
 ├── <newrelic、datadog>/
 │   ├── backend.tf # バックエンド内のdatadog用terraform.tfstate
 │   ├── output.tf # 他のtfstateファイルから依存される
+│   ├── remote_state.tf # 他のtfstateファイルに依存する
 │   ├── provider.tf
 │   ...
 │
 ├── <healthchecks>/
 │   ├── backend.tf # バックエンド内のhealthchecks用terraform.tfstate
 │   ├── output.tf # 他のtfstateファイルから依存される
+│   ├── remote_state.tf # 他のtfstateファイルに依存する
 │   ├── provider.tf
 │   ...
 │
-├── <pagerduty>/
-│    ├── backend.tf # バックエンド内のpagerduty用terraform.tfstate
-│    ├── output.tf # 他のtfstateファイルから依存される
-│    ├── provider.tf
-│    ...
-│
-└── <akamai、cloudflare>/
-    ├── backend.tf # バックエンド内のdatadog用terraform.tfstate
-    ├── output.tf # 他のtfstateファイルから依存される
-    ├── provider.tf
-    ...
+└── <pagerduty>/
+     ├── backend.tf # バックエンド内のpagerduty用terraform.tfstate
+     ├── output.tf # 他のtfstateファイルから依存される
+     ├── remote_state.tf # 他のtfstateファイルに依存する****
+     ├── provider.tf
+     ...
 ```
 
 <br>
@@ -545,11 +539,6 @@ aws-bucket/
 └── terraform.tfstate # PagerDutyの状態を持つ
 ```
 
-```sh
-<akamai、cloudflare>-bucket/
-└── terraform.tfstate # Akamai、Cloudflare、の状態を持つ
-```
-
 #### 同じリモートバックエンドの場合
 
 各クラウドプロバイダーの`tfstate`ファイルを、同じリモートバックエンドで管理します。
@@ -571,12 +560,8 @@ bucket/
 ├── <healthchecks>
 │   └── terraform.tfstate # Healthchecksの状態を持つ
 │
-├── <pagerduty>
-│   └── terraform.tfstate # PagerDutyの状態を持つ
-│
-└── <akamai、cloudflare>
-    └── terraform.tfstate # Akamai、Cloudflare、の状態を持つ
-
+└── <pagerduty>
+    └── terraform.tfstate # PagerDutyの状態を持つ
 ```
 
 <br>
@@ -597,9 +582,25 @@ bucket/
 - stg (ユーザー受け入れ環境)
 - prd (本番環境)
 
+かつ、以下のプロバイダーを使用したい状況と仮定します。
+
+- aws
+- アプリ/インフラ監視プロバイダー (NewRelic、Datadog、など)
+- ジョブ監視プロバイダー (Healthchecks)
+- インシデント管理プロバイダー (PagerDuty)
+
 ```mermaid
 %%{init:{'theme':'natural'}}%%
-flowchart TB
+flowchart LR
+    subgraph pagerduty
+        PagerDuty["tfstate"]
+    end
+    subgraph healthchecks
+        Healthchecks[tfstate]
+    end
+    subgraph newrelic / datadog
+        Newrelic_Datadog[tfstate]
+    end
     subgraph aws
         subgraph tes-bucket
             Tes[tfstate]
@@ -611,6 +612,12 @@ flowchart TB
             Prd[tfstate]
         end
     end
+    Tes -...-> Newrelic_Datadog
+    Tes -...-> Healthchecks
+    Tes -...-> PagerDuty
+    Newrelic_Datadog -...-> Tes
+    Healthchecks -...-> Tes
+    PagerDuty -...-> Tes
 ```
 
 ### リポジトリのディレクトリ構成
@@ -662,14 +669,6 @@ aws-repository/
 └── prd/
 ```
 
-```sh
-<akamai、cloudflare>-repository/
-├── provider.tf
-├── tes/
-├── stg/
-└── prd/
-```
-
 #### 同じリポジトリの場合
 
 クラウドプロバイダー別に`tfstate`ファイルを分割することは必須としているため、その上でディレクトリ構成を考えます。
@@ -700,15 +699,11 @@ repository/
 │   ├── stg/
 │   └── prd/
 │
-├── <pagerduty>/
-│   ├── tes/
-│   ├── stg/
-│   └── prd/
-│
-└── <akamai、cloudflare>/
+└── <pagerduty>/
     ├── tes/
     ├── stg/
     └── prd/
+
 ```
 
 ### リモートバックエンドのディレクトリ構成
@@ -743,11 +738,6 @@ tes-<pagerduty>-bucket/
 └── terraform.tfstate # PagerDutyの状態を持つ
 ```
 
-```sh
-tes-<akamai、cloudflare>-bucket/
-└── terraform.tfstate # Akamai、Cloudflare、の状態を持つ
-```
-
 #### 同じリモートバックエンド x AWSアカウントごと異なる実行環境 の場合
 
 **以降は、こちらを使用してディレクトリを構成します。**
@@ -773,11 +763,9 @@ tes-bucket/
 ├── <healthchecks>/
 │   └── terraform.tfstate # Healthchecksの状態を持つ
 │
-├── <pagerduty>/
-│   └── terraform.tfstate # PagerDutyの状態を持つ
-│
-└── <akamai、cloudflare>/
-    └── terraform.tfstate # Akamai、Cloudflare、の状態を持つ
+└── <pagerduty>/
+    └── terraform.tfstate # PagerDutyの状態を持つ
+
 ```
 
 #### 同じリモートバックエンド x 単一のAWSアカウント内に全ての実行環境 の場合
@@ -815,16 +803,9 @@ bucket/
 │   ├── stg/
 │   └── prd/
 │
-├── <pagerduty>/
-│   ├── tes/
-│   │   └── terraform.tfstate # PagerDutyの状態を持つ
-│   │
-│   ├── stg/
-│   └── prd/
-│
-└── <akamai、cloudflare>/
+└── <pagerduty>/
     ├── tes/
-    │   └── terraform.tfstate # Akamai、Cloudflare、の状態を持つ
+    │   └── terraform.tfstate # PagerDutyの状態を持つ
     │
     ├── stg/
     └── prd/
@@ -837,6 +818,8 @@ bucket/
 ## 同じテナントのプロダクト別
 
 同じテナント (例：同じAWSアカウントの同じVPC) 内に複数のプロダクトがある場合に、プロダクト別で`tfstate`ファイルを分割し、ディレクトリも分割します。
+
+**ここからは、依存関係図を複雑にしないために、AWSプロバイダー内の`tfsfate`ファイルの依存関係のみを考えることとします。**
 
 ### 依存関係図
 
