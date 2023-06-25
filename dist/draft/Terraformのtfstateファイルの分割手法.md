@@ -79,7 +79,7 @@ flowchart TB
 
 ### リポジトリのディレクトリ構成
 
-リポジトリのディレクトリ構成は、`tfstate`ファイルの粒度に基づいて分割しましょう。
+リポジトリのディレクトリは、`tfstate`ファイルの分割に基づいて構成しましょう。
 
 ```yaml
 repository/
@@ -143,6 +143,8 @@ flowchart TD
 
 `tfstate`ファイルが他の`tfstate`ファイルに依存する方法として、`terraform_remote_state`ブロックがあります。
 
+**今回はこちらを使用して、依存関係を実装します。**
+
 `terraform_remote_state`ブロックを使用する場合、以下のメリットがあります。
 
 - 依存先のAWSリソースに関わらず、同じ`terraform_remote_state`ブロックを使い回すことができる
@@ -172,7 +174,7 @@ flowchart TD
 
 ### リポジトリのディレクトリ構成
 
-`tfstate`ファイルの粒度に基づいて、ディレクトリ構成は以下の通りです。
+`tfstate`ファイルの分割に基づいて、ディレクトリ構成例は以下の通りです。
 
 ```sh
 repository/
@@ -225,7 +227,7 @@ output "vpc_id" {
 
 ### リモートバックエンドのディレクトリ構成
 
-リモートバックエンド内のディレクトリ構成は以下の通りです。
+`tfstate`ファイルの分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
 
 ```sh
 bucket/
@@ -276,7 +278,7 @@ flowchart TD
 
 ### リポジトリのディレクトリ構成
 
-ディレクトリ構成は、`tfstate`ファイルの粒度に合わせて、以下の通りです。
+ディレクトリ構成は、`tfstate`ファイルの分割に基づいて、以下の通りです。
 
 ```sh
 repository/
@@ -291,17 +293,6 @@ repository/
     ├── resource.tf
     ├── provider.tf
     ...
-```
-
-リモートバックエンド内のディレクトリ構成は以下の通りです。
-
-```sh
-bucket/
-├── foo
-│   └── terraform.tfstate
-│
-└── bar
-    └── terraform.tfstate
 ```
 
 `bar-tfstate`ファイルが`foo-tfstate`ファイルに依存するために必要な実装は、以下の通りです。
@@ -326,7 +317,7 @@ resource "example" "bar" {
 
 ### リモートバックエンドのディレクトリ構成
 
-リモートバックエンド内のディレクトリ構成は以下の通りです。
+`tfstate`ファイルの分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
 
 ```sh
 bucket/
@@ -339,14 +330,14 @@ bucket/
 
 <br>
 
-# 05. 分割手法パターン
+# 05. 分割手法パターンの概要
 
 階層ごとにいくつかの分割パターンがあると考えています。
 
 <table>
 <thead>
   <tr>
-    <th>必須<br>または<br>任意</th><th>階層</th><th>パターン</th><th>おすすめ</th>
+    <th>必須<br>または<br>任意</th><th>ディレクトリ階層</th><th>パターン</th><th>おすすめ</th>
   </tr>
 </thead>
 <tbody>
@@ -354,13 +345,13 @@ bucket/
     <td rowspan="3">必須</td>
   </tr>
   <tr>
-    <td>リポジトリ自体<br>または<br>リポジトリのディレクトリ最上層</td><td>クラウドプロバイダーのアカウント別</td><td align=center><code>⭕️</code></td>
+    <td>リポジトリ構成<br>または<br>リポジトリのディレクトリ最上層の構成</td><td>クラウドプロバイダーのアカウント別</td><td align=center><code>⭕️</code></td>
   </tr>
   <tr>
-    <td>リポジトリのディレクトリ最下層</td><td>実行環境別</td><td align=center><code>⭕️</code></td>
+    <td>リポジトリのディレクトリ最下層の構成</td><td>実行環境別</td><td align=center><code>⭕️</code></td>
   </tr>
   <tr>
-    <td rowspan="6">任意</td><td rowspan="7">リポジトリのディレクトリ中間層</td><td>同じテナント内のプロダクト別</td><td></td>
+    <td rowspan="6">任意</td><td rowspan="7">リポジトリのディレクトリ中間層の構成</td><td>同じテナント内のプロダクト別</td><td></td>
   </tr>
   <tr>
     <td>運用チーム責務範囲別</td><td align=center><code>⭕️</code></td>
@@ -381,11 +372,11 @@ bucket/
 </table>
 <br>
 
-# 05-02. 最上層ディレクトリ
+# 06. 最上層ディレクトリの構成
 
 ## クラウドプロバイダーのアカウント別
 
-最上層ディレクトリは、プロバイダーのアカウント別のtfstateファイルに基づいて、ディレクトリを分割します。
+最上層ディレクトリは、プロバイダーのアカウント別の`tfstate`ファイルに基づいて、ディレクトリを分割します。
 
 ### 依存関係図
 
@@ -404,12 +395,12 @@ flowchart LR
         Healthchecks[tfstate]
     end
     subgraph newrelic / datadog
-        Newrelec_Datadog[tfstate]
+        Newrelic_Datadog[tfstate]
     end
     subgraph aws
         Aws[tfstate]
     end
-    Aws -..-> Newrelec_Datadog
+    Aws -..-> Newrelic_Datadog
     Aws -..-> Akamai_Cloudflare
     Aws -..-> Healthchecks
     Aws -..-> PagerDuty
@@ -419,7 +410,9 @@ flowchart LR
 
 #### 異なるリポジトリの場合
 
-クラウドプロバイダー別のtfstateファイルを異なるリポジトリで管理する場合、ディレクトリ構成は以下の通りです。
+クラウドプロバイダー別の`tfstate`ファイルを異なるリポジトリで管理する場合です。
+
+`tfstate`ファイルの分割に基づいて、ディレクトリ構成例は以下の通りです。
 
 ```sh
 aws-repository/
@@ -430,7 +423,7 @@ aws-repository/
 ```
 
 ```sh
-<bewrelic、datadog>-repository/
+<newrelic、datadog>-repository/
 ├── backend.tf # バックエンド内のnewrelic、datadog用terraform.tfstate
 ├── output.tf # 他のtfstateファイルから依存される
 ├── provider.tf
@@ -463,10 +456,11 @@ aws-repository/
 
 #### 同じリポジトリの場合
 
-クラウドプロバイダー別のtfstateファイルを同じリポジトリで管理する場合、ディレクトリ構成は以下の通りです。
+クラウドプロバイダー別の`tfstate`ファイルを同じリポジトリで管理する場合です。
+
+`tfstate`ファイルの分割に基づいて、ディレクトリ構成例は以下の通りです。
 
 ```sh
-
 repository/
 ├── aws/
 │   ├── backend.tf # バックエンド内のaws用terraform.tfstate
@@ -503,7 +497,11 @@ repository/
 
 ### リモートバックエンドのディレクトリ構成
 
-### 異なるリモートバックエンドの場合
+#### 異なるリモートバックエンドの場合
+
+各クラウドプロバイダーの`tfstate`ファイルを、異なるリモートバックエンドで管理します。
+
+`tfstate`ファイルの分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
 
 ```sh
 aws-bucket/
@@ -530,26 +528,36 @@ aws-bucket/
 └── terraform.tfstate # Akamai、Cloudflare、の状態を持つ
 ```
 
-### 同じリモートバックエンドの場合
+#### 同じリモートバックエンドの場合
 
-```
+各クラウドプロバイダーの`tfstate`ファイルを、同じリモートバックエンドで管理します。
+
+`tfstate`ファイルの分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
+
+```sh
 bucket/
 ├── aws
-│   └── terraform.tfstate
+│   └── terraform.tfstate # AWSの状態を持つ
 │
 ├── <newrelic、datadog>
-│   └── terraform.tfstate
+│   └── terraform.tfstate # NewRelic、Datadog、の状態を持つ
 │
 ├── <healthchecks>
-│   └── terraform.tfstate
+│   └── terraform.tfstate # Healthchecksの状態を持つ
 │
 ├── <pagerduty>
-│   └── terraform.tfstate
+│   └── terraform.tfstate # PagerDutyの状態を持つ
 │
 └── <akamai、cloudflare>
-    └── terraform.tfstate
+    └── terraform.tfstate # Akamai、Cloudflare、の状態を持つ
 
 ```
+
+<br>
+
+# 07. 最下層ディレクトリの構成
+
+## 実行環境別
 
 <br>
 
