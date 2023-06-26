@@ -121,9 +121,13 @@ bucket/
 
 `tfstate`ファイル間で依存関係がある場合には、依存関係図を考える必要があります。
 
-例えば、AWSリソースからなるプロダクトをいくつかの`tfstate`ファイル (`foo-tfstate`、`bar-tfstate`) に分割したと仮定します。
+(例)
 
-この時、`foo-tfstate` ➡︎ `bar-tfstate` の方向に依存関係があると、依存関係図は以下の通りです。
+AWSリソースからなるプロダクトをいくつかの`tfstate`ファイル (`foo-tfstate`、`bar-tfstate`) に分割したと仮定します。
+
+この時、`foo-tfstate` ➡︎ `bar-tfstate` の方向に依存しています。
+
+そのため、想定される依存関係図は以下の通りです。
 
 ```mermaid
 %%{init:{'theme':'natural'}}%%
@@ -160,11 +164,9 @@ flowchart TD
 
 AWSリソースからなるプロダクトをいくつかの`tfstate`ファイル (`foo-tfstate`、`bar-tfstate`) に分割したと仮定します。
 
-`foo-tfstate`ファイルでは、VPCの状態を持っているとします。
+この時、`foo-tfstate`ファイルはVPCの状態を持っており、`bar-tfstate`ファイルは`foo-tfstate`ファイルに依存しています。
 
-`bar-tfstate`ファイルは`foo-tfstate`ファイルが持つVPCに依存することとなりあんす。
-
-想定される依存関係図は以下の通りです。
+そのため、想定される依存関係図は以下の通りです。
 
 ```mermaid
 %%{init:{'theme':'natural'}}%%
@@ -390,12 +392,14 @@ bucket/
 
 以下のプロバイダーを使用したい状況と仮定します。
 
-また、ユースケース次第で依存関係が変わるため、ここでは相互に依存があると仮定します。
-
 - 主要プロバイダー (AWS)
 - アプリ/インフラ監視プロバイダー (NewRelic、Datadog、など)
 - ジョブ監視プロバイダー (Healthchecks)
 - インシデント管理プロバイダー (PagerDuty)
+
+この時、プロバイダー間で相互に依存関係があります。
+
+そのため、想定される依存関係図は以下の通りです。
 
 ```mermaid
 %%{init:{'theme':'natural'}}%%
@@ -592,6 +596,10 @@ bucket/
 - アプリ/インフラ監視プロバイダー (NewRelic、Datadog、など)
 - ジョブ監視プロバイダー (Healthchecks)
 - インシデント管理プロバイダー (PagerDuty)
+
+この時、その実行環境の`tfstate`ファイルは他の実行環境には依存していません。
+
+そのため、想定される依存関係図は以下の通りです。
 
 ```mermaid
 %%{init:{'theme':'natural'}}%%
@@ -823,6 +831,8 @@ bucket/
 
 ## 同じテナントのプロダクト別
 
+### この分割方法について
+
 同じテナント (例：同じAWSアカウントの同じVPC) 内に複数のプロダクトがある場合に、プロダクト別で`tfstate`ファイルを分割し、ディレクトリも分割します。
 
 各プロダクトの使用するIPアドレス数が少なく、プロダクト別にVPCを分割するのが煩雑という背景があるとしています。
@@ -837,7 +847,9 @@ bucket/
 - bar-product
 - 共有network系コンポーネント (例：VPC、Route53)
 
-各プロダクトの`tfstate`ファイルは、共有network系コンポーネントの`tfstate`ファイルに依存するため、依存関係図
+この時、各プロダクトの`tfstate`ファイルは、共有network系コンポーネントの`tfstate`ファイルに依存しています。
+
+そのため、想定される依存関係図は以下の通りです。
 
 ```mermaid
 %%{init:{'theme':'natural'}}%%
@@ -1019,25 +1031,93 @@ tes-bucket/
 
 ## 運用チーム責務範囲別
 
+### この分割方法について
+
+### 依存関係図
+
+以下の運用チームがある状況と仮定します。
+
+- frontendチーム
+- backendチーム
+- sreチーム
+
+```sh
+%%{init:{'theme':'natural'}}%%
+flowchart TB
+    subgraph aws
+        subgraph tes-bucket
+            Frontend["frontend-team-tfstate<br>(CloudFront, S3, など)"]
+            Backend["backend-team-tfstate<br>(API Gateway, ElastiCache, RDS, SES, SNS, など)"]
+            Sre["sre-team-tfstate<br>(ALB, CloudWatch, EC2, ECS, EKS, IAM, VPC, など)"]
+            Frontend-..->Sre
+            Backend-..->Sre
+            Sre-..->Frontend
+            Sre-..->Backend
+        end
+    subgraph stg-bucket
+        Stg[tfstate]
+    end
+    subgraph prd-bucket
+        Prd[tfstate]
+    end
+    end
+```
+
+### リポジトリのディレクトリ構成
+
+### リモートバックエンドのディレクトリ構成
+
 <br>
 
 ## プロダクトのサブコンポーネント別
+
+### この分割方法について
+
+### 依存関係図
+
+### リポジトリのディレクトリ構成
+
+### リモートバックエンドのディレクトリ構成
 
 <br>
 
 ## AWSリソースの種類別
 
+### この分割方法について
+
+### 依存関係図
+
+### リポジトリのディレクトリ構成
+
+### リモートバックエンドのディレクトリ構成
+
 <br>
 
 ## AWSリソースの状態の変更頻度別
+
+### この分割方法について
+
+### 依存関係図
+
+### リポジトリのディレクトリ構成
+
+### リモートバックエンドのディレクトリ構成
 
 <br>
 
 ## 運用チーム責務範囲別 × プロダクトサブコンポーネント別
 
+### この分割方法について
+
+### 依存関係図
+
+### リポジトリのディレクトリ構成
+
+### リモートバックエンドのディレクトリ構成
+
 <br>
 
-# おわりに
+# 09. おわりに
 
 Terraformの`tfstate`ファイルの分割手法をもりもり布教しました。
 
