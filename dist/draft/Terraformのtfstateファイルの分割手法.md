@@ -815,13 +815,25 @@ bucket/
 
 # 08. 中間層ディレクトリの構成 (任意)
 
+**ここからは、依存関係図を複雑にしないために、AWSプロバイダー内の`tfsfate`ファイルの依存関係のみを考えることとします。**
+
 ## 同じテナントのプロダクト別
 
 同じテナント (例：同じAWSアカウントの同じVPC) 内に複数のプロダクトがある場合に、プロダクト別で`tfstate`ファイルを分割し、ディレクトリも分割します。
 
-**ここからは、依存関係図を複雑にしないために、AWSプロバイダー内の`tfsfate`ファイルの依存関係のみを考えることとします。**
+各プロダクトの使用するIPアドレス数が少なく、プロダクト別にVPCを分割するのが煩雑という背景があるとしています。
 
 ### 依存関係図
+
+依存関係図は以下の通りです。
+
+(例)
+
+以下のプロダクトがある状況と仮定します。
+
+- foo-product
+- bar-product
+- 共有のnetwork系コンポーネント (例：VPC、Route53)
 
 ```mermaid
 %%{init:{'theme':'natural'}}%%
@@ -840,6 +852,121 @@ flowchart TB
     end
     end
 ```
+
+### リポジトリのディレクトリ構成
+
+#### 異なるリポジトリの場合
+
+同じテナントのプロダクト別に分割した`tfstate`ファイルを異なるリポジトリで管理する場合です。
+
+`tfstate`ファイルの分割に基づいて、ディレクトリ構成例は以下の通りです。
+
+```sh
+aws-repository/
+├── foo-product/
+│   ├── provider.tf
+│   ├── remote_state.tf # 他のtfstateファイルに依存する
+│   ├── tes # 検証環境
+│   │   ├── backend.tfvars # tes用バックエンド内の/foo-product/terraform.tfstate
+│   │   ...
+│   │
+│   ├── stg # ユーザー受け入れ環境
+│   │   ├── backend.tfvars # stg用バックエンド内の/foo-product/terraform.tfstate
+│   │   ...
+│   │
+│   └── prd # 本番環境
+│       ├── backend.tfvars # prd用バックエンド内の/foo-product/terraform.tfstate
+│       ...
+│
+├── bar-product/
+│   ├── provider.tf
+│   ├── remote_state.tf # 他のtfstateファイルに依存する
+│   ├── tes # 検証環境
+│   │   ├── backend.tfvars # tes用バックエンド内の/bar-product/terraform.tfstate
+│   │   ...
+│   │
+│   ├── stg # ユーザー受け入れ環境
+│   │   ├── backend.tfvars # stg用バックエンド内の/bar-product/terraform.tfstate
+│   │   ...
+│   │
+│   └── prd # 本番環境
+│       ├── backend.tfvars # prd用バックエンド内の/bar-product/terraform.tfstate
+│       ...
+│
+└── network
+    ├── provider.tf
+    ├── output.tf # 他のtfstateファイルから依存される
+    ├── route53.tf
+    ├── vpc.tf
+    ├── tes # 検証環境
+    │   ├── backend.tfvars # tes用バックエンド内の/network/terraform.tfstate
+    │   ...
+    │
+    ├── stg # ユーザー受け入れ環境
+    │   ├── backend.tfvars # stg用バックエンド内の/network/terraform.tfstate
+    │   ...
+    │
+    └── prd # 本番環境
+        ├── backend.tfvars # prd用バックエンド内の/network/terraform.tfstate
+        ...
+```
+
+#### 同じリポジトリの場合
+
+```sh
+aws-foo-product-repository/
+├── provider.tf
+├── remote_state.tf # 他のtfstateファイルに依存する
+├── tes # 検証環境
+│   ├── backend.tfvars # tes用バックエンド内の/foo-product/terraform.tfstate
+│   ...
+│
+├── stg # ユーザー受け入れ環境
+│   ├── backend.tfvars # stg用バックエンド内の/foo-product/terraform.tfstate
+│   ...
+│
+└── prd # 本番環境
+    ├── backend.tfvars # prd用バックエンド内の/foo-product/terraform.tfstate
+    ...
+```
+
+```sh
+aws-bar-product-repository/
+├── provider.tf
+├── remote_state.tf # 他のtfstateファイルに依存する
+├── tes # 検証環境
+│   ├── backend.tfvars # tes用バックエンド内の/bar-product/terraform.tfstate
+│   ...
+│
+├── stg # ユーザー受け入れ環境
+│   ├── backend.tfvars # stg用バックエンド内の/bar-product/terraform.tfstate
+│   ...
+│
+└── prd # 本番環境
+    ├── backend.tfvars # prd用バックエンド内の/bar-product/terraform.tfstate
+       ...
+```
+
+```sh
+aws-network-repository
+├── provider.tf
+├── output.tf # 他のtfstateファイルから依存される
+├── route53.tf
+├── vpc.tf
+├── tes # 検証環境
+│   ├── backend.tfvars # tes用バックエンド内の/network/terraform.tfstate
+│   ...
+│
+├── stg # ユーザー受け入れ環境
+│   ├── backend.tfvars # stg用バックエンド内の/network/terraform.tfstate
+│   ...
+│
+└── prd # 本番環境
+    ├── backend.tfvars # prd用バックエンド内の/network/terraform.tfstate
+    ...
+```
+
+### リモートバックエンドのディレクトリ構成
 
 <br>
 
