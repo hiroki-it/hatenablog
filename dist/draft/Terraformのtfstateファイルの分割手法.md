@@ -472,7 +472,7 @@ aws-repository/
 
 (例)
 
-同上の状況です。
+依存関係図と同じ状況です。
 
 ```sh
 repository/
@@ -517,7 +517,7 @@ repository/
 
 (例)
 
-同上の状況です。
+依存関係図と同じ状況です。
 
 ```sh
 aws-bucket/
@@ -547,7 +547,7 @@ aws-bucket/
 
 (例)
 
-同上の状況です。
+依存関係図と同じ状況です。
 
 ```sh
 bucket/
@@ -578,9 +578,9 @@ bucket/
 
 以下の実行環境を構築したい状況と仮定します。
 
-- tes (検証環境)
-- stg (ユーザー受け入れ環境)
-- prd (本番環境)
+- `tes` (検証環境)
+- `stg` (ユーザー受け入れ環境)
+- `prd` (本番環境)
 
 かつ、以下のプロバイダーを使用したい状況と仮定します。
 
@@ -632,7 +632,7 @@ flowchart LR
 
 (例)
 
-同上の状況です。
+依存関係図と同じ状況です。
 
 ```sh
 aws-repository/
@@ -677,7 +677,7 @@ aws-repository/
 
 (例)
 
-同上の状況です。
+依存関係図と同じ状況です。
 
 ```sh
 repository/
@@ -716,7 +716,7 @@ repository/
 
 (例)
 
-同上の状況です。
+依存関係図と同じ状況です。
 
 ```sh
 tes-aws-bucket/
@@ -750,7 +750,7 @@ tes-<pagerduty>-bucket/
 
 (例)
 
-同上の状況です。
+依存関係図と同じ状況です。
 
 ```sh
 tes-bucket/
@@ -778,7 +778,7 @@ tes-bucket/
 
 (例)
 
-同上の状況です。
+依存関係図と同じ状況です。
 
 ```sh
 bucket/
@@ -833,7 +833,7 @@ bucket/
 
 - foo-product
 - bar-product
-- 共有のnetwork系コンポーネント (例：VPC、Route53)
+- 共有network系コンポーネント (例：VPC、Route53)
 
 ```mermaid
 %%{init:{'theme':'natural'}}%%
@@ -860,6 +860,76 @@ flowchart TB
 同じテナントのプロダクト別に分割した`tfstate`ファイルを異なるリポジトリで管理する場合です。
 
 `tfstate`ファイルの分割に基づいて、ディレクトリ構成例は以下の通りです。
+
+(例)
+
+依存関係図と同じ状況です。
+
+```sh
+# foo-productのtfstateファイルのリポジトリ
+aws-foo-product-repository/
+├── provider.tf
+├── remote_state.tf # 他のtfstateファイルに依存する
+├── tes # 検証環境
+│   ├── backend.tfvars # tes用バックエンド内の/foo-product/terraform.tfstate
+│   ...
+│
+├── stg # ユーザー受け入れ環境
+│   ├── backend.tfvars # stg用バックエンド内の/foo-product/terraform.tfstate
+│   ...
+│
+└── prd # 本番環境
+    ├── backend.tfvars # prd用バックエンド内の/foo-product/terraform.tfstate
+    ...
+```
+
+```sh
+# bar-productのtfstateファイルのリポジトリ
+aws-bar-product-repository/
+├── provider.tf
+├── remote_state.tf # 他のtfstateファイルに依存する
+├── tes # 検証環境
+│   ├── backend.tfvars # tes用バックエンド内の/bar-product/terraform.tfstate
+│   ...
+│
+├── stg # ユーザー受け入れ環境
+│   ├── backend.tfvars # stg用バックエンド内の/bar-product/terraform.tfstate
+│   ...
+│
+└── prd # 本番環境
+    ├── backend.tfvars # prd用バックエンド内の/bar-product/terraform.tfstate
+       ...
+```
+
+```sh
+# 共有network系コンポーネントのtfstateファイルのリポジトリ
+aws-network-repository
+├── provider.tf
+├── output.tf # 他のtfstateファイルから依存される
+├── route53.tf
+├── vpc.tf
+├── tes # 検証環境
+│   ├── backend.tfvars # tes用バックエンド内の/network/terraform.tfstate
+│   ...
+│
+├── stg # ユーザー受け入れ環境
+│   ├── backend.tfvars # stg用バックエンド内の/network/terraform.tfstate
+│   ...
+│
+└── prd # 本番環境
+    ├── backend.tfvars # prd用バックエンド内の/network/terraform.tfstate
+    ...
+```
+
+#### 同じリポジトリの場合
+
+同じテナントのプロダクト別に分割した`tfstate`ファイルを同じリポジトリで管理する場合です。
+
+`tfstate`ファイルの分割に基づいて、ディレクトリ構成例は以下の通りです。
+
+(例)
+
+依存関係図と同じ状況です。
 
 ```sh
 aws-repository/
@@ -909,61 +979,6 @@ aws-repository/
     └── prd # 本番環境
         ├── backend.tfvars # prd用バックエンド内の/network/terraform.tfstate
         ...
-```
-
-#### 同じリポジトリの場合
-
-```sh
-aws-foo-product-repository/
-├── provider.tf
-├── remote_state.tf # 他のtfstateファイルに依存する
-├── tes # 検証環境
-│   ├── backend.tfvars # tes用バックエンド内の/foo-product/terraform.tfstate
-│   ...
-│
-├── stg # ユーザー受け入れ環境
-│   ├── backend.tfvars # stg用バックエンド内の/foo-product/terraform.tfstate
-│   ...
-│
-└── prd # 本番環境
-    ├── backend.tfvars # prd用バックエンド内の/foo-product/terraform.tfstate
-    ...
-```
-
-```sh
-aws-bar-product-repository/
-├── provider.tf
-├── remote_state.tf # 他のtfstateファイルに依存する
-├── tes # 検証環境
-│   ├── backend.tfvars # tes用バックエンド内の/bar-product/terraform.tfstate
-│   ...
-│
-├── stg # ユーザー受け入れ環境
-│   ├── backend.tfvars # stg用バックエンド内の/bar-product/terraform.tfstate
-│   ...
-│
-└── prd # 本番環境
-    ├── backend.tfvars # prd用バックエンド内の/bar-product/terraform.tfstate
-       ...
-```
-
-```sh
-aws-network-repository
-├── provider.tf
-├── output.tf # 他のtfstateファイルから依存される
-├── route53.tf
-├── vpc.tf
-├── tes # 検証環境
-│   ├── backend.tfvars # tes用バックエンド内の/network/terraform.tfstate
-│   ...
-│
-├── stg # ユーザー受け入れ環境
-│   ├── backend.tfvars # stg用バックエンド内の/network/terraform.tfstate
-│   ...
-│
-└── prd # 本番環境
-    ├── backend.tfvars # prd用バックエンド内の/network/terraform.tfstate
-    ...
 ```
 
 ### リモートバックエンドのディレクトリ構成
