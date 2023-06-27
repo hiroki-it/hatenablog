@@ -380,10 +380,10 @@ bucket/
     <td>プロダクトのサブコンポーネント別</td><td align=center><code>⭕️</code></td>
   </tr>
   <tr>
-    <td>AWSリソースの種類別</td><td></td>
+    <td>AWSリソースの種類グループ別</td><td></td>
   </tr>
   <tr>
-    <td>AWSリソースの状態の変更頻度別</td><td></td>
+    <td>AWSリソースの状態の変更頻度グループ別</td><td></td>
   </tr>
   <tr>
     <td>運用チーム責務範囲別とプロダクトのサブコンポーネント別の組み合わせ</td><td align=center><code>⭕️</code></td>
@@ -1035,7 +1035,7 @@ aws-repository/
 
 #### 異なるリモートバックエンドの場合
 
-中間層ディレクトリの場合、異なるリモートバックエンドで管理する必要はないと考えています。
+中間層ディレクトリの場合、異なるリモートバックエンドで管理するとバックエンドが増え過ぎてしまいます。
 
 そのため、ここでは説明を省略します。
 
@@ -1272,7 +1272,7 @@ aws-repository/
 
 #### 異なるリモートバックエンドの場合
 
-中間層ディレクトリの場合、異なるリモートバックエンドで管理する必要はないと考えています。
+中間層ディレクトリの場合、異なるリモートバックエンドで管理するとバックエンドが増え過ぎてしまいます。
 
 そのため、ここでは説明を省略します。
 
@@ -1305,7 +1305,7 @@ tes-bucket/
 
 ### この分割方法について
 
-プロダクトのサブコンポーネント (例：アプリ、ネットワーク、認証認可、監視、など) 別でtfstateファイルを分割し、中間層ディレクトリもこれに基づいて設計します。
+プロダクトのサブコンポーネント (例：アプリ、ネットワーク、認証/認可、監視、など) 別でtfstateファイルを分割し、中間層ディレクトリもこれに基づいて設計します。
 
 この分割方法により、サブコンポーネントの管理者が互いに影響を受けずにTerraformのソースコードを変更できるようになります。
 
@@ -1325,7 +1325,7 @@ tes-bucket/
 以下のサブコンポーネントがある状況と仮定します。
 
 - application (Web3層系)
-- auth (認証認可系)
+- auth (認証/認可系)
 - monitor (監視系)
 - network (ネットワーク系)
 
@@ -1357,7 +1357,7 @@ flowchart TB
 
 #### 異なるリポジトリの場合
 
-中間層ディレクトリの場合、異なるリモートバックエンドで管理する必要はないと考えています。
+中間層ディレクトリの場合、異なるリポジトリで管理するとリポジトリが増え過ぎてしまいます。
 
 そのため、ここでは説明を省略します。
 
@@ -1450,7 +1450,7 @@ aws-repository/
 
 #### 異なるリモートバックエンドの場合
 
-中間層ディレクトリの場合、異なるリモートバックエンドで管理する必要はないと考えています。
+中間層ディレクトリの場合、異なるリモートバックエンドで管理するとバックエンドが増え過ぎてしまいます。
 
 そのため、ここでは説明を省略します。
 
@@ -1483,7 +1483,7 @@ tes-bucket/
 
 <br>
 
-## AWSリソースの種類別
+## AWSリソースの種類グループ別
 
 ### この分割方法について
 
@@ -1504,7 +1504,7 @@ AWSリソースの種類グループ別でtfstateファイルを分割し、中�
 以下の種類グループがある状況と仮定します。
 
 - application (Webサーバー、Appサーバー系)
-- auth (認証認可系)
+- auth (認証/認可系)
 - datastore (DBサーバー系)
 - cicd (CI/CD系)
 - monitor (監視系)
@@ -1542,11 +1542,162 @@ flowchart TB
 
 ### リポジトリのディレクトリ構成
 
+#### 異なるリポジトリの場合
+
+中間層ディレクトリの場合、異なるリポジトリで管理するとリポジトリが増え過ぎてしまいます。
+
+そのため、これはお勧めしません。
+
+#### 同じリポジトリの場合
+
+AWSリソースの種類グループ別に分割した`tfstate`ファイルを同じリポジトリで管理する場合です。
+
+(例)
+
+`tfstate`ファイルの分割に基づいて、リポジトリのディレクトリ構成例は以下の通りです。
+
+ここでは、状態の依存関係図と同じ状況を仮定しています。
+
+```sh
+aws-repository/
+├── application/
+│   ├── provider.tf
+│   ├── remote_state.tf # 他のtfstateファイルに依存する
+│   ├── output.tf # 他のtfstateファイルから依存される
+│   ├── alb.tf
+│   ├── api_gateway.tf
+│   ├── cloudfront.tf
+│   ├── ec2.tf
+│   ├── ecs.tf
+│   ├── eks.tf
+│   ├── ses.tf
+│   ├── sns.tf
+│   ├── tes # 検証環境
+│   │   ├── backend.tfvars # tes用バックエンド内の/application/terraform.tfstate
+│   │   ...
+│   │
+│   ├── stg # ユーザー受け入れ環境
+│   │   ├── backend.tfvars # stg用バックエンド内の/application/terraform.tfstate
+│   │   ...
+│   │
+│   └── prd # 本番環境
+│       ├── backend.tfvars # prd用バックエンド内の/application/terraform.tfstate
+│       ...
+│
+├── auth/
+│   ├── provider.tf
+│   ├── output.tf # 他のtfstateファイルから依存される
+│   ├── iam.tf
+│   ├── tes # 検証環境
+│   │   ├── backend.tfvars # tes用バックエンド内の/auth/terraform.tfstate
+│   │   ...
+│   │
+│   ├── stg # ユーザー受け入れ環境
+│   │   ├── backend.tfvars # stg用バックエンド内の/auth/terraform.tfstate
+│   │   ...
+│   │
+│   └── prd # 本番環境
+│       ├── backend.tfvars # prd用バックエンド内の/auth/terraform.tfstate
+│       ...
+│
+├── cicd/
+│   ├── provider.tf
+│   ├── remote_state.tf # 他のtfstateファイルに依存する
+│   ├── codebuild.tf
+│   ├── codecommit.tf
+│   ├── codedeploy.tf
+│   ├── tes # 検証環境
+│   │   ├── backend.tfvars # tes用バックエンド内の/cicd/terraform.tfstate
+│   │   ...
+│   │
+│   ├── stg # ユーザー受け入れ環境
+│   │   ├── backend.tfvars # stg用バックエンド内の/cicd/terraform.tfstate
+│   │   ...
+│   │
+│   └── prd # 本番環境
+│       ├── backend.tfvars # prd用バックエンド内の/cicd/terraform.tfstate
+│       ...
+│
+├── datastore/
+│   ├── provider.tf
+│   ├── output.tf # 他のtfstateファイルから依存される
+│   ├── remote_state.tf # 他のtfstateファイルに依存する
+│   ├── elasticache.tf
+│   ├── rds.tf
+│   ├── s3.tf
+│   ├── tes # 検証環境
+│   │   ├── backend.tfvars # tes用バックエンド内の/datastore/terraform.tfstate
+│   │   ...
+│   │
+│   ├── stg # ユーザー受け入れ環境
+│   │   ├── backend.tfvars # stg用バックエンド内の/datastore/terraform.tfstate
+│   │   ...
+│   │
+│   └── prd # 本番環境
+│       ├── backend.tfvars # prd用バックエンド内の/datastore/terraform.tfstate
+│       ...
+│
+├── monitor/
+│   ├── provider.tf
+│   ├── remote_state.tf # 他のtfstateファイルに依存する
+│   ├── cloudwatch.tf
+│   ├── tes # 検証環境
+│   │   ├── backend.tfvars # tes用バックエンド内の/monitor/terraform.tfstate
+│   │   ...
+│   │
+│   ├── stg # ユーザー受け入れ環境
+│   │   ├── backend.tfvars # stg用バックエンド内の/monitor/terraform.tfstate
+│   │   ...
+│   │
+│   └── prd # 本番環境
+│       ├── backend.tfvars # prd用バックエンド内の/monitor/terraform.tfstate
+│       ...
+│
+└── network
+    ├── provider.tf
+    ├── output.tf # 他のtfstateファイルから参照できるように、outputブロックを定義する
+    ├── route53.tf
+    ├── vpc.tf
+    ├── tes # 検証環境
+    │   ├── backend.tfvars # tes用バックエンド内の/network/terraform.tfstate
+    │   ...
+    │
+    ├── stg # ユーザー受け入れ環境
+    │   ├── backend.tfvars # stg用バックエンド内の/network/terraform.tfstate
+    │   ...
+    │
+    └── prd # 本番環境
+        ├── backend.tfvars # prd用バックエンド内の/network/terraform.tfstate
+        ...
+```
+
 ### リモートバックエンドのディレクトリ構成
+
+```sh
+# tes用バケットの場合
+tes-bucket/
+├── application
+│   └── terraform.tfstate
+│
+├── auth
+│   └── terraform.tfstate
+│
+├── cicd
+│   └── terraform.tfstate
+│
+├── datastore
+│   └── terraform.tfstate
+│
+├── monitor
+│   └── terraform.tfstate
+│
+└── network
+    └── terraform.tfstate
+```
 
 <br>
 
-## AWSリソースの状態の変更頻度別
+## AWSリソースの状態の変更頻度グループ別
 
 ### この分割方法について
 
