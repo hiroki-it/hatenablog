@@ -87,6 +87,10 @@ flowchart TB
 
 リポジトリのディレクトリは、`tfstate`ファイルの分割に基づいて設計しましょう。
 
+率直に言うと、Terraformのディレクトリ構成のパターンは無数にあり、**<font color="#FF0000">ディレクトリ構成自体の設計が本質的ではないと考えています。</font>**
+
+一方で、このディレクトリ構成を`tfstate`ファイルに基づいて設計することにより、意義のあるパターンとして抽象化できるようになります。
+
 ```yaml
 repository/
 ├── foo/
@@ -100,7 +104,15 @@ repository/
 
 <br>
 
-### リモートバックエンドのディレクトリ構成
+### リモートバックエンドの構成
+
+#### リモートバックエンド自体の分割
+
+`tfstate`ファイルの分割に基づいて、リモートバックエンド自体も分割するとよい場合があります。
+
+これについては、[08. 中間層ディレクトリの構成](# 08. 中間層ディレクトリの構成 (任意))で紹介しています。
+
+#### ディレクトリ構成
 
 リモートバックエンド内のディレクトリ構成も、Terraformのディレクトリ構成とおおよそ同じである方がわかりやすいです。
 
@@ -112,12 +124,6 @@ bucket/
 └── bar/
     └── terraform.tfstate
 ```
-
-<br>
-
-###
-
-[05. 分割手法]() リモートバックエンド自体を別々にする
 
 <br>
 
@@ -392,6 +398,8 @@ bucket/
 
 ### この分割方法について
 
+基本的な分割方法の1つです。
+
 プロバイダー (AWS、GoogleCloud、Azure) のアカウント別に`tfstate`ファイルを分割し、最上層ディレクトリもこれに基づいて設計します。
 
 この分割方法により、各プロバイダーの管理者が互いに影響を受けずに、Terraformのソースコードを変更できるようになります。
@@ -590,9 +598,16 @@ bucket/
 
 ### この分割方法について
 
+基本的な分割方法の1つです。
+
 実行環境別 (`tes`、`stg`、`prd`環境など) に`tfstate`ファイルを分割し、最下層ディレクトリもこれに基づいて設計します。
 
 この分割方法により、各実行環境の管理者が互いに影響を受けずに、Terraformのソースコードを変更できるようになります。
+
+> ↪️：
+>
+> - [isbn:1098116747:title]
+> - [https://blog.gruntwork.io/how-to-manage-terraform-state-28f5697e68fa:title]
 
 ### 状態の依存関係図
 
@@ -1294,20 +1309,25 @@ tes-bucket/
 
 この分割方法により、サブコンポーネントの管理者が互いに影響を受けずにTerraformのソースコードを変更できるようになります。
 
+一方で、サブコンポーネントは、分けようと思えばいくらでも細分化できてしまいます。
+
+細分化した数だけ状態の依存関係図が複雑になっていくため、適度な数 (`3`~`4`個くらい) にしておくように注意が必要です。
+
+> ↪️：
+>
+> - [https://www.endava.com/en/blog/Engineering/2019/11-Things-I-wish-I-knew-before-working-with-Terraform-I:title]
+> - [https://charotamine.medium.com/terraform-organization-part-i-what-if-you-split-your-components-2fa3e8bf34b1:title]
+
 ### 状態の依存関係図
 
 (例)
 
 以下のサブコンポーネントがある状況と仮定します。
 
-- application
-- auth
-- monitor
-- network
-
-サブコンポーネントは、分けようと思えばいくらでも細分化できます。
-
-ただし、細分化しただけ状態の依存関係図が複雑になっていくため、適度な数 (`3`~`5`個くらい) にしておくとよいです。
+- application (Web3層系)
+- auth (認証認可系)
+- monitor (監視系)
+- network (ネットワーク系)
 
 そのため、想定される状態の依存関係図は以下の通りです。
 
@@ -1467,7 +1487,58 @@ tes-bucket/
 
 ### この分割方法について
 
+AWSリソースの種類グループ別でtfstateファイルを分割し、中間層ディレクトリもこれに基づいて設計します。
+
+この分割方法により、各AWSリソースの種類グループも管理者が互いに影響を受けずにTerraformのソースコードを変更できるようになります。
+
+一方で、AWSリソースの種類グループは、分けようと思えばいくらでも細分化できてしまいます。
+
+細分化した数だけ状態の依存関係図が複雑になっていくため、適度な数 (`3`~`5`個くらい) にしておくように注意が必要です。
+
+この分割方法はグループ数が増えがなため、お勧めしません。
+
 ### 状態の依存関係図
+
+(例)
+
+以下の種類グループがある状況と仮定します。
+
+- application (Webサーバー、Appサーバー系)
+- auth (認証認可系)
+- datastore (DBサーバー系)
+- cicd (CI/CD系)
+- monitor (監視系)
+- network (ネットワーク系)
+
+そのため、想定される状態の依存関係図は以下の通りです。
+
+```mermaid
+%%{init:{'theme':'natural'}}%%
+flowchart TB
+    subgraph aws
+        subgraph tes-bucket
+            Application[application-tfstate<br>例: ALB, API Gateway, CloudFront, EC2, ECS, EKS, SNS, など]
+            Auth[auth-tfstate<br>例: IAM, など]
+            Cicd[cicd-tfstate<br>例: Code3兄弟, など]
+            Monitor[monitor-tfstate<br>例: CloudWatch, など]
+            Network[network-tfstate<br>例: Route53, VPC, など]
+            Datastore[datastore-tfstate<br>例: ElastiCache, RDS, S3, など]
+            Application-....->Auth
+            Application-..->Datastore
+            Application-...->Network
+            Cicd-..->Application
+            Datastore-..->Network
+            Monitor-..->Application
+            Monitor-..->Datastore
+       end
+    subgraph stg-bucket
+        Stgtfstate[tfstate]
+    end
+    subgraph prd-bucket
+        Prdtfstate[tfstate]
+    end
+    end
+```
 
 ### リポジトリのディレクトリ構成
 
@@ -1483,7 +1554,15 @@ tes-bucket/
 
 ### リポジトリのディレクトリ構成
 
+#### 異なるリポジトリの場合
+
+#### 同じリポジトリの場合
+
 ### リモートバックエンドのディレクトリ構成
+
+#### 異なるリモートバックエンドの場合
+
+#### 同じリモートバックエンドの場合
 
 <br>
 
@@ -1495,7 +1574,15 @@ tes-bucket/
 
 ### リポジトリのディレクトリ構成
 
+#### 異なるリポジトリの場合
+
+#### 同じリポジトリの場合
+
 ### リモートバックエンドのディレクトリ構成
+
+#### 異なるリモートバックエンドの場合
+
+#### 同じリモートバックエンドの場合
 
 <br>
 
@@ -1508,13 +1595,6 @@ Terraformの`tfstate`ファイルの分割手法をもりもり布教しまし�
 そのため、あらゆる要件を抽象化した分割手法を考えることは不可能だと思っています😇
 
 もし、この記事を参考に設計してくださる方は、分割手法を現場に落とし込んで解釈いただけると幸いです。
-
-なお、`tfstate`ファイルの分割の考え方は、”State File Isolation” というテーマで以下の書籍にも記載されていますので、ぜひご一読いただけると🙇🏻‍
-
-> ↪️：
->
-> - [isbn:1098116747:title]
-> - [https://www.oreilly.com/library/view/terraform-up-and/9781098116736/ch03.html:title]
 
 <br>
 
