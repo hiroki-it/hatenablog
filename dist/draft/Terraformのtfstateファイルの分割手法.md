@@ -55,6 +55,8 @@ Category:
 
 これを見つけるコツは、『他の状態にできるだけ依存しないリソースの関係』に注目することだと考えています。
 
+もう少し簡単に説明すると、ここでいう依存関係とは『設定値の参照』のことです。
+
 本記事では、`tfstate`ファイルが他の`tfstate`ファイルの状態を使用する場合、それを『依存』と表現することとします。
 
 これは、オブジェクト指向でいうところの『依存』と同じような考え方と思っていただいてよいです
@@ -63,7 +65,7 @@ Category:
 
 AWSリソースからなるプロダクトをいくつかの`tfstate`ファイル (`foo-tfstate`、`bar-tfstate`、`baz-tfstate`) に分割したと仮定します。
 
-ここで仮定した状況では、`tfstate`ファイル間で状態の依存関係が少ないほどよいです。
+`tfstate`ファイル間で状態の依存関係 (設定値の参照数) が少ないほどよいです。
 
 ```mermaid
 ---
@@ -405,7 +407,7 @@ bucket/
 - ジョブ監視プロバイダー (Healthchecks)
 - インシデント管理プロバイダー (PagerDuty)
 
-ここで仮定した状況では、各プロバイダーの`tfstate`ファイル間で状態の相互依存関係があります。
+ここで仮定した状況では、各プロバイダーの`tfstate`ファイル間で状態の相互依存関係があるとします。
 
 そのため、想定される状態の依存関係図は以下の通りです。
 
@@ -609,7 +611,7 @@ bucket/
 - ジョブ監視プロバイダー (Healthchecks)
 - インシデント管理プロバイダー (PagerDuty)
 
-ここで仮定した状況では、各実行環境の`tfstate`ファイルは他の実行環境には依存していません。
+ここで仮定した状況では、各実行環境の`tfstate`ファイルは他の実行環境には依存していないとします。
 
 そのため、想定される状態の依存関係図は以下の通りです。
 
@@ -1064,13 +1066,15 @@ AWSドキュメントや書籍に記載がある分割方法であり、実際�
 
 ### 状態の依存関係図
 
+(例)
+
 以下の運用チームがある状況と仮定します。
 
 - frontendチーム (アプリのフロントエンド領域担当)
 - backendチーム (アプリのバックエンド領域担当)
 - sreチーム (インフラ領域担当)
 
-ここで仮定した状況では、各チームの`tfstate`ファイル間で状態の相互依存関係があります。
+ここで仮定した状況では、各チームの`tfstate`ファイル間で状態の相互依存関係があるとします。
 
 そのため、想定される状態の依存関係図は以下の通りです。
 
@@ -1106,7 +1110,7 @@ flowchart TB
 
 `tfstate`ファイルの分割に基づいて、リポジトリのディレクトリ構成例は以下の通りです。
 
-同上の状況です。
+ここでは、状態の依存関係図と同じ状況を仮定しています。
 
 ```sh
 aws-frontend-team-repository/ # frontendチーム
@@ -1115,11 +1119,11 @@ aws-frontend-team-repository/ # frontendチーム
 ├── remote_state.tf # 他のtfstateファイルに依存する
 ├── cloudfront.tf
 ├── s3.tf
-├── tes # テスト環境
+├── tes # 検証環境
 │   ├── backend.tfvars # tes用バックエンド内の/frontend-team/terraform.tfstate
 │   ...
 │
-├── stg # ステージング環境
+├── stg # ユーザー受け入れ環境
 │   ├── backend.tfvars # stg用バックエンド内の/frontend-team/terraform.tfstate
 │   ...
 │
@@ -1183,7 +1187,7 @@ aws-sre-team-repository/ # sreチーム
 
 `tfstate`ファイルの分割に基づいて、リポジトリのディレクトリ構成例は以下の通りです。
 
-同上の状況です。
+ここでは、状態の依存関係図と同じ状況を仮定しています。
 
 ```sh
 aws-repository/
@@ -1193,11 +1197,11 @@ aws-repository/
 │   ├── remote_state.tf # 他のtfstateファイルに依存する
 │   ├── cloudfront.tf
 │   ├── s3.tf
-│   ├── tes # テスト環境
+│   ├── tes # 検証環境
 │   │   ├── backend.tfvars # tes用バックエンド内の/frontend-team/terraform.tfstate
 │   │   ...
 │   │
-│   ├── stg # ステージング環境
+│   ├── stg # ユーザー受け入れ環境
 │   │   ├── backend.tfvars # stg用バックエンド内の/frontend-team/terraform.tfstate
 │   │   ...
 │   │
@@ -1265,7 +1269,7 @@ aws-repository/
 
 `tfstate`ファイルの分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
 
-状態の依存関係図の項目に記載する状況と同じです。
+ここでは、状態の依存関係図と同じ状況を仮定しています。
 
 ```sh
 # tes用バケットの場合
@@ -1292,9 +1296,170 @@ tes-bucket/
 
 ### 状態の依存関係図
 
+(例)
+
+以下のサブコンポーネントがある状況と仮定します。
+
+- application
+- auth
+- monitor
+- network
+
+サブコンポーネントは、分けようと思えばいくらでも細分化できます。
+
+ただし、細分化しただけ状態の依存関係図が複雑になっていくため、適度な数 (`3`~`5`個くらい) にしておくとよいです。
+
+そのため、想定される状態の依存関係図は以下の通りです。
+
+```mermaid
+%%{init:{'theme':'natural'}}%%
+flowchart TB
+    subgraph aws
+    subgraph tes-bucket
+        Application["application-tfstate<br>Web3層と周辺AWSリソース<br>(ALB, APIGateway, CloudFront, EC2, ECS, EKS, RDS, S3, SNS, など)<br>"]
+        Auth["auth-tfstate<br>(IAMなど)"]
+        Monitor["monitor-tfstate<br>(CloudWatch, など)"]
+        Network["network-tfstate<br>(Route53, VPC, など)"]
+        Application-..->Network
+        Application-..->Auth
+        Monitor-..->Application
+    end
+    subgraph stg-bucket
+        Stg[tfstate]
+    end
+    subgraph prd-bucket
+        Prd[tfstate]
+    end
+    end
+```
+
 ### リポジトリのディレクトリ構成
 
+#### 異なるリポジトリの場合
+
+中間層ディレクトリの場合、異なるリモートバックエンドで管理する必要はないと考えています。
+
+そのため、ここでは説明を省略します。
+
+#### 同じリポジトリの場合
+
+プロダクトのサブコンポーネント別に分割した`tfstate`ファイルを同じリポジトリで管理する場合です。
+
+(例)
+
+`tfstate`ファイルの分割に基づいて、リポジトリのディレクトリ構成例は以下の通りです。
+
+ここでは、状態の依存関係図と同じ状況を仮定しています。
+
+```sh
+aws-repository/
+├── application/
+│   ├── output.tf # 他のtfstateファイルから依存される
+│   ├── remote_state.tf # 他のtfstateファイルに依存する
+│   ├── provider.tf
+│   ├── alb.tf
+│   ├── cloudfront.tf
+│   ├── ec2.tf
+│   ├── ecs.tf
+│   ├── eks.tf
+│   ├── ses.tf
+│   ├── sns.tf
+│   ├── tes # 検証環境
+│   │   ├── backend.tfvars # tes用バックエンド内の/application/terraform.tfstate
+│   │   ...
+│   │
+│   ├── stg # ユーザー受け入れ環境
+│   │   ├── backend.tfvars # stg用バックエンド内の/application/terraform.tfstate
+│   │   ...
+│   │
+│   └── prd # 本番環境
+│       ├── backend.tfvars # prd用バックエンド内の/application/terraform.tfstate
+│       ...
+│
+├── auth/
+│   ├── provider.tf
+│   ├── output.tf # 他のtfstateファイルから依存される
+│   ├── iam.tf
+│   ├── tes # 検証環境
+│   │   ├── backend.tfvars # tes用バックエンド内の/auth/terraform.tfstate
+│   │   ...
+│   │
+│   ├── stg # ユーザー受け入れ環境
+│   │   ├── backend.tfvars # stg用バックエンド内の/auth/terraform.tfstate
+│   │   ...
+│   │
+│   └── prd # 本番環境
+│       ├── backend.tfvars # prd用バックエンド内の/auth/terraform.tfstate
+│       ...
+│
+├── monitor/
+│   ├── provider.tf
+│   ├── remote_state.tf # 他のtfstateファイルに依存する
+│   ├── cloudwatch.tf
+│   ├── tes # 検証環境
+│   │   ├── backend.tfvars # tes用バックエンド内の/monitor/terraform.tfstate
+│   │   ...
+│   │
+│   ├── stg # ユーザー受け入れ環境
+│   │   ├── backend.tfvars # stg用バックエンド内の/monitor/terraform.tfstate
+│   │   ...
+│   │
+│   └── prd # 本番環境
+│       ├── backend.tfvars # prd用バックエンド内の/monitor/terraform.tfstate
+│       ...
+│
+└── network
+    ├── provider.tf
+    ├── output.tf # 他のtfstateファイルから依存される
+    ├── route53.tf
+    ├── vpc.tf
+    ├── tes # 検証環境
+    │   ├── backend.tfvars # tes用バックエンド内の/network/terraform.tfstate
+    │   ...
+    │
+    ├── stg # ユーザー受け入れ環境
+    │   ├── backend.tfvars # stg用バックエンド内の/network/terraform.tfstate
+    │   ...
+    │
+    └── prd # 本番環境
+        ├── backend.tfvars # prd用バックエンド内の/network/terraform.tfstate
+        ...
+```
+
 ### リモートバックエンドのディレクトリ構成
+
+#### 異なるリモートバックエンドの場合
+
+中間層ディレクトリの場合、異なるリモートバックエンドで管理する必要はないと考えています。
+
+そのため、ここでは説明を省略します。
+
+#### 同じリモートバックエンドの場合
+
+プロダクトのサブコンポーネント別に分割した`tfstate`ファイルを、異なるリモートバックエンドで管理します。
+
+(例)
+
+`tfstate`ファイルの分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
+
+ここでは、状態の依存関係図と同じ状況を仮定しています。
+
+```sh
+# tes用バケットの場合
+tes-bucket/
+├── application
+│   └── terraform.tfstate
+│
+├── auth
+│   └── terraform.tfstate
+│
+├── monitor
+│   └── terraform.tfstate
+│
+└── network
+    └── terraform.tfstate
+
+```
 
 <br>
 
