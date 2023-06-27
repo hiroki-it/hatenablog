@@ -1077,7 +1077,7 @@ tes-bucket/
 
 この分割方法により、各運用チームが互いに影響を受けずにTerraformのソースコードを変更できるようになります。
 
-AWSドキュメントや書籍に記載がある分割方法であり、実際に私も現在進行形で採用しているため、非常に実用的と考えています
+この分割方法は、AWSドキュメントや著名な書籍で紹介され、実際に私も現在進行形で採用しているため、非常に実用的と考えています。
 
 > ↪️：
 >
@@ -1880,7 +1880,7 @@ tes-bucket/
 
 この分割方法により、各運用チーム内の複数の開発者が互いに影響を受けずにTerraformのソースコードを変更できるようになります。
 
-この分割方法は、変更頻度の境目が曖昧なため、お勧めしません。
+この分割方法はTerraformに携わる開発者が多いほど効力を発揮し、実際に私も現在進行形で採用しているため、非常に実用的と考えています。
 
 ### 状態の依存関係図
 
@@ -1949,11 +1949,11 @@ aws-frontend-team-repository/
 │   ├── remote_state.tf # 他のtfstateファイルに依存する
 │   ├── cloudfront.tf
 │   ├── ses.tf
-│   ├── tes # テスト環境
+│   ├── tes # 検証環境
 │   │   ├── backend.tfvars # tes用バックエンド内の/frontend-team/application/terraform.tfstate
 │   │   ...
 │   │
-│   ├── stg # ステージング環境
+│   ├── stg # ユーザー受け入れ環境
 │   │   ├── backend.tfvars # stg用バックエンド内の/frontend-team/application/terraform.tfstate
 │   │   ...
 │   │
@@ -1965,11 +1965,11 @@ aws-frontend-team-repository/
     ├── provider.tf
     ├── remote_state.tf # 他のtfstateファイルに依存する
     ├── cloudwatch.tf
-    ├── tes # テスト環境
+    ├── tes # 検証環境
     │   ├── backend.tfvars # tes用バックエンド内の/frontend-team/monitor/terraform.tfstate
     │   ...
     │
-    ├── stg # ステージング環境
+    ├── stg # ユーザー受け入れ環境
     │   ├── backend.tfvars # stg用バックエンド内の/frontend-team/monitor/terraform.tfstate
     │   ...
     │
@@ -1989,11 +1989,11 @@ aws-backend-team-repository/
 │   ├── rds.tf
 │   ├── ses.tf
 │   ├── sns.tf
-│   ├── tes # テスト環境
+│   ├── tes # 検証環境
 │   │   ├── backend.tfvars # tes用バックエンド内の/backend-team/application/terraform.tfstate
 │   │   ...
 │   │
-│   ├── stg # ステージング環境
+│   ├── stg # ユーザー受け入れ環境
 │   │   ├── backend.tfvars # stg用バックエンド内の/backend-team/application/terraform.tfstate
 │   │   ...
 │   │
@@ -2005,11 +2005,11 @@ aws-backend-team-repository/
     ├── provider.tf
     ├── remote_state.tf # 他のtfstateファイルに依存する
     ├── cloudwatch.tf
-    ├── tes # テスト環境
+    ├── tes # 検証環境
     │   ├── backend.tfvars # tes用バックエンド内の/backend-team/monitor/terraform.tfstate
     │   ...
     │
-    ├── stg # ステージング環境
+    ├── stg # ユーザー受け入れ環境
     │   ├── backend.tfvars # stg用バックエンド内の/backend-team/monitor/terraform.tfstate
     │   ...
     │
@@ -2028,11 +2028,11 @@ aws-sre-team-repository/
 │   ├── ec2.tf
 │   ├── ecs.tf
 │   ├── eks.tf
-│   ├── tes # テスト環境
+│   ├── tes # 検証環境
 │   │   ├── backend.tfvars # バックエンド内の/sre-team/application/terraform.tfstate
 │   │   ...
 │   │
-│   ├── stg # ステージング環境
+│   ├── stg # ユーザー受け入れ環境
 │   │   ├── backend.tfvars # バックエンド内の/sre-team/application/terraform.tfstate
 │   │   ...
 │   │
@@ -2044,11 +2044,11 @@ aws-sre-team-repository/
 │   ├── provider.tf
 │   ├── output.tf # 他のtfstateファイルから依存される
 │   ├── iam.tf
-│   ├── tes # テスト環境
+│   ├── tes # 検証環境
 │   │   ├── backend.tfvars # バックエンド内の/sre-team/application/terraform.tfstate
 │   │   ...
 │   │
-│   ├── stg # ステージング環境
+│   ├── stg # ユーザー受け入れ環境
 │   │   ├── backend.tfvars # バックエンド内の/sre-team/application/terraform.tfstate
 │   │   ...
 │   │
@@ -2060,11 +2060,11 @@ aws-sre-team-repository/
 │   ├── provider.tf
 │   ├── remote_state.tf # 他のtfstateファイルに依存する
 │   ├── cloudwatch.tf
-│   ├── tes # テスト環境
+│   ├── tes # 検証環境
 │   │   ├── backend.tfvars # tes用バックエンド内の/sre-team/monitor/terraform.tfstate
 │   │   ...
 │   │
-│   ├── stg # ステージング環境
+│   ├── stg # ユーザー受け入れ環境
 │   │   ├── backend.tfvars # stg用バックエンド内の/sre-team/monitor/terraform.tfstate
 │   │   ...
 │   │
@@ -2077,11 +2077,11 @@ aws-sre-team-repository/
     ├── output.tf # 他のtfstateファイルから依存される
     ├── route53.tf
     ├── vpc.tf
-    ├── tes # テスト環境
+    ├── tes # 検証環境
     │   ├── backend.tfvars # バックエンド内の/sre-team/network/terraform.tfstate
     │   ...
     │
-    ├── stg # ステージング環境
+    ├── stg # ユーザー受け入れ環境
     │   ├── backend.tfvars # バックエンド内の/sre-team/network/terraform.tfstate
     │   ...
     │
@@ -2107,7 +2107,7 @@ aws-sre-team-repository/
 #### 同じリモートバックエンドの場合
 
 ```sh
-# AWSのtes用バケットの場合
+# tes用バケットの場合
 tes-bucket/
 ├── frontend-team
 │   ├── application
