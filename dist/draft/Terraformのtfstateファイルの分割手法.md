@@ -41,6 +41,8 @@ Category:
 
 この時に`tfstate`ファイルをいい感じに分割すると、まるで暗黙的に`target`オプションがついたように、他の作業ブランチの影響を受けずに`terraform`コマンドを実行できます。
 
+各`tfstate`ファイルの管理者は互いに影響を受けずに、Terraformのソースコードを変更できるようになります。
+
 ![terraform_architecture_different-tfstate](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate.png)
 
 <br>
@@ -180,7 +182,7 @@ flowchart TD
 
 ### リポジトリのディレクトリ構成
 
-`tfstate`ファイルの分割に基づいて、ディレクトリ構成例は以下の通りです。
+`tfstate`ファイルの分割に基づいて、リポジトリのディレクトリ構成例は以下の通りです。
 
 ```sh
 repository/
@@ -434,9 +436,9 @@ flowchart LR
 
 クラウドプロバイダー別に分割した`tfstate`ファイルを異なるリポジトリで管理する場合です。
 
-`tfstate`ファイルの分割に基づいて、ディレクトリ構成例は以下の通りです。
-
 (例)
+
+`tfstate`ファイルの分割に基づいて、リポジトリのディレクトリ構成例は以下の通りです。
 
 同上の状況です。
 
@@ -480,9 +482,9 @@ aws-repository/
 
 クラウドプロバイダー別に分割した`tfstate`ファイルを同じリポジトリで管理する場合です。
 
-`tfstate`ファイルの分割に基づいて、ディレクトリ構成例は以下の通りです。
-
 (例)
+
+`tfstate`ファイルの分割に基づいて、リポジトリのディレクトリ構成例は以下の通りです。
 
 依存関係図の項目に記載する状況と同じです。
 
@@ -525,9 +527,9 @@ repository/
 
 クラウドプロバイダー別に分割した`tfstate`ファイルを、異なるリモートバックエンドで管理します。
 
-`tfstate`ファイルの分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
-
 (例)
+
+`tfstate`ファイルの分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
 
 依存関係図の項目に記載する状況と同じです。
 
@@ -555,9 +557,9 @@ aws-bucket/
 
 クラウドプロバイダー別に分割した`tfstate`ファイルを、同じリモートバックエンドで管理します。
 
-`tfstate`ファイルの分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
-
 (例)
+
+`tfstate`ファイルの分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
 
 依存関係図の項目に記載する状況と同じです。
 
@@ -648,9 +650,9 @@ flowchart LR
 
 クラウドプロバイダー別に`tfstate`ファイルを分割することは必須としているため、その上でディレクトリ構成を考えます。
 
-`tfstate`ファイルの分割に基づいて、ディレクトリ構成例は以下の通りです。
-
 (例)
+
+`tfstate`ファイルの分割に基づいて、リポジトリのディレクトリ構成例は以下の通りです。
 
 依存関係図の項目に記載する状況と同じです。
 
@@ -693,9 +695,9 @@ aws-repository/
 
 クラウドプロバイダー別に`tfstate`ファイルを分割することは必須としているため、その上でディレクトリ構成を考えます。
 
-`tfstate`ファイルの分割に基づいて、ディレクトリ構成例は以下の通りです。
-
 (例)
+
+`tfstate`ファイルの分割に基づいて、リポジトリのディレクトリ構成例は以下の通りです。
 
 依存関係図の項目に記載する状況と同じです。
 
@@ -766,13 +768,14 @@ tes-<pagerduty>-bucket/
 
 また、AWSアカウントごとに異なる実行環境を構築していると仮定します。
 
-`tfstate`ファイルの分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
-
 (例)
+
+`tfstate`ファイルの分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
 
 依存関係図の項目に記載する状況と同じです。
 
 ```sh
+# tes用バケットの場合
 tes-bucket/
 ├── aws/
 │   └── terraform.tfstate # AWSの状態を持つ
@@ -794,9 +797,9 @@ tes-bucket/
 
 また、単一のAWSアカウント内に全実行環境を構築しているとします。
 
-`tfstate`ファイルの分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
-
 (例)
+
+`tfstate`ファイルの分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
 
 依存関係図の項目に記載する状況と同じです。
 
@@ -887,9 +890,9 @@ flowchart TB
 
 同じテナントのプロダクト別に分割した`tfstate`ファイルを異なるリポジトリで管理する場合です。
 
-`tfstate`ファイルの分割に基づいて、ディレクトリ構成例は以下の通りです。
-
 (例)
+
+`tfstate`ファイルの分割に基づいて、リポジトリのディレクトリ構成例は以下の通りです。
 
 依存関係図の項目に記載する状況と同じです。
 
@@ -953,9 +956,9 @@ aws-network-repository
 
 同じテナントのプロダクト別に分割した`tfstate`ファイルを同じリポジトリで管理する場合です。
 
-`tfstate`ファイルの分割に基づいて、ディレクトリ構成例は以下の通りです。
-
 (例)
+
+`tfstate`ファイルの分割に基づいて、リポジトリのディレクトリ構成例は以下の通りです。
 
 依存関係図の項目に記載する状況と同じです。
 
@@ -1021,13 +1024,14 @@ aws-repository/
 
 同じテナントのプロダクト別に分割した`tfstate`ファイルを、異なるリモートバックエンドで管理します。
 
-`tfstate`ファイルの分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
-
 (例)
+
+`tfstate`ファイルの分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
 
 依存関係図の項目に記載する状況と同じです。
 
 ```sh
+# tes用バケットの場合
 tes-bucket/
 ├── foo-product
 │   └── terraform.tfstate
@@ -1081,7 +1085,187 @@ flowchart TB
 
 ### リポジトリのディレクトリ構成
 
+#### 異なるリポジトリの場合
+
+運用チーム責務範囲別に分割した`tfstate`ファイルを同じリポジトリで管理する場合です。
+
+(例)
+
+`tfstate`ファイルの分割に基づいて、リポジトリのディレクトリ構成例は以下の通りです。
+
+同上の状況です。
+
+```sh
+aws-frontend-team-repository/ # frontendチーム
+├── provider.tf
+├── output.tf # 他のtfstateファイルから依存される
+├── remote_state.tf # 他のtfstateファイルに依存する
+├── cloudfront.tf
+├── s3.tf
+├── tes # テスト環境
+│   ├── backend.tfvars # tes用バックエンド内の/frontend-team/terraform.tfstate
+│   ...
+│
+├── stg # ステージング環境
+│   ├── backend.tfvars # stg用バックエンド内の/frontend-team/terraform.tfstate
+│   ...
+│
+└── prd # 本番環境
+    ├── backend.tfvars # prd用バックエンド内の/frontend-team/terraform.tfstate
+    ...
+```
+
+```sh
+aws-backend-team-repository/ # backendチーム
+├── provider.tf
+├── output.tf # 他のtfstateファイルから依存される
+├── remote_state.tf # 他のtfstateファイルに依存する
+├── elasticache.tf
+├── ses.tf
+├── sns.tf
+├── rds.tf
+├── tes
+│   ├── backend.tfvars # tes用バックエンド内の/backend-team/terraform.tfstate
+│   ...
+│
+├── stg
+│   ├── backend.tfvars # stg用バックエンド内の/backend-team/terraform.tfstate
+│   ...
+│
+└── prd
+    ├── backend.tfvars # prd用バックエンド内の/backend-team/terraform.tfstate
+     ...
+```
+
+```sh
+aws-sre-team-repository/ # sreチーム
+├── provider.tf
+├── output.tf # 他のtfstateファイルから依存される
+├── remote_state.tf # 他のtfstateファイルに依存する
+├── alb.tf
+├── cloudwatch.tf
+├── ec2.tf
+├── ecs.tf
+├── eks.tf
+├── iam.tf
+├── vpc.tf
+├── tes
+│   ├── backend.tfvars # tes用バックエンド内の/sre-team/terraform.tfstate
+│   ...
+│
+├── stg
+│   ├── backend.tfvars # stg用バックエンド内の/sre-team/terraform.tfstate
+│   ...
+│
+└── prd
+    ├── backend.tfvars # prd用バックエンド内の/sre-team/terraform.tfstate
+    ...
+```
+
+#### 同じリポジトリの場合
+
+運用チーム責務範囲別に分割した`tfstate`ファイルを異なるリポジトリで管理する場合です。
+
+(例)
+
+`tfstate`ファイルの分割に基づいて、リポジトリのディレクトリ構成例は以下の通りです。
+
+同上の状況です。
+
+```sh
+aws-repository/
+├── frontend-team # frontendチーム
+│   ├── provider.tf
+│   ├── output.tf # 他のtfstateファイルから依存される
+│   ├── remote_state.tf # 他のtfstateファイルに依存する
+│   ├── cloudfront.tf
+│   ├── s3.tf
+│   ├── tes # テスト環境
+│   │   ├── backend.tfvars # tes用バックエンド内の/frontend-team/terraform.tfstate
+│   │   ...
+│   │
+│   ├── stg # ステージング環境
+│   │   ├── backend.tfvars # stg用バックエンド内の/frontend-team/terraform.tfstate
+│   │   ...
+│   │
+│   └── prd # 本番環境
+│       ├── backend.tfvars # prd用バックエンド内の/frontend-team/terraform.tfstate
+│       ...
+│
+├── backend-team # backendチーム
+│   ├── provider.tf
+│   ├── output.tf # 他のtfstateファイルから依存される
+│   ├── remote_state.tf # 他のtfstateファイルに依存する
+│   ├── elasticache.tf
+│   ├── ses.tf
+│   ├── sns.tf
+│   ├── rds.tf
+│   ├── tes
+│   │   ├── backend.tfvars # tes用バックエンド内の/backend-team/terraform.tfstate
+│   │   ...
+│   │
+│   ├── stg
+│   │   ├── backend.tfvars # stg用バックエンド内の/backend-team/terraform.tfstate
+│   │   ...
+│   │
+│   └── prd
+│       ├── backend.tfvars # prd用バックエンド内の/backend-team/terraform.tfstate
+│       ...
+│
+└── sre-team # sreチーム
+    ├── provider.tf
+    ├── output.tf # 他のtfstateファイルから依存される
+    ├── remote_state.tf # 他のtfstateファイルに依存する
+    ├── alb.tf
+    ├── cloudwatch.tf
+    ├── ec2.tf
+    ├── ecs.tf
+    ├── eks.tf
+    ├── iam.tf
+    ├── vpc.tf
+    ├── tes
+    │   ├── backend.tfvars # tes用バックエンド内の/sre-team/terraform.tfstate
+    │   ...
+    │
+    ├── stg
+    │   ├── backend.tfvars # stg用バックエンド内の/sre-team/terraform.tfstate
+    │   ...
+    │
+    └── prd
+        ├── backend.tfvars # prd用バックエンド内の/sre-team/terraform.tfstate
+        ...
+```
+
 ### リモートバックエンドのディレクトリ構成
+
+#### 異なるリモートバックエンドの場合
+
+中間層ディレクトリの場合、異なるリモートバックエンドで管理する必要はないと考えています。
+
+そのため、ここでは説明を省略します。
+
+#### 同じリモートバックエンドの場合
+
+クラウドプロバイダー別に分割した`tfstate`ファイルを、異なるリモートバックエンドで管理します。
+
+(例)
+
+`tfstate`ファイルの分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
+
+依存関係図の項目に記載する状況と同じです。
+
+```sh
+# tes用バケットの場合
+tes-bucket/
+├── frontend-team
+│   └── terraform.tfstate
+│
+├── backend-team
+│   └── terraform.tfstate
+│
+└── sre-team
+    └── terraform.tfstate
+```
 
 <br>
 
