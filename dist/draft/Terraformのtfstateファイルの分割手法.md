@@ -70,15 +70,13 @@ Category:
 
 AWSリソースからなるプロダクトをいくつかの`tfstate`ファイル (`foo-tfstate`、`bar-tfstate`、`baz-tfstate`) に分割したと仮定します。
 
-`tfstate`ファイル間で状態の依存関係 (設定値の参照数) が少ないほどよいです。
-
 ![terraform_architecture_different-tfstate_independent](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_independent.png)
 
 <div hidden>
 
 ```mermaid
 ---
-title: tfstateファイルは互いに依存しない関係にある
+title: tfstateファイルを分割しよう
 ---
 %%{init:{'theme':'natural'}}%%
 flowchart TB
@@ -144,6 +142,8 @@ bucket/
 
 `tfstate`ファイル間で状態の依存関係図を考える必要があります。
 
+`tfstate`ファイル間で状態の依存関係 (設定値の参照数) が少ないほどよいです。
+
 (例)
 
 AWSリソースからなるプロダクトをいくつかの`tfstate`ファイル (`foo-tfstate`、`bar-tfstate`) に分割したと仮定します。
@@ -157,6 +157,9 @@ AWSリソースからなるプロダクトをいくつかの`tfstate`ファイ�
 <div hidden>
 
 ```mermaid
+---
+title: foo-tfstateファイルは、bar-tfstateファイルに依存
+---
 %%{init:{'theme':'natural'}}%%
 flowchart TD
     subgraph aws
@@ -193,7 +196,7 @@ flowchart TD
 
 AWSリソースからなるプロダクトをいくつかの`tfstate`ファイル (`foo-tfstate`、`bar-tfstate`) に分割したと仮定します。
 
-ここで仮定した状況では、`foo-tfstate`ファイルはVPCの状態を持っており、`bar-tfstate`ファイルは`foo-tfstate`ファイルに依存しています。
+ここで仮定した状況では、`bar-tfstate`ファイルはVPCの状態を持っており、`foo-tfstate`ファイルは`bar-tfstate`ファイルに依存しています。
 
 そのため、想定される状態の依存関係図は以下の通りです。
 
@@ -202,13 +205,16 @@ AWSリソースからなるプロダクトをいくつかの`tfstate`ファイ�
 <div hidden>
 
 ```mermaid
+---
+title: terraform_remote_stateブロックを使用した依存関係
+---
 %%{init:{'theme':'natural'}}%%
 flowchart TD
     subgraph bucket
         Foo[foo-tfstate]
         Bar[bar-tfstate]
     end
-    Bar -. VPCの状態に依存 .-> Foo
+    Foo -. VPCの状態に依存 .-> Bar
 ```
 
 </div>
@@ -221,48 +227,50 @@ flowchart TD
 repository/
 ├── foo/
 │   ├── backend.tf # リモートバックエンド内の/foo/terraform.tfstate
-│   ├── output.tf # 他のtfstateファイルから依存される
+│   ├── remote_state.tf # terraform_remote_stateブロックを使用し、bar-tfstateファイルに依存する
 │   ├── provider.tf
 │   ...
 │
 └── bar/
     ├── backend.tf # リモートバックエンド内の/bar/terraform.tfstate
-    ├── remote_state.tf # terraform_remote_stateブロックを使用し、foo-tfstateファイルに依存する
-    ├── resource.tf
+    ├── output.tf # 他のtfstateファイルから依存される
     ├── provider.tf
     ...
 ```
 
-`bar-tfstate`ファイルが`foo-tfstate`ファイルに依存するために必要な実装は、以下の通りです。
+`foo-tfstate`ファイルが`bar-tfstate`ファイルに依存するために必要な実装は、以下の通りです。
 
 ```terraform
-# VPCの状態は、foo-tfstateファイルで持つ
-data "terraform_remote_state" "foo" {
+# fooリソースの状態は、bar-tfstateファイルで持つ
+resource "example" "foo" {
+
+  # fooリソースは、bar-tfstateファイルのVPCに依存する
+  vpc_id = data.terraform_remote_state.bar.outputs.vpc_id
+
+  ...
+}
+
+# VPCの状態は、bar-tfstateファイルで持つ
+data "terraform_remote_state" "bar" {
 
   backend = "s3"
 
   config = {
-    bucket = "foo-tfstate"
-    key    = "foo/terraform.tfstate"
+    bucket = "bar-tfstate"
+    key    = "bar/terraform.tfstate"
     region = "ap-northeast-1"
   }
-}
-
-
-# barリソースの状態は、bar-tfstateファイルで持つ
-resource "example" "bar" {
-
-  # barリソースは、foo-tfstateファイルのVPCに依存する
-  vpc_id = data.terraform_remote_state.foo.outputs.vpc_id
-
-  ...
 }
 ```
 
 ```terraform
-# VPCの状態は、foo-tfstateファイルで持つ
+# VPCの状態は、bar-tfstateファイルで持つ
 output "vpc_id" {
-  value = aws_vpc.vpc.id
+  value = aws_vpc.bar.id
+}
+
+resource "aws_vpc" "bar" {
+  ...
 }
 ```
 
@@ -307,18 +315,23 @@ bucket/
 
 `data`ブロックも同様にして、AWSリソースからなるプロダクトをいくつかの`tfstate`ファイル (`foo-tfstate`、`bar-tfstate`) に分割したと仮定します。
 
+ここで仮定した状況では、`bar-tfstate`ファイルはVPCの状態を持っており、`foo-tfstate`ファイルは`bar-tfstate`ファイルに依存しています。
+
 想定される状態の依存関係図は以下の通りです。
 
 <div hidden>
 
 ```mermaid
+---
+title: dataブロックを使用した依存関係
+---
 %%{init:{'theme':'natural'}}%%
 flowchart TD
     subgraph bucket
         Foo[foo-tfstate]
         Bar[bar-tfstate]
     end
-    Bar -. VPCの状態に依存 .-> Foo
+    Foo -. VPCの状態に依存 .-> Bar
 ```
 
 </div>
@@ -331,34 +344,33 @@ flowchart TD
 repository/
 ├── foo/
 │   ├── backend.tf # リモートバックエンド内の/foo/terraform.tfstate
+│   ├── data.tf # dataブロックを使用し、bar-tfstateファイルに依存する
 │   ├── provider.tf
 │   ...
 │
 └── bar/
     ├── backend.tf # リモートバックエンド内の/bar/terraform.tfstate
-    ├── data.tf # dataブロックを使用し、foo-tfstateファイルに依存する
-    ├── resource.tf
     ├── provider.tf
     ...
 ```
 
-`bar-tfstate`ファイルが`foo-tfstate`ファイルに依存するために必要な実装は、以下の通りです。
+`foo-tfstate`ファイルが`bar-tfstate`ファイルに依存するために必要な実装は、以下の通りです。
 
 ```terraform
-# VPCの状態は、foo-tfstateファイルで持つ
-data "aws_vpc" "foo" {
+# fooリソースの状態は、foo-tfstateファイルで持つ
+resource "example" "foo" {
+
+  # fooリソースは、bar-tfstateファイルのVPCに依存する
+  vpc_id     = data.aws_vpc.bar.id
+}
+
+# VPCの状態は、bar-tfstateファイルで持つ
+data "aws_vpc" "bar" {
 
   filter {
     name   = "tag:Name"
-    values = ["<foo-tfstateが持つVPCの名前>"]
+    values = ["<bar-tfstateが持つVPCの名前>"]
   }
-}
-
-# barリソースの状態は、bar-tfstateファイルで持つ
-resource "example" "bar" {
-
-  # barリソースは、foo-tfstateファイルのVPCに依存する
-  vpc_id     = data.aws_vpc.foo.id
 }
 ```
 
@@ -452,6 +464,9 @@ bucket/
 <div hidden>
 
 ```mermaid
+---
+title: プロバイダーのアカウント別にtfstateファイルを分割した場合
+---
 %%{init:{'theme':'natural'}}%%
 flowchart LR
     subgraph pagerduty
