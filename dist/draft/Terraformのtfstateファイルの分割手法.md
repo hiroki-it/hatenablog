@@ -72,6 +72,8 @@ AWSリソースからなるプロダクトをいくつかの`tfstate`ファイ�
 
 `tfstate`ファイル間で状態の依存関係 (設定値の参照数) が少ないほどよいです。
 
+<div hidden>
+
 ```mermaid
 ---
 title: tfstateファイルは互いに依存しない関係にある
@@ -83,6 +85,8 @@ flowchart TB
         Bar[bar-tfstate]
     end
 ```
+
+</div>
 
 <br>
 
@@ -146,6 +150,8 @@ AWSリソースからなるプロダクトをいくつかの`tfstate`ファイ�
 
 そのため、想定される状態の依存関係図は以下の通りです。
 
+<div hidden>
+
 ```mermaid
 %%{init:{'theme':'natural'}}%%
 flowchart TD
@@ -155,6 +161,8 @@ flowchart TD
     end
     Foo -. 依存 .-> Bar
 ```
+
+</div>
 
 <br>
 
@@ -185,6 +193,8 @@ AWSリソースからなるプロダクトをいくつかの`tfstate`ファイ�
 
 そのため、想定される状態の依存関係図は以下の通りです。
 
+<div hidden>
+
 ```mermaid
 %%{init:{'theme':'natural'}}%%
 flowchart TD
@@ -194,6 +204,8 @@ flowchart TD
     end
     Bar -. VPCの状態に依存 .-> Foo
 ```
+
+</div>
 
 ### リポジトリのディレクトリ構成
 
@@ -291,6 +303,8 @@ bucket/
 
 想定される状態の依存関係図は以下の通りです。
 
+<div hidden>
+
 ```mermaid
 %%{init:{'theme':'natural'}}%%
 flowchart TD
@@ -300,6 +314,8 @@ flowchart TD
     end
     Bar -. VPCの状態に依存 .-> Foo
 ```
+
+</div>
 
 ### リポジトリのディレクトリ構成
 
@@ -395,6 +411,7 @@ bucket/
   </tr>
 </tbody>
 </table>
+
 <br>
 
 # 06. 最上層ディレクトリの構成 (必須)
@@ -424,6 +441,10 @@ bucket/
 
 そのため、想定される状態の依存関係図は以下の通りです。
 
+![terraform_architecture_different-tfstate_provider-accounts](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_provider-accounts.png)
+
+<div hidden>
+
 ```mermaid
 %%{init:{'theme':'natural'}}%%
 flowchart LR
@@ -446,6 +467,8 @@ flowchart LR
     Healthchecks -...-> Aws
     PagerDuty -...-> Aws
 ```
+
+</div>
 
 ### リポジトリのディレクトリ構成
 
@@ -635,6 +658,10 @@ bucket/
 
 そのため、想定される状態の依存関係図は以下の通りです。
 
+![terraform_architecture_different-tfstate_environments](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_environments.png)
+
+<div hidden>
+
 ```mermaid
 %%{init:{'theme':'natural'}}%%
 flowchart LR
@@ -665,6 +692,8 @@ flowchart LR
     Healthchecks -...-> Tes
     PagerDuty -...-> Tes
 ```
+
+</div>
 
 ### リポジトリのディレクトリ構成
 
@@ -890,6 +919,10 @@ bucket/
 
 そのため、想定される状態の依存関係図は以下の通りです。
 
+![terraform_architecture_different-tfstate_products](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_products.png)
+
+<div hidden>
+
 ```mermaid
 %%{init:{'theme':'natural'}}%%
 flowchart TB
@@ -907,6 +940,8 @@ flowchart TB
     end
     end
 ```
+
+</div>
 
 ### リポジトリのディレクトリ構成
 
@@ -1098,6 +1133,10 @@ tes-bucket/
 
 そのため、想定される状態の依存関係図は以下の通りです。
 
+![terraform_architecture_different-tfstate_teams](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_teams.png)
+
+<div hidden>
+
 ```mermaid
 %%{init:{'theme':'natural'}}%%
 flowchart TB
@@ -1119,6 +1158,8 @@ flowchart TB
     end
     end
 ```
+
+</div>
 
 ### リポジトリのディレクトリ構成
 
@@ -1336,6 +1377,10 @@ tes-bucket/
 
 そのため、想定される状態の依存関係図は以下の通りです。
 
+![terraform_architecture_different-tfstate_product_sub-components](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_product_sub-components.png)
+
+<div hidden>
+
 ```mermaid
 %%{init:{'theme':'natural'}}%%
 flowchart TB
@@ -1357,6 +1402,8 @@ flowchart TB
     end
     end
 ```
+
+</div>
 
 ### リポジトリのディレクトリ構成
 
@@ -1517,6 +1564,10 @@ AWSリソースの種類グループ別で`tfstate`ファイルを分割し、�
 
 そのため、想定される状態の依存関係図は以下の通りです。
 
+![terraform_architecture_different-tfstate_product_resource-type](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_product_resource-type.png)
+
+<div hidden>
+
 ```mermaid
 %%{init:{'theme':'natural'}}%%
 flowchart TB
@@ -1544,6 +1595,8 @@ flowchart TB
     end
     end
 ```
+
+</div>
 
 ### リポジトリのディレクトリ構成
 
@@ -1742,6 +1795,10 @@ AWSリソースの状態の変更頻度グループ別で`tfstate`ファイル�
 
 そのため、想定される状態の依存関係図は以下の通りです。
 
+![terraform_architecture_different-tfstate_update-frequence](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_update-frequence.png)
+
+<div hidden>
+
 ```mermaid
 %%{init:{'theme':'natural'}}%%
 flowchart TB
@@ -1759,6 +1816,8 @@ flowchart TB
     end
     end
 ```
+
+</div>
 
 ### リポジトリのディレクトリ構成
 
@@ -1819,7 +1878,7 @@ aws-repository/
 │       ├── backend.tfvars # prd用バックエンド内の/low-freq/terraform.tfstate
 │       ...
 │
-└── middle-freq # 中頻度変更グループ (高頻度とも低頻度とも言えないリソース) 
+└── middle-freq # 中頻度変更グループ (高頻度とも低頻度とも言えないリソース)
     ├── provider.tf
     ├── remote_state.tf # 他のtfstateファイルに依存する
     ├── elasticache.tf
@@ -1880,7 +1939,7 @@ tes-bucket/
 
 この分割方法により、各運用チーム内の複数の開発者が互いに影響を受けずにTerraformのソースコードを変更できるようになります。
 
-この分割方法はTerraformに携わる開発者が多いほど効力を発揮し、実際に私も現在進行形で採用しているため、非常に実用的と考えています。
+この分割方法は、Terraformに携わる開発者が多い大規模なプロダクトほど効力を発揮し、実際に私も現在進行形で採用しているため、非常に実用的と考えています。
 
 ### 状態の依存関係図
 
@@ -1899,6 +1958,10 @@ tes-bucket/
   - auth
   - monitor
   - network
+
+![terraform_architecture_different-tfstate_teams_resource-type](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_teams_resource-type.png)
+
+<div hidden>
 
 ```mermaid
 %%{init:{'theme':'natural'}}%%
@@ -1936,6 +1999,8 @@ flowchart TB
     end
     end
 ```
+
+</div>
 
 ### リポジトリのディレクトリ構成
 

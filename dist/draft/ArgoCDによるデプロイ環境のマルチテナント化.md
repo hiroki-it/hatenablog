@@ -41,7 +41,7 @@ ArgoCD上にプロダクト別のテナントを作成する時、何を単位�
 
 ## 実Cluster単位
 
-![argocd_tenant_physical_cluster.png](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/argocd/argocd_tenant_physical_cluster.png)
+![argocd_tenant_physical_cluster](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/argocd/argocd_tenant_physical_cluster.png)
 
 後述の仮想Clusterと対比させるために、『実Cluster』と呼ぶことにします。
 
@@ -59,7 +59,7 @@ ArgoCD上にプロダクト別のテナントを作成する時、何を単位�
 
 ## 仮想Cluster単位
 
-![argocd_tenant_virtual_cluster.png](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/argocd/argocd_tenant_virtual_cluster.png)
+![argocd_tenant_virtual_cluster](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/argocd/argocd_tenant_virtual_cluster.png)
 
 この単位では、プロダクト共有Cluster上に仮想Clusterを作成し、それぞれの仮想Cluster上でArgoCDを動かします。
 
@@ -79,7 +79,7 @@ ArgoCD上にプロダクト別のテナントを作成する時、何を単位�
 
 ## AppProject単位
 
-![argocd_tenant_appproject.png](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/argocd/argocd_tenant_appproject.png)
+![argocd_tenant_appproject](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/argocd/argocd_tenant_appproject.png)
 
 この単位では、プロダクト共有Cluster上にプロダクト別のNamespaceを作成し、Cluster全体に認可スコープを持つ単一のArgoCDを動かします。
 
@@ -101,7 +101,7 @@ ArgoCD上にプロダクト別のテナントを作成する時、何を単位�
 
 ## Namespace単位
 
-![argocd_tenant_namespace.png](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/argocd/argocd_tenant_namespace.png)
+![argocd_tenant_namespace](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/argocd/argocd_tenant_namespace.png)
 
 この単位では、プロダクト共有Cluster上にプロダクト別のNamespaceを作成し、それぞれのNamespace内にのみ認可スコープを持つArgoCDを動かします。
 
@@ -135,7 +135,7 @@ Namespace単位のマルチテナントを採用した場合、ArgoCD上でど�
 
 ## 仕組みの概要
 
-![argocd_tenant_namespace_overview.png](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/argocd/argocd_tenant_namespace_overview.png)
+![argocd_tenant_namespace_overview](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/argocd/argocd_tenant_namespace_overview.png)
 
 ArgoCD用Clusterがあり、ここで動いているArgoCDは、dev環境とstg環境のプロダクト用Clusterにマニフェストをデプロイします。
 
