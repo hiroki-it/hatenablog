@@ -72,6 +72,8 @@ AWSリソースからなるプロダクトをいくつかの`tfstate`ファイ�
 
 `tfstate`ファイル間で状態の依存関係 (設定値の参照数) が少ないほどよいです。
 
+![terraform_architecture_different-tfstate_independent](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_independent.png)
+
 <div hidden>
 
 ```mermaid
@@ -150,6 +152,8 @@ AWSリソースからなるプロダクトをいくつかの`tfstate`ファイ�
 
 そのため、想定される状態の依存関係図は以下の通りです。
 
+![terraform_architecture_different-tfstate_dependent](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_dependent.png)
+
 <div hidden>
 
 ```mermaid
@@ -192,6 +196,8 @@ AWSリソースからなるプロダクトをいくつかの`tfstate`ファイ�
 ここで仮定した状況では、`foo-tfstate`ファイルはVPCの状態を持っており、`bar-tfstate`ファイルは`foo-tfstate`ファイルに依存しています。
 
 そのため、想定される状態の依存関係図は以下の通りです。
+
+![terraform_architecture_different-tfstate_dependent_vpc](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_dependent_vpc.png)
 
 <div hidden>
 
