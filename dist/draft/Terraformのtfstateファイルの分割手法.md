@@ -76,7 +76,7 @@ AWSリソースからなるプロダクトをいくつかの`tfstate`ファイ�
 
 ```mermaid
 ---
-title: tfstateファイルを分割しよう
+title: tfstateファイルの分割
 ---
 %%{init:{'theme':'natural'}}%%
 flowchart TB
@@ -200,7 +200,7 @@ AWSリソースからなるプロダクトをいくつかの`tfstate`ファイ�
 
 そのため、想定される状態の依存関係図は以下の通りです。
 
-![terraform_architecture_different-tfstate_dependent_vpc](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_dependent_vpc.png)
+![terraform_architecture_different-tfstate_dependent_terraform-remote-state](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_dependent_terraform-remote-state.png)
 
 <div hidden>
 
@@ -318,6 +318,8 @@ bucket/
 ここで仮定した状況では、`bar-tfstate`ファイルはVPCの状態を持っており、`foo-tfstate`ファイルは`bar-tfstate`ファイルに依存しています。
 
 想定される状態の依存関係図は以下の通りです。
+
+![terraform_architecture_different-tfstate_dependent_data](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_dependent_data.png)
 
 <div hidden>
 
@@ -1602,6 +1604,9 @@ AWSリソースの種類グループ別で`tfstate`ファイルを分割し、�
 <div hidden>
 
 ```mermaid
+---
+title: AWSリソースの種類グループ別
+---
 %%{init:{'theme':'natural'}}%%
 flowchart TB
     subgraph aws
