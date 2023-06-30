@@ -245,7 +245,7 @@ repository/
 resource "example" "foo" {
 
   # fooリソースは、bar-tfstateファイルのVPCに依存する
-  vpc_id = data.terraform_remote_state.bar.outputs.vpc_id
+  vpc_id = data.terraform_remote_state.bar.outputs.bar_vpc_id
 
   ...
 }
@@ -265,7 +265,7 @@ data "terraform_remote_state" "bar" {
 
 ```terraform
 # VPCの状態は、bar-tfstateファイルで持つ
-output "vpc_id" {
+output "bar_vpc_id" {
   value = aws_vpc.bar.id
 }
 
@@ -465,7 +465,7 @@ bucket/
 
 ```mermaid
 ---
-title: プロバイダーのアカウント別にtfstateファイルを分割した場合
+title: プロバイダーのアカウント別
 ---
 %%{init:{'theme':'natural'}}%%
 flowchart LR
@@ -684,6 +684,9 @@ bucket/
 <div hidden>
 
 ```mermaid
+---
+title: 実行環境別
+---
 %%{init:{'theme':'natural'}}%%
 flowchart LR
     subgraph pagerduty
@@ -945,6 +948,9 @@ bucket/
 <div hidden>
 
 ```mermaid
+---
+title: 同じテナントのプロダクト別
+---
 %%{init:{'theme':'natural'}}%%
 flowchart TB
     subgraph aws
@@ -1159,6 +1165,9 @@ tes-bucket/
 <div hidden>
 
 ```mermaid
+---
+title: 運用チーム責務範囲別
+---
 %%{init:{'theme':'natural'}}%%
 flowchart TB
     subgraph aws
@@ -1403,6 +1412,9 @@ tes-bucket/
 <div hidden>
 
 ```mermaid
+---
+title: プロダクトのサブコンポーネント別
+---
 %%{init:{'theme':'natural'}}%%
 flowchart TB
     subgraph aws
@@ -1821,6 +1833,9 @@ AWSリソースの状態の変更頻度グループ別で`tfstate`ファイル�
 <div hidden>
 
 ```mermaid
+---
+title: AWSリソースの状態の変更頻度グループ別
+---
 %%{init:{'theme':'natural'}}%%
 flowchart TB
     subgraph aws
@@ -1985,6 +2000,9 @@ tes-bucket/
 <div hidden>
 
 ```mermaid
+---
+title: 運用チーム責務範囲別 × プロダクトサブコンポーネント別
+---
 %%{init:{'theme':'natural'}}%%
 flowchart TB
     subgraph aws
