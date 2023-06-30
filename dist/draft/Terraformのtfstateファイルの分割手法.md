@@ -35,7 +35,7 @@ Category:
 
 その一方で、自身の作業ブランチ以外でインフラコンポーネントの状態を変更しかけていると、`terraform`コマンドで`target`オプションが必要になります。
 
-![terraform_architecture_same-tfstate](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_same-tfstate.png)
+![terraform_architecture_same-tfstate](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_same-tfstate.svg)
 
 <br>
 
@@ -43,7 +43,7 @@ Category:
 
 各`tfstate`ファイルの管理者は互いに影響を受けずに、Terraformのソースコードを変更できるようになります。
 
-![terraform_architecture_different-tfstate](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate.png)
+![terraform_architecture_different-tfstate](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate.svg)
 
 > ↪️：
 >
@@ -70,7 +70,7 @@ Category:
 
 AWSリソースからなるプロダクトをいくつかの`tfstate`ファイル (`foo-tfstate`、`bar-tfstate`、`baz-tfstate`) に分割したと仮定します。
 
-![terraform_architecture_different-tfstate_independent](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_independent.png)
+![terraform_architecture_different-tfstate_independent](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_independent.svg)
 
 <div hidden>
 
@@ -152,7 +152,7 @@ AWSリソースからなるプロダクトをいくつかの`tfstate`ファイ�
 
 そのため、想定される状態の依存関係図は以下の通りです。
 
-![terraform_architecture_different-tfstate_dependent](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_dependent.png)
+![terraform_architecture_different-tfstate_dependent](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_dependent.svg)
 
 <div hidden>
 
@@ -200,7 +200,7 @@ AWSリソースからなるプロダクトをいくつかの`tfstate`ファイ�
 
 そのため、想定される状態の依存関係図は以下の通りです。
 
-![terraform_architecture_different-tfstate_dependent_terraform-remote-state](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_dependent_terraform-remote-state.png)
+![terraform_architecture_different-tfstate_dependent_terraform-remote-state](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_dependent_terraform-remote-state.svg)
 
 <div hidden>
 
@@ -319,7 +319,7 @@ bucket/
 
 想定される状態の依存関係図は以下の通りです。
 
-![terraform_architecture_different-tfstate_dependent_data](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_dependent_data.png)
+![terraform_architecture_different-tfstate_dependent_data](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_dependent_data.svg)
 
 <div hidden>
 
@@ -461,7 +461,7 @@ bucket/
 
 そのため、想定される状態の依存関係図は以下の通りです。
 
-![terraform_architecture_different-tfstate_provider-accounts](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_provider-accounts.png)
+![terraform_architecture_different-tfstate_provider-accounts](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_provider-accounts.svg)
 
 <div hidden>
 
@@ -681,7 +681,7 @@ bucket/
 
 そのため、想定される状態の依存関係図は以下の通りです。
 
-![terraform_architecture_different-tfstate_environments](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_environments.png)
+![terraform_architecture_different-tfstate_environments](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_environments.svg)
 
 <div hidden>
 
@@ -945,7 +945,7 @@ bucket/
 
 そのため、想定される状態の依存関係図は以下の通りです。
 
-![terraform_architecture_different-tfstate_products](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_products.png)
+![terraform_architecture_different-tfstate_products](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_products.svg)
 
 <div hidden>
 
@@ -1162,7 +1162,7 @@ tes-bucket/
 
 そのため、想定される状態の依存関係図は以下の通りです。
 
-![terraform_architecture_different-tfstate_teams](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_teams.png)
+![terraform_architecture_different-tfstate_teams](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_teams.svg)
 
 <div hidden>
 
@@ -1409,7 +1409,7 @@ tes-bucket/
 
 そのため、想定される状態の依存関係図は以下の通りです。
 
-![terraform_architecture_different-tfstate_product_sub-components](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_product_sub-components.png)
+![terraform_architecture_different-tfstate_product_sub-components](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_product_sub-components.svg)
 
 <div hidden>
 
@@ -1599,7 +1599,7 @@ AWSリソースの種類グループ別で`tfstate`ファイルを分割し、�
 
 そのため、想定される状態の依存関係図は以下の通りです。
 
-![terraform_architecture_different-tfstate_product_resource-type](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_product_resource-type.png)
+![terraform_architecture_different-tfstate_product_resource-type](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_product_resource-type.svg)
 
 <div hidden>
 
@@ -1833,7 +1833,7 @@ AWSリソースの状態の変更頻度グループ別で`tfstate`ファイル�
 
 そのため、想定される状態の依存関係図は以下の通りです。
 
-![terraform_architecture_different-tfstate_update-frequence](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_update-frequence.png)
+![terraform_architecture_different-tfstate_update-frequence](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_update-frequence.svg)
 
 <div hidden>
 
@@ -2000,7 +2000,7 @@ tes-bucket/
   - monitor
   - network
 
-![terraform_architecture_different-tfstate_teams_resource-type](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_teams_resource-type.png)
+![terraform_architecture_different-tfstate_teams_resource-type](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_teams_resource-type.svg)
 
 <div hidden>
 
