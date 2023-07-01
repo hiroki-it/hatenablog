@@ -35,7 +35,7 @@ Category:
 
 その一方で、自身の作業ブランチ以外でインフラコンポーネントの状態を変更しかけていると、`terraform`コマンドで`target`オプションが必要になります。
 
-![terraform_architecture_same-tfstate](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_same-tfstate.svg)
+![terraform_architecture_same-tfstate](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_same-tfstate.png)
 
 <br>
 
@@ -43,7 +43,7 @@ Category:
 
 各`tfstate`ファイルの管理者は互いに影響を受けずに、Terraformのソースコードを変更できるようになります。
 
-![terraform_architecture_different-tfstate](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate.svg)
+![terraform_architecture_different-tfstate](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate.png)
 
 > ↪️：
 >
@@ -66,11 +66,13 @@ Category:
 
 これは、オブジェクト指向でいうところの『依存』と同じような考え方と思っていただいてよいです
 
+`tfstate`ファイルの分割パターンについては後述します。
+
 (例)
 
 AWSリソースからなるプロダクトをいくつかの`tfstate`ファイル (`foo-tfstate`、`bar-tfstate`、`baz-tfstate`) に分割したと仮定します。
 
-![terraform_architecture_different-tfstate_independent](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_independent.svg)
+![terraform_architecture_different-tfstate_independent](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_independent.png)
 
 <div hidden>
 
@@ -90,13 +92,19 @@ flowchart TB
 
 <br>
 
-## リポジトリのディレクトリ構成
+## リポジトリ
 
-リポジトリのディレクトリは、`tfstate`ファイルの分割に基づいて設計しましょう。
+### リポジトリ分割
+
+リポジトリの分割は、`tfstate`ファイル分割に基づいて設計しましょう。
+
+### ディレクトリ構成
+
+リポジトリ内のディレクトリ構成も、`tfstate`ファイル分割に基づいて設計しましょう。
 
 率直に言うと、Terraformのディレクトリ構成のパターンは無数にあり、**<font color="#FF0000">ディレクトリ構成自体の設計が本質的ではないと考えています。</font>**
 
-一方で、このディレクトリ構成を`tfstate`ファイルに基づいて設計することにより、意義のあるパターンとして抽象化できるようになります。
+一方で、このディレクトリ構成を`tfstate`ファイル分割に基づいて設計することにより、意義のあるパターンとして抽象化できるようになります。
 
 ```yaml
 repository/
@@ -113,15 +121,15 @@ repository/
 
 ## リモートバックエンドの構成
 
-### リモートバックエンド自体の分割
+### リモートバックエンド分割
 
-`tfstate`ファイルの分割に基づいて、リモートバックエンド自体も分割するとよい場合があります。
+リモートバックエンドの分割は、`tfstate`ファイル分割に基づいて設計しましょう。
 
 これについては、[08. 中間レイヤーの構成](# 08. 中間レイヤーの構成 (任意))で紹介しています。
 
 ### ディレクトリ構成
 
-リモートバックエンド内のディレクトリ構成も、`tfstate`ファイルの分割に基づいて設計しましょう。
+リモートバックエンド内のディレクトリ構成も、`tfstate`ファイル分割に基づいて設計しましょう。
 
 ```sh
 bucket/
@@ -150,7 +158,7 @@ AWSリソースからなるプロダクトをいくつかの`tfstate`ファイ�
 
 そのため、想定される状態の依存関係図は以下の通りです。
 
-![terraform_architecture_different-tfstate_dependent](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_dependent.svg)
+![terraform_architecture_different-tfstate_dependent](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_dependent.png)
 
 <div hidden>
 
@@ -198,7 +206,7 @@ AWSリソースからなるプロダクトをいくつかの`tfstate`ファイ�
 
 そのため、想定される状態の依存関係図は以下の通りです。
 
-![terraform_architecture_different-tfstate_dependent_terraform-remote-state](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_dependent_terraform-remote-state.svg)
+![terraform_architecture_different-tfstate_dependent_terraform-remote-state](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_dependent_terraform-remote-state.png)
 
 <div hidden>
 
@@ -219,7 +227,7 @@ flowchart TD
 
 ### リポジトリのディレクトリ構成
 
-`tfstate`ファイルの分割に基づいて、リポジトリのディレクトリ構成例は以下の通りです。
+`tfstate`ファイル分割に基づいて、リポジトリのディレクトリ構成例は以下の通りです。
 
 ```sh
 repository/
@@ -274,7 +282,7 @@ resource "aws_vpc" "bar" {
 
 ### リモートバックエンドのディレクトリ構成
 
-`tfstate`ファイルの分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
+`tfstate`ファイル分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
 
 ```sh
 bucket/
@@ -317,7 +325,7 @@ bucket/
 
 想定される状態の依存関係図は以下の通りです。
 
-![terraform_architecture_different-tfstate_dependent_data](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_dependent_data.svg)
+![terraform_architecture_different-tfstate_dependent_data](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_dependent_data.png)
 
 <div hidden>
 
@@ -338,7 +346,7 @@ flowchart TD
 
 ### リポジトリのディレクトリ構成
 
-ディレクトリ構成は、`tfstate`ファイルの分割に基づいて、以下の通りです。
+ディレクトリ構成は、`tfstate`ファイル分割に基づいて、以下の通りです。
 
 ```sh
 repository/
@@ -376,7 +384,7 @@ data "aws_vpc" "bar" {
 
 ### リモートバックエンドのディレクトリ構成
 
-`tfstate`ファイルの分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
+`tfstate`ファイル分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
 
 ```sh
 bucket/
@@ -465,7 +473,7 @@ bucket/
 
 そのため、想定される状態の依存関係図は以下の通りです。
 
-![terraform_architecture_different-tfstate_provider-accounts](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_provider-accounts.svg)
+![terraform_architecture_different-tfstate_provider-accounts](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_provider-accounts.png)
 
 <div hidden>
 
@@ -505,7 +513,7 @@ flowchart LR
 
 (例)
 
-`tfstate`ファイルの分割に基づいて、リポジトリのディレクトリ構成例は以下の通りです。
+`tfstate`ファイル分割に基づいて、リポジトリのディレクトリ構成例は以下の通りです。
 
 状態の依存関係図の項目に記載する状況と同じです。
 
@@ -551,7 +559,7 @@ aws-repository/
 
 (例)
 
-`tfstate`ファイルの分割に基づいて、リポジトリのディレクトリ構成例は以下の通りです。
+`tfstate`ファイル分割に基づいて、リポジトリのディレクトリ構成例は以下の通りです。
 
 状態の依存関係図の項目に記載する状況と同じです。
 
@@ -596,7 +604,7 @@ repository/
 
 (例)
 
-`tfstate`ファイルの分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
+`tfstate`ファイル分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
 
 状態の依存関係図の項目に記載する状況と同じです。
 
@@ -626,7 +634,7 @@ aws-bucket/
 
 (例)
 
-`tfstate`ファイルの分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
+`tfstate`ファイル分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
 
 状態の依存関係図の項目に記載する状況と同じです。
 
@@ -685,7 +693,7 @@ bucket/
 
 そのため、想定される状態の依存関係図は以下の通りです。
 
-![terraform_architecture_different-tfstate_environments](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_environments.svg)
+![terraform_architecture_different-tfstate_environments](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_environments.png)
 
 <div hidden>
 
@@ -735,7 +743,7 @@ flowchart LR
 
 (例)
 
-`tfstate`ファイルの分割に基づいて、リポジトリのディレクトリ構成例は以下の通りです。
+`tfstate`ファイル分割に基づいて、リポジトリのディレクトリ構成例は以下の通りです。
 
 状態の依存関係図の項目に記載する状況と同じです。
 
@@ -780,7 +788,7 @@ aws-repository/
 
 (例)
 
-`tfstate`ファイルの分割に基づいて、リポジトリのディレクトリ構成例は以下の通りです。
+`tfstate`ファイル分割に基づいて、リポジトリのディレクトリ構成例は以下の通りです。
 
 状態の依存関係図の項目に記載する状況と同じです。
 
@@ -817,7 +825,7 @@ repository/
 
 実行環境別に分割した`tfstate`ファイルを、異なるリモートバックエンドで管理します。
 
-`tfstate`ファイルの分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
+`tfstate`ファイル分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
 
 (例)
 
@@ -853,7 +861,7 @@ tes-<pagerduty>-bucket/
 
 (例)
 
-`tfstate`ファイルの分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
+`tfstate`ファイル分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
 
 状態の依存関係図の項目に記載する状況と同じです。
 
@@ -882,7 +890,7 @@ tes-bucket/
 
 (例)
 
-`tfstate`ファイルの分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
+`tfstate`ファイル分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
 
 状態の依存関係図の項目に記載する状況と同じです。
 
@@ -949,7 +957,7 @@ bucket/
 
 そのため、想定される状態の依存関係図は以下の通りです。
 
-![terraform_architecture_different-tfstate_products](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_products.svg)
+![terraform_architecture_different-tfstate_products](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_products.png)
 
 <div hidden>
 
@@ -984,7 +992,7 @@ flowchart TB
 
 (例)
 
-`tfstate`ファイルの分割に基づいて、リポジトリのディレクトリ構成例は以下の通りです。
+`tfstate`ファイル分割に基づいて、リポジトリのディレクトリ構成例は以下の通りです。
 
 状態の依存関係図の項目に記載する状況と同じです。
 
@@ -1050,7 +1058,7 @@ aws-network-repository
 
 (例)
 
-`tfstate`ファイルの分割に基づいて、リポジトリのディレクトリ構成例は以下の通りです。
+`tfstate`ファイル分割に基づいて、リポジトリのディレクトリ構成例は以下の通りです。
 
 状態の依存関係図の項目に記載する状況と同じです。
 
@@ -1118,7 +1126,7 @@ aws-repository/
 
 (例)
 
-`tfstate`ファイルの分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
+`tfstate`ファイル分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
 
 状態の依存関係図の項目に記載する状況と同じです。
 
@@ -1166,7 +1174,7 @@ tes-bucket/
 
 そのため、想定される状態の依存関係図は以下の通りです。
 
-![terraform_architecture_different-tfstate_teams](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_teams.svg)
+![terraform_architecture_different-tfstate_teams](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_teams.png)
 
 <div hidden>
 
@@ -1205,7 +1213,7 @@ flowchart TB
 
 (例)
 
-`tfstate`ファイルの分割に基づいて、リポジトリのディレクトリ構成例は以下の通りです。
+`tfstate`ファイル分割に基づいて、リポジトリのディレクトリ構成例は以下の通りです。
 
 ここでは、状態の依存関係図と同じ状況を仮定しています。
 
@@ -1282,7 +1290,7 @@ aws-sre-team-repository/ # sreチーム
 
 (例)
 
-`tfstate`ファイルの分割に基づいて、リポジトリのディレクトリ構成例は以下の通りです。
+`tfstate`ファイル分割に基づいて、リポジトリのディレクトリ構成例は以下の通りです。
 
 ここでは、状態の依存関係図と同じ状況を仮定しています。
 
@@ -1364,7 +1372,7 @@ aws-repository/
 
 (例)
 
-`tfstate`ファイルの分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
+`tfstate`ファイル分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
 
 ここでは、状態の依存関係図と同じ状況を仮定しています。
 
@@ -1413,7 +1421,7 @@ tes-bucket/
 
 そのため、想定される状態の依存関係図は以下の通りです。
 
-![terraform_architecture_different-tfstate_product_sub-components](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_product_sub-components.svg)
+![terraform_architecture_different-tfstate_product_sub-components](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_product_sub-components.png)
 
 <div hidden>
 
@@ -1458,7 +1466,7 @@ flowchart TB
 
 (例)
 
-`tfstate`ファイルの分割に基づいて、リポジトリのディレクトリ構成例は以下の通りです。
+`tfstate`ファイル分割に基づいて、リポジトリのディレクトリ構成例は以下の通りです。
 
 ここでは、状態の依存関係図と同じ状況を仮定しています。
 
@@ -1551,7 +1559,7 @@ aws-repository/
 
 (例)
 
-`tfstate`ファイルの分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
+`tfstate`ファイル分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
 
 ここでは、状態の依存関係図と同じ状況を仮定しています。
 
@@ -1603,7 +1611,7 @@ AWSリソースの種類グループ別で`tfstate`ファイルを分割し、�
 
 そのため、想定される状態の依存関係図は以下の通りです。
 
-![terraform_architecture_different-tfstate_product_resource-type](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_product_resource-type.svg)
+![terraform_architecture_different-tfstate_product_resource-type](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_product_resource-type.png)
 
 <div hidden>
 
@@ -1654,7 +1662,7 @@ AWSリソースの種類グループ別に分割した`tfstate`ファイルを�
 
 (例)
 
-`tfstate`ファイルの分割に基づいて、リポジトリのディレクトリ構成例は以下の通りです。
+`tfstate`ファイル分割に基づいて、リポジトリのディレクトリ構成例は以下の通りです。
 
 ここでは、状態の依存関係図と同じ状況を仮定しています。
 
@@ -1785,7 +1793,7 @@ AWSリソースの種類グループ別に分割した`tfstate`ファイルを�
 
 (例)
 
-`tfstate`ファイルの分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
+`tfstate`ファイル分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
 
 ここでは、状態の依存関係図と同じ状況を仮定しています。
 
@@ -1837,7 +1845,7 @@ AWSリソースの状態の変更頻度グループ別で`tfstate`ファイル�
 
 そのため、想定される状態の依存関係図は以下の通りです。
 
-![terraform_architecture_different-tfstate_update-frequence](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_update-frequence.svg)
+![terraform_architecture_different-tfstate_update-frequence](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_update-frequence.png)
 
 <div hidden>
 
@@ -1878,7 +1886,7 @@ AWSリソースの変更頻度グループ別に分割した`tfstate`ファイ�
 
 (例)
 
-`tfstate`ファイルの分割に基づいて、リポジトリのディレクトリ構成例は以下の通りです。
+`tfstate`ファイル分割に基づいて、リポジトリのディレクトリ構成例は以下の通りです。
 
 ここでは、状態の依存関係図と同じ状況を仮定しています。
 
@@ -1957,7 +1965,7 @@ AWSリソースの変更頻度グループ別に分割した`tfstate`ファイ�
 
 (例)
 
-`tfstate`ファイルの分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
+`tfstate`ファイル分割に基づいて、リモートバックエンド内のディレクトリ構成例は以下の通りです。
 
 ここでは、状態の依存関係図と同じ状況を仮定しています。
 
@@ -2004,7 +2012,7 @@ tes-bucket/
   - monitor
   - network
 
-![terraform_architecture_different-tfstate_teams_resource-type](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_teams_resource-type.svg)
+![terraform_architecture_different-tfstate_teams_resource-type](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/terraform/terraform_architecture_different-tfstate_teams_resource-type.png)
 
 <div hidden>
 
