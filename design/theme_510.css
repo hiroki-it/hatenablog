@@ -114,8 +114,9 @@
 }
 
 /* コメントアウトの色 */
+/* Zennに合わせる */
 .synComment {
-    color: #7D8C93
+    color: #94a1b3
 }
 
 /* 引用文 */
