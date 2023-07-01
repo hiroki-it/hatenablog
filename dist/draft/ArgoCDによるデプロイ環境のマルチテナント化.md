@@ -73,7 +73,7 @@ ArgoCD上にプロダクト別のテナントを作成する時、何を単位�
 
 しかし、仮想Cluster自体が増えてしまうことと、技術的に発展途上で運用保守の難易度が高くなってしまうため、不採用になりました。
 
-> ↪️：[https://blog.argoproj.io/using-argo-cd-with-vclusters-5df53d1c51ce:title]
+> [https://blog.argoproj.io/using-argo-cd-with-vclusters-5df53d1c51ce:title]
 
 <br>
 
