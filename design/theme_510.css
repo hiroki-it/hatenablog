@@ -312,15 +312,10 @@ figure {
     font-weight: bold;
 }
 
-/* mermaid */
-/* https://cartman0.hatenablog.com/entry/2022/03/16/%E3%81%AF%E3%81%A6%E3%81%AA%E3%83%96%E3%83%AD%E3%82%B0%E3%81%A7mermaid%E3%81%AE%E5%9B%B3%E3%82%92%E6%8F%8F%E3%81%8F */
-.entry-content pre.code.mermaid {
-    background: none;
-    border: none;
-    padding: 0;
+/* Mermaid */
+.mermaid {
+    /* 中央に配置する */
+    /* https://github.com/squidfunk/mkdocs-material/issues/2953#issuecomment-903240973 */
     text-align: center;
 }
 
-.entry-content pre.code.mermaid[data-lang="mermaid"]:before {
-    content: none;
-}
