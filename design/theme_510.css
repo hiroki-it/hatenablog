@@ -168,6 +168,7 @@ figure {
 .text-box {
     /* ボックスの背景色 */
     background-color: #FFFCDB;
+    font-size: 0.85em;
     /* ボックス内側の余白 */
     padding: 16px 20px 16px 65px;
     position: relative;
