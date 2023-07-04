@@ -2,7 +2,8 @@
 Title: 【ArgoCD🐙️】ArgoCDにおけるマルチテナント化の設計手法とその仕組み
 Category:
   - ArgoCD
-  - マイクロサービスアーキテクチャ
+  - Kubernetes
+  - ソフトウェアアーキテクチャ
 ---
 
 <br>
