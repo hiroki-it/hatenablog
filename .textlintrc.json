@@ -8,6 +8,7 @@
       "no-doubled-joshi": {
         "allow": ["が", "に"]
       },
+      "no-exclamation-question-mark": false,
       "no-unmatched-pair": false,
       "sentence-length": false
     }
