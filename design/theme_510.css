@@ -321,3 +321,57 @@ figure {
     text-align: center;
 }
 
+/* 番号リストのデザイン
+https://qiita.com/suin/items/7ee3c8ae24a7d8e3ff33
+*/
+/*.steps {*/
+/*    !* 連番カウンター名の定義 *!*/
+/*    counter-reset: step-counter;*/
+/*    !* 縦棒との位置関係に必要 *!*/
+/*    position: relative;*/
+/*    !* 縦棒と連番のためのスペースを左に確保 *!*/
+/*    padding-left: 2rem; !* 連番(1.5rem) + 余白 *!*/
+/*}*/
+/*!* 縦棒 *!*/
+/*.steps:before {*/
+/*    content: "";*/
+/*    !* 幅と色 *!*/
+/*    background-color: #253243;*/
+/*    width: 2px;*/
+/*    !* 位置 *!*/
+/*    position: absolute;*/
+/*    top: 1.0rem; !* 円のwidthの半分 *!*/
+/*    left: 1.0rem; !* 円のwidthの半分 *!*/
+/*    height: calc(100% - 0.7rem); !* 100% - top *!*/
+/*    !* 連番より後ろに表示するため *!*/
+/*    z-index: 0;*/
+/*}*/
+/*.steps > h4 {*/
+/*    !* 連番カウンターを+1する *!*/
+/*    counter-increment: step-counter;*/
+/*    !* 連番カウンターを垂直方向に中央揃えで表示する *!*/
+/*    display: flex;*/
+/*    align-items: center;*/
+/*}*/
+/*!* ①②③など連番 *!*/
+/*.steps > h4:before {*/
+/*    !* 連番カウンターの値を表示する *!*/
+/*    content: counter(step-counter);*/
+/*    !* フォントと色 *!*/
+/*    background: #253243;*/
+/*    color: white;*/
+/*    font-size: 1.0rem;*/
+/*    font-weight: bold;*/
+/*    !* 文字を中央に表示する *!*/
+/*    line-height: 2.0rem;*/
+/*    text-align: center;*/
+/*    !* 円で表示する *!*/
+/*    width: 2.0rem;*/
+/*    height: 2.0rem;*/
+/*    border-radius: 1.5rem;*/
+/*    !* .stepsでmargin-left +2rem したぶん左に戻す *!*/
+/*    position: absolute;*/
+/*    left: 0;*/
+/*    !* 縦棒より手前に表示するため *!*/
+/*    z-index: 1;*/
+/*}*/
