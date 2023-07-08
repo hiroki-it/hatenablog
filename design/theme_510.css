@@ -326,11 +326,7 @@ figure {
 /* キーワード */
 /* 下線を消す (URLは残ってしまう) */
 a.keyword {
-    border: 0 !important;
-    text-decoration: none !important;
-    pointer-events: none !important;
-    cursor: default;
-    color: #5A5A5A;
+    border: 0 !important;;
 }
 
 /* 番号リストのデザイン
