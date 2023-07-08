@@ -81,6 +81,8 @@
     font-weight: 550;
     /*既存のデザインを打ち消す*/
     border-bottom: 0px;
+    text-decoration: underline;
+    text-underline-offset: 0.6em;
 }
 
 /* 画像 */
