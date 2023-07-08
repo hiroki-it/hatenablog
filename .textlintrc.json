@@ -3,6 +3,11 @@
   "filters": {},
   "rules": {
     "preset-ja-technical-writing": {
+      "ja-no-successive-word": {
+        "allow": [
+          "まあ"
+        ]
+      },
       "ja-no-mixed-period": false,
       "ja-no-weak-phrase": false,
       "no-doubled-joshi": {
