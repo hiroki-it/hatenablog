@@ -6,7 +6,10 @@
       "ja-no-mixed-period": false,
       "ja-no-weak-phrase": false,
       "no-doubled-joshi": {
-        "allow": ["が", "に"]
+        "allow": [
+          "が",
+          "に"
+        ]
       },
       "no-exclamation-question-mark": false,
       "no-unmatched-pair": false,
