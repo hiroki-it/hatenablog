@@ -149,19 +149,19 @@ ArgoCD用Clusterがあり、ここで動いているArgoCDは、dev環境とstg�
 
 Cluster上には、Namespace (`foo`、`bar`、`baz`) があります。
 
-#### 【１】
+#### 【１】デプロイ先Cluster管理者のログイン
 
 各プロダクト用Clusterの管理者は、SSOでargocd-serverにログインします。
 
-#### 【２】
+#### 【２】argocd-serverによる認可スコープ制御
 
 argocd-serverは、各プロダクト用Clusterの管理者のApplicationの認可スコープを制御します。
 
 なお各プロダクトのArgoCDのApplicationは、プロダクトの実行環境別のClusterに対応しています。
 
-#### 【３】
+#### 【３】application-controllerによるマニフェストデプロイ
 
-各プロダクト用Clusterの管理者は、各Namespace上のArgoCDを介して、担当するClusterにのみマニフェストをデプロイできます。
+各プロダクト用Clusterの管理者は、各Namespace上のArgoCD (application-controller) を介して、担当するClusterにのみマニフェストをデプロイできます。
 
 <br>
 
@@ -173,29 +173,29 @@ argocd-serverは、各プロダクト用Clusterの管理者のApplicationの認�
 
 Namespace単位でテナントを分割する場合、argocd-serverの『Namespacedスコープモード』を有効化します。
 
-#### 【１】
+#### 【１】デプロイ先Cluster管理者のログイン
 
 各プロダクトCluster管理者がダッシュボード (argocd-server) にSSOを使用してログインしようとします。
 
-#### 【２】
+#### 【２】IDプロバイダーへの認証フェーズ委譲
 
 argocd-serverは、認証フェーズをIDプロバイダーに委譲するために、dex-serverをコールします。
 
-#### 【３】
+#### 【３】dex-serverによる認可リクエスト作成
 
 dex-serverは、認可リクエストを作成します。
 
-#### 【４】
+#### 【４】dex-serverによる認可リクエスト送信
 
 dex-serverは、前の手順で作成した認可リクエストをIDプロバイダーに送信します。
 
-#### 【５】
+#### 【５】IDプロバイダーによる認可フェーズ実施
 
 IDプロバイダー側でSSOの認証フェーズを実施します。
 
 IDプロバイダーは、コールバックURL (`<ArgoCDのドメイン名>/api/dex/callback`) を指定して、認可レスポンスを送信します。
 
-#### 【６】
+#### 【６】argocd-serverによる認可フェーズ実施
 
 認可レスポンスは、argocd-serverを介して、dex-serverに届きます。
 
