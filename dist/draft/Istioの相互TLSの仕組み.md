@@ -1,3 +1,3 @@
 ---
-Title: 【Istio⛵️】Istioの相互TLSの仕組み
+Title: 【Istio⛵️】IstioのSSL証明書自動更新と相互TLSの仕組み
 ---
