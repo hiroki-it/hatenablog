@@ -12,14 +12,16 @@
     background: #253243 !important;
 }
 
-/* ブログ全体の文字 */
-.entry-content {
-    font-size: 1.0em;
-}
-
 /* ブログタイトル */
 .entry-title {
     font-size: 1.40em;
+    font-family: 'ヒラギノ角ゴ ProN W3', '游ゴシック', 'MS Pゴシック', Arial, sans-serif !important;
+}
+
+/* ブログ全体の文字 */
+.entry-content {
+    font-size: 1.0em;
+    font-family: 'ヒラギノ角ゴ ProN W3', '游ゴシック', 'MS Pゴシック', Arial, sans-serif !important;
 }
 
 /* h1の文字 */
