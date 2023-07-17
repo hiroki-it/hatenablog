@@ -332,12 +332,6 @@ a.keyword {
     border: 0 !important;;
 }
 
-/* 埋め込みツイート */
-div.twitter-tweet {
-    margin: auto;
-    width: 60%;
-}
-
 /* 番号リストのデザイン
 https://qiita.com/suin/items/7ee3c8ae24a7d8e3ff33
 */
