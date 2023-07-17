@@ -202,6 +202,12 @@ figure {
     color: #ffa500;
 }
 
+/* テーブル全体 */
+.entry-content td, th {
+    /* 中央揃え */
+    vertical-align: middle;
+}
+
 /* テーブルヘッダー */
 .entry-content table th {
     background-color: #313131;
