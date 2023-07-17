@@ -204,7 +204,7 @@ figure {
 
 /* テーブル全体 */
 .entry-content td, th {
-    /* 中央揃え */
+    /* 上下中央揃え */
     vertical-align: middle;
 }
 
