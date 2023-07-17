@@ -126,6 +126,7 @@
 /* 引用文 */
 .entry-content blockquote {
     font-size: 0.75em;
+    background: #F6F6F6;
 }
 
 /* 目次 */
