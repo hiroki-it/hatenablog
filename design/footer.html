@@ -1,23 +1,24 @@
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // コードブロックを取得
-        const codeBlocks = document.querySelectorAll('pre.code');
+<!-- コピーボタンの位置を変えられるまでコメントアウト -->
+<!--<script>-->
+<!--    document.addEventListener('DOMContentLoaded', function() {-->
+<!--        // コードブロックを取得-->
+<!--        const codeBlocks = document.querySelectorAll('pre.code');-->
 
-        // すべてのコードブロックにコピーボタンを追加
-        for (var i = 0; i < codeBlocks.length; i++) {
-            const copyButton = document.createElement('button');
-            copyButton.className = 'copy-button';
-            copyButton.textContent = 'コピーする';
-            copyButton.onclick = function() {
-                const codeElem = this.parentNode.querySelector('code') || this.parentNode;
-                const textArea = document.createElement('textarea');
-                textArea.value = codeElem.textContent.replace(/コピーする$/, ''); // "コピーする" テキストを削除
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
-            }
-            codeBlocks[i].appendChild(copyButton);
-        }
-    });
-</script>
+<!--        // すべてのコードブロックにコピーボタンを追加-->
+<!--        for (var i = 0; i < codeBlocks.length; i++) {-->
+<!--            const copyButton = document.createElement('button');-->
+<!--            copyButton.className = 'copy-button';-->
+<!--            copyButton.textContent = 'コピーする';-->
+<!--            copyButton.onclick = function() {-->
+<!--                const codeElem = this.parentNode.querySelector('code') || this.parentNode;-->
+<!--                const textArea = document.createElement('textarea');-->
+<!--                textArea.value = codeElem.textContent.replace(/コピーする$/, ''); // "コピーする" テキストを削除-->
+<!--                document.body.appendChild(textArea);-->
+<!--                textArea.select();-->
+<!--                document.execCommand('copy');-->
+<!--                document.body.removeChild(textArea);-->
+<!--            }-->
+<!--            codeBlocks[i].appendChild(copyButton);-->
+<!--        }-->
+<!--    });-->
+<!--</script>-->
