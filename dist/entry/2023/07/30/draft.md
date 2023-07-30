@@ -1,0 +1,289 @@
+---
+Title: 【ArgoCD🐙️】ArgoCDのためのテナント設計とテナント内の認可処理の仕組み
+Category:
+  - ArgoCD
+  - Kubernetes
+  - ソフトウェアアーキテクチャ
+  - 認証/認可
+Draft: true
+---
+
+<br>
+
+[:contents]
+
+<br>
+
+# この記事から得られる知識
+
+この記事を読むと、以下を "完全に理解" できます✌️
+
+- ArgoCDのNamespacedスコープモードとは
+- テナント内での
+
+<br>
+
+# 01. はじめに
+
+
+# 02. ArgoCDのためのテナント設計
+
+## 概要
+
+それでは、AppProjectテナントを採用する場合に、テナントをどのような粒度で作成するべきなのかを考えていきましょう。
+
+AppProjectはNamespaceスコープなカスタムリソースなため、NamespaceとAppProjectの両方の粒度を考える必要があります。
+
+<table>
+<thead>
+  <tr>
+    <th>Namespaceの粒度</th><th>AppProjectの粒度</th><th>おすすめ</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td>実行環境別</td><td></td><td></td>
+  </tr>
+  <tr>
+    <td>プロダクトコンポーネント別</td><td></td><td></td>
+  </tr>
+  <tr>
+    <td>プロダクトチーム別</td><td></td><td style="text-align: center;"><code>✅</code></td>
+  </tr>
+</tbody>
+</table>
+
+> - [asin:1617293725:title]
+
+<br>
+
+## プロダクトの実行環境別
+
+### プロダクトの実行環境別とは
+
+例えば、プロダクトごとに異なるチームがいると仮定します。
+
+また、ArgoCDのデプロイ対象のプロダクトが複数おり、プロダクトの実行環境 (Dev環境、Tes環境) 別にClusterがいるとします。
+
+この時、プロダクトの実行環境別にNamespaceを作成します。
+
+![argocd_multi-tenant_appproject_namespaced-scope_product-environments](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/argocd/argocd_multi-tenant_appproject_namespaced-scope_product-environments.png)
+
+### 採用せず...
+
+プロダクトの実行環境別では、粒度が細かすぎるとし、将来的に問題が起こることを予想できました。
+
+例えば、Cluster上にArgoCDが増えすぎてIPアドレスが枯渇することや、ArgoCDが増えた分だけ運用が大変になることです。
+
+そのため、採用しませんでした。
+
+<br>
+
+## プロダクトのチーム別
+
+### プロダクトのチーム別とは
+
+同様にして、プロダクトごとに異なるチームがおり、プロダクトの実行環境 (Dev環境、Tes環境) 別にClusterがいると仮定します。
+
+この時、プロダクトチーム別にNamespaceを作成します。
+
+![argocd_multi-tenant_appproject_namespaced-scope_products](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/argocd/argocd_multi-tenant_appproject_namespaced-scope_products.png)
+
+### 採用!!
+
+単一のClusterで全プロダクト用の各ArgoCDを運用する必要がありました。
+
+そこで、**<font color="#FF0000">採用になりました</font>**。
+
+<br>
+
+# 07. 各テナントにおける認可処理の仕組み
+
+Namespaceテナントのマルチテナントを採用した場合、ArgoCD上でどのようなことが起こるのか、その仕組みとNamespacedスコープモードの設定方法を説明していきます。
+
+なおこの仕組みを理解する上で、ArgoCDの特に "argocd-server" "application-controller" "dex-server" の責務を知る必要があります。
+
+これらのコンポーネントついて、今回は簡単にしか説明していません😢
+
+詳しく知りたい方は、以下の記事で全体像を紹介してますので、よろしくどうぞ🙇🏻‍♂️
+
+[https://hiroki-hasegawa.hatenablog.jp/entry/2023/05/02/145115:embed]
+
+<br>
+
+## 概要
+
+![argocd_multi-tenant_appproject_namespaced-scope_overview](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/argocd/argocd_multi-tenant_appproject_namespaced-scope_overview.png)
+
+ArgoCD用Clusterがあり、ここで動いているArgoCDは、Dev環境とTes環境のプロダクト用Clusterにマニフェストをデプロイします。
+
+Cluster上には、Namespace (`foo`、`bar`、`baz`) があります。
+
+### (1) プロダクトチームのログイン
+
+プロダクトチームは、SSOでargocd-serverにログインします。
+
+### (2) argocd-serverによる認可スコープ制御
+
+argocd-serverは、プロダクトチームのApplicationの認可スコープを制御します。
+
+なお各プロダクトのArgoCDのApplicationは、プロダクトの実行環境別のClusterに対応しています。
+
+### (3) application-controllerによるマニフェストデプロイ
+
+プロダクトチームは、各Namespace上のArgoCD (application-controller) を介して、担当するClusterにのみマニフェストをデプロイできます。
+
+<br>
+
+## argocd-server
+
+わかりやすいように、Namespaceの`foo`のみに着目します。
+
+まず、argocd-serverです。
+
+Namespaceテナントの場合、argocd-serverの『Namespacedスコープモード』を有効化します。
+
+![argocd_multi-tenant_appproject_namespaced-scope_argocd-server](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/argocd/argocd_multi-tenant_appproject_namespaced-scope_argocd-server.png)
+
+### (1) プロダクトチームのログイン
+
+プロダクトチームは、ダッシュボード (argocd-server) にSSOを使用してログインしようとします。
+
+### (2) IDプロバイダーへの認証フェーズ委譲
+
+argocd-serverは、認証フェーズをIDプロバイダーに委譲するために、dex-serverをコールします。
+
+### (3) dex-serverによる認可リクエスト作成
+
+dex-serverは、認可リクエストを作成します。
+
+### (4) dex-serverによる認可リクエスト送信
+
+dex-serverは、前の手順で作成した認可リクエストをIDプロバイダーに送信します。
+
+### (5) IDプロバイダーによる認証フェーズ実施
+
+IDプロバイダー側でSSOの認証フェーズを実施します。
+
+IDプロバイダーは、コールバックURL (`<ArgoCDのドメイン名>/api/dex/callback`) を指定して、認可レスポンスを送信します。
+
+### (6) argocd-serverによる認可フェーズ実施
+
+認可レスポンスは、argocd-serverを介して、dex-serverに届きます。
+
+### (7) 認証情報に認可スコープ紐付け
+
+#### ▼ argocd-rbac-cm
+
+argocd-serverは、ConfigMap (`argocd-rbac-cm`) を参照します。
+
+`argocd-rbac-cm`から、IDプロバイダーで認証済みのユーザーやグループに、ArgoCD系カスタムリソース (Application) に関する認可スコープを付与します。
+
+例えば、各プロダクトチームに他のテナントの参照権限のみを付与したいとしましょう。
+
+その場合、実装例は以下の通りとなります。
+
+```yaml
+# fooテナントで使用するargocd-rbac-cm
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-rbac-cm
+  namespace: foo
+data:
+  # いずれのグループにも属さずにログインした場合、参照権限になる。
+  policy.default: role:readonly
+  # 認証されたグループに応じて、パーミッションを設定する。
+  policy.csv: |
+    # ユーザー定義ロールのArgoCD系カスタムリソース (特にApplication) のパーミッションを定義する
+    p, role:foo-team, *, *, dev/foo-team/*, allow
+    p, role:foo-team, *, *, tes/foo-eam/*, allow
+
+    # グループにロールを紐付ける
+    g, foo-team, role:foo-team
+  scopes: "[groups]"
+```
+
+もし権限のないApplicationをダッシュボード (argocd-server) から操作しようとすると、エラーになります。
+
+```bash
+# 操作権限のないApplicationの設定値をダッシュボードから変えようとすると...
+Unable to save changes: permission denied: applications, update, foo-team/foo-application
+```
+
+#### ▼ `p` (パーミッション)
+
+ロールとArgoCD系リソースの認可スコープを定義する。
+
+```bash
+p, <ロール名> <Kubernetesリソースの種類> <アクション名> <AppProject名>/<Namespace名>/<Kubernetesリソースの識別名>
+
+p, role:foo, *, *, dev/foo/*, allow
+p, role:foo, *, *, tes/foo/*, allow
+```
+
+ビルトインのパーミッションとして、`admin`や`readonly`があります。
+
+> - [https://github.com/argoproj/argo-cd/blob/master/assets/builtin-policy.csv:title]
+
+#### ▼ `g` (グループ)
+
+グループにロールを紐付ける。
+
+```bash
+g, <グループ名> <ロール名>
+
+g, foo-team, role:foo
+```
+
+<br>
+
+## application-controller
+
+わかりやすいように、argocd-serverの説明と同様にNamespaceの`foo`のみに着目します。
+
+Namespaceテナントの場合、argocd-serverと同様にapplication-controllerの『Namespacedスコープモード』を有効化します。
+
+![argocd_multi-tenant_appproject_namespaced-scope_application-controller](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/argocd/argocd_multi-tenant_appproject_namespaced-scope_application-controller.png)
+
+### (1) プロダクトチームのログイン
+
+プロダクトチームは、ダッシュボード (argocd-server) にSSOを使用してログインしようとします。
+
+### (2) アクセス可能なNamespace取得
+
+argocd-serverは、ConfigMap (`argocd-cmd-params-cm`) を参照します。
+
+`argocd-cmd-params-cm`から、アクセス可能なNamespaceを取得します。
+
+Namespaceスコープモードの場合、`argocd-cmd-params-cm`には**<font color="#FF0000">設定しない</font>**ようにします。
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-cmd-params-cm
+  namespace: argocd
+data:
+  # 設定しない
+  # アクセス可能なNamespaceを設定する。AppProjectのspec.sourceNamespacesキーでも設定が必要になる
+  # application.namespaces: "<Applicationが属するNamespace>"
+```
+
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: prd
+  namespace: foo # サービス名、など
+spec:
+  # 設定しない
+  # sourceNamespaces:
+  #   - "<Applicationが属するNamespace>"
+```
+
+### (3)
+
+...
+
+<br>
