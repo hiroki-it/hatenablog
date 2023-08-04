@@ -3,6 +3,6 @@
     "prettier": "^3.0.0",
     "prettier-plugin-md-nocjsp": "^1.5.1",
     "textlint": "^13.3.2",
-    "textlint-rule-preset-ja-technical-writing": "^7.0.0"
+    "textlint-rule-preset-ja-technical-writing": "^8.0.0"
   }
 }
