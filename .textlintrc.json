@@ -5,7 +5,8 @@
     "preset-ja-technical-writing": {
       "ja-no-successive-word": {
         "allow": [
-          "まあ"
+          "まあ",
+          "★"
         ]
       },
       "ja-no-mixed-period": false,
