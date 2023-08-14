@@ -20,7 +20,7 @@
 
 /* ブログ全体の文字 */
 .entry-content {
-    font-size: 1.0em;
+    font-size: 0.9em;
     font-family: 'ヒラギノ角ゴ ProN W3', '游ゴシック', 'MS Pゴシック', Arial, sans-serif !important;
 }
 
@@ -673,6 +673,7 @@ a.keyword {
 /* モジュール */
 .hatena-module {
     margin-bottom: 20px;
+    font-size: 0.85em;
 }
 
 /* カテゴリ */
