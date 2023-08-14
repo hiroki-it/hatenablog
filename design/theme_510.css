@@ -20,13 +20,13 @@
 
 /* ブログ全体の文字 */
 .entry-content {
-    font-size: 0.925rem;
+    font-size: 0.8rem;
     font-family: 'ヒラギノ角ゴ ProN W3', '游ゴシック', 'MS Pゴシック', Arial, sans-serif !important;
 }
 
 /* h1の文字 */
 .entry-content h1 {
-    font-size: 1.3rem;
+    font-size: 1.1rem;
     font-weight: bold;
     background: #253243;
     border-radius: 0.45rem;
@@ -36,7 +36,7 @@
 
 /* h2の文字 */
 .entry-content h2 {
-    font-size: 1.1rem;
+    font-size: 1.0rem;
     font-weight: bold;
     /* 背景：色 */
     background: #d7d7d7;
@@ -51,7 +51,7 @@
 
 /* h3の文字 */
 .entry-content h3 {
-    font-size: 1.1rem;
+    font-size: 0.85rem;
     /*既存のデザインで色がついてしまうため、白くする*/
     background: white;
     /*既存のデザインを打ち消す*/
@@ -66,7 +66,7 @@
 
 /* h3のアイコン */
 .entry-content h3:before {
-    font-size: 1.1rem;
+    font-size: 0.9rem;
     /*アイコン色*/
     color: #253243;
     /*アイコンのユニコード*/
@@ -78,7 +78,7 @@
 
 /* h4の文字 */
 .entry-content h4 {
-    font-size: 1.0rem;
+    font-size: 0.9rem;
     /*既存のデザインが太すぎるので細くする*/
     font-weight: 550;
     /*既存のデザインを打ち消す*/
@@ -125,7 +125,7 @@
 
 /* 引用文 */
 .entry-content blockquote {
-    font-size: 0.875em;
+    font-size: 0.8em;
     background: #F6F6F6;
 }
 
@@ -134,7 +134,7 @@
     /* 枠内の余白(上右下左) */
     padding: 9px 18px 9px;
     /* 文字サイズ */
-    font-size: 0.88em;
+    font-size: 0.825em;
     /* 線の種類と色 */
     border: dotted 1px #777;
     /* 背景 */
@@ -173,7 +173,7 @@ figure {
 .text-box {
     /* ボックスの背景色 */
     background-color: #FFFCDB;
-    font-size: 0.875rem;
+    font-size: 0.7rem;
     /* ボックス内側の余白 */
     padding: 16px 20px 16px 65px;
     position: relative;
@@ -217,7 +217,7 @@ figure {
 /* HTMLでテーブルを定義した場合 */
 .entry-content table {
     background: white;
-    font-size: 0.9rem;
+    font-size: 0.7rem;
 }
 
 /* スマホでは無効化し、レスポンシブが壊れないようにする */
@@ -340,7 +340,7 @@ a.keyword {
 
 /* モジュール */
 .hatena-module {
-    font-size: 0.825rem;
+    font-size: 0.8rem;
     margin-bottom: 30px
 }
 
