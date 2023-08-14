@@ -125,7 +125,7 @@
 
 /* 引用文 */
 .entry-content blockquote {
-    font-size: 0.75em;
+    font-size: 0.9em;
     background: #F6F6F6;
 }
 
@@ -134,7 +134,7 @@
     /* 枠内の余白(上右下左) */
     padding: 9px 18px 9px;
     /* 文字サイズ */
-    font-size: 0.9em;
+    font-size: 0.88em;
     /* 線の種類と色 */
     border: dotted 1px #777;
     /* 背景 */
@@ -173,7 +173,7 @@ figure {
 .text-box {
     /* ボックスの背景色 */
     background-color: #FFFCDB;
-    font-size: 0.85em;
+    font-size: 0.9em;
     /* ボックス内側の余白 */
     padding: 16px 20px 16px 65px;
     position: relative;
