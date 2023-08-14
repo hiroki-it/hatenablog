@@ -14,44 +14,44 @@
 
 /* ブログタイトル */
 .entry-title {
-    font-size: 1.25em;
+    font-size: 1.2rem;
     font-family: 'ヒラギノ角ゴ ProN W3', '游ゴシック', 'MS Pゴシック', Arial, sans-serif !important;
 }
 
 /* ブログ全体の文字 */
 .entry-content {
-    font-size: 0.925em;
+    font-size: 0.925rem;
     font-family: 'ヒラギノ角ゴ ProN W3', '游ゴシック', 'MS Pゴシック', Arial, sans-serif !important;
 }
 
 /* h1の文字 */
 .entry-content h1 {
-    font-size: 1.4em;
+    font-size: 1.3rem;
     font-weight: bold;
     background: #253243;
-    border-radius: 0.45em;
+    border-radius: 0.45rem;
     color: white;
-    padding: 0.7em;
+    padding: 0.7rem;
 }
 
 /* h2の文字 */
 .entry-content h2 {
-    font-size: 1.3em;
+    font-size: 1.1rem;
     font-weight: bold;
     /* 背景：色 */
     background: #d7d7d7;
     /* 左線：太さ，色 */
-    border-left: 0.7em solid #253243;
+    border-left: 0.7rem solid #253243;
 
     /* 上外部余白：大きさ */
-    margin-top: 0.9em;
+    margin-top: 0.9rem;
     /* 内部余白：文字周り */
-    padding: 0.6em;
+    padding: 0.6rem;
 }
 
 /* h3の文字 */
 .entry-content h3 {
-    font-size: 1.1em;
+    font-size: 1.1rem;
     /*既存のデザインで色がついてしまうため、白くする*/
     background: white;
     /*既存のデザインを打ち消す*/
@@ -60,31 +60,31 @@
     font-weight: 700;
     /*既存のデザインを打ち消す*/
     border-left: 0px;
-    border-bottom: solid 0.1em #313131;
-    border-radius: 0em;
+    border-bottom: solid 0.1rem #313131;
+    border-radius: 0rem;
 }
 
 /* h3のアイコン */
 .entry-content h3:before {
-    font-size: 1.1em;
+    font-size: 1.1rem;
     /*アイコン色*/
     color: #253243;
     /*アイコンのユニコード*/
     content: "\f138";
     font-family: "FontAwesome", serif;
     /*アイコンの右側にスペースを空ける*/
-    margin-right: 0.5em;
+    margin-right: 0.5rem;
 }
 
 /* h4の文字 */
 .entry-content h4 {
-    font-size: 1.1em;
+    font-size: 1.0rem;
     /*既存のデザインが太すぎるので細くする*/
     font-weight: 550;
     /*既存のデザインを打ち消す*/
     border-bottom: 0px;
     text-decoration: underline;
-    text-underline-offset: 0.6em;
+    text-underline-offset: 0.6rem;
 }
 
 /* 画像 */
@@ -125,7 +125,7 @@
 
 /* 引用文 */
 .entry-content blockquote {
-    font-size: 0.9em;
+    font-size: 0.875em;
     background: #F6F6F6;
 }
 
@@ -154,7 +154,7 @@
 /* ulの数で階層が決まる */
 .table-of-contents ul {
     /* 目次のh2の左横スペース */
-    margin-left: 0em;
+    margin-left: 0rem;
 }
 /* 目次のh4部分 */
 /* https://www.yukihy.com/entry/hatenablog-table-of-contents-custom */
@@ -173,12 +173,12 @@ figure {
 .text-box {
     /* ボックスの背景色 */
     background-color: #FFFCDB;
-    font-size: 0.9em;
+    font-size: 0.875rem;
     /* ボックス内側の余白 */
     padding: 16px 20px 16px 65px;
     position: relative;
     /* ボックス外側の余白 */
-    margin: 1em 0.5em 1em 0.5em;
+    margin: 1rem 0.5rem 1rem 0.5rem;
     display: block;
     /* ボックスの枠線 */
     border: 1px dashed #ffa500;
@@ -194,8 +194,8 @@ figure {
     /* アイコンの大きさ */
     font-size: 40px;
     /* アイコンの位置 */
-    top: 0.2em;
-    left: 0.3em;
+    top: 5px;
+    left: 8px;
     -webkit-transform: translateY(-50%);
     transform: translateY(-50%);
     /* アイコンの色 */
@@ -217,7 +217,7 @@ figure {
 /* HTMLでテーブルを定義した場合 */
 .entry-content table {
     background: white;
-    font-size: 0.9em;
+    font-size: 0.9rem;
 }
 
 /* スマホでは無効化し、レスポンシブが壊れないようにする */
@@ -308,7 +308,7 @@ figure {
     /*更新日の大きさ*/
     font-size: 15px;
     display: inline;
-    margin-left: 1em;
+    margin-left: 1rem;
     /*更新日の色*/
     color: #FF0000;
     font-weight: bold;
@@ -340,7 +340,7 @@ a.keyword {
 
 /* モジュール */
 .hatena-module {
-    font-size: 0.825em;
+    font-size: 0.825rem;
     margin-bottom: 30px
 }
 
