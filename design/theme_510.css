@@ -130,9 +130,9 @@
 }
 
 /* 目次 */
-.table-of-contents {
+.table-of-contents, .entry-content ul.table-of-contents {
     /* 枠内の余白(上右下左) */
-    padding: 15px 10px 15px 15px;
+    padding: 9px 18px 9px;
     /* 文字サイズ */
     font-size: 0.9em;
     /* 線の種類と色 */
@@ -340,7 +340,7 @@ a.keyword {
 
 /* モジュール */
 .hatena-module {
-    font-size: 0.80em;
+    font-size: 0.825em;
     margin-bottom: 30px
 }
 
