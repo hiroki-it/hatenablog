@@ -142,8 +142,8 @@
 }
 
 .table-of-contents:before {
-    content: "記事の内容";
-    font-size: 1.4em;
+    content: "✏️ 記事の内容";
+    font-size: 1.0em;
     /* 文字の太さ　通常はnormal */
     font-weight: bold;
     /* 文字の色 */
