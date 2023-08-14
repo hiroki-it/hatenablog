@@ -20,7 +20,7 @@
 
 /* ブログ全体の文字 */
 .entry-content {
-    font-size: 0.9em;
+    font-size: 0.925em;
     font-family: 'ヒラギノ角ゴ ProN W3', '游ゴシック', 'MS Pゴシック', Arial, sans-serif !important;
 }
 
@@ -78,7 +78,7 @@
 
 /* h4の文字 */
 .entry-content h4 {
-    font-size: 1.0em;
+    font-size: 1.1em;
     /*既存のデザインが太すぎるので細くする*/
     font-weight: 550;
     /*既存のデザインを打ち消す*/
@@ -105,7 +105,7 @@
 
 /* コードブロック */
 .entry-content pre.code {
-    font-size: 1.0rem;
+    font-size: 1em;
     /* Googleフォントを使用する */
     font-family: "Source Code Pro", monospace;
     margin: 1.5rem 0;
@@ -217,7 +217,7 @@ figure {
 /* HTMLでテーブルを定義した場合 */
 .entry-content table {
     background: white;
-    font-size: 0.80em;
+    font-size: 0.9em;
 }
 
 /* スマホでは無効化し、レスポンシブが壊れないようにする */
