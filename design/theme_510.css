@@ -134,7 +134,7 @@
     /* 枠内の余白(上右下左) */
     padding: 15px 10px 15px 15px;
     /* 文字サイズ */
-    font-size: 0.8em;
+    font-size: 0.9em;
     /* 線の種類と色 */
     border: dotted 1px #777;
     /* 背景 */
@@ -338,11 +338,18 @@ a.keyword {
     border: 0 !important;;
 }
 
-/* カテゴリ */
+/* モジュール */
+.hatena-module {
+    font-size: 0.80em;
+    margin-bottom: 30px
+}
+
+/* モジュールのタイトル */
 .hatena-module-title {
     margin-bottom: 10px
 }
 
+/* カテゴリ */
 .hatena-module-category .hatena-urllist li a {
     /* カテゴリの隙間を小さくする */
     padding: 0 4px;
