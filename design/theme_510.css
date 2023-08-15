@@ -125,7 +125,7 @@
 
 /* 引用文 */
 .entry-content blockquote {
-    font-size: 0.8em;
+    font-size: 0.75rem;
     background: #F6F6F6;
 }
 
@@ -173,7 +173,7 @@ figure {
 .text-box {
     /* ボックスの背景色 */
     background-color: #FFFCDB;
-    font-size: 0.7rem;
+    font-size: 0.8rem;
     /* ボックス内側の余白 */
     padding: 16px 20px 16px 65px;
     position: relative;
@@ -217,7 +217,7 @@ figure {
 /* HTMLでテーブルを定義した場合 */
 .entry-content table {
     background: white;
-    font-size: 0.7rem;
+    font-size: 0.8rem;
 }
 
 /* スマホでは無効化し、レスポンシブが壊れないようにする */
