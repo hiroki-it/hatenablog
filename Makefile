@@ -21,10 +21,12 @@ format:
 .PHONY: push-post
 push-post: format
 	git checkout release/entry
+	git pull
 	git add ./dist
 	git commit -m "update 記事を更新した。"
 	git push
 	git checkout main
+	git pull
 	git push
 	git merge release/entry
 	git checkout release/entry
