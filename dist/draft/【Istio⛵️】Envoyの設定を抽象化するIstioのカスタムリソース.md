@@ -22,8 +22,6 @@ IstioはEnvoyを使用してトラフィックを管理します。
 
 Istioによるトラフィック管理は、通信方向の観点で3つの種類に分類できます。
 
-
-
 ## サービスメッシュ外からの通信
 
 サービスメッシュ外からリクエストを送信する場合です。
@@ -38,8 +36,6 @@ Istioによるトラフィック管理は、通信方向の観点で3つの種�
 
 ![istio_envoy_istio_ingress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_ingress.png)
 
-
-
 ## マイクロサービス間の通信
 
 マイクロサービスのPodから別のマイクロサービスのPodにリクエストを送信する場合です。
@@ -52,8 +48,6 @@ Istioによるトラフィック管理は、通信方向の観点で3つの種�
 4. `istio-proxy`コンテナは、別のマイクロサービスのPodにHTTPSでリクエストを送信します。
 
 ![istio_envoy_istio_service-to-service](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_service-to-service.png)
-
-
 
 ## サービスメッシュ外への通信
 
@@ -70,24 +64,15 @@ Istioによるトラフィック管理は、通信方向の観点で3つの種�
 
 ![istio_envoy_istio_egress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_egress.png)
 
-
 # 03. トラフィック管理を宣言するためのリソース
-
-
-
-
 
 ## サービスメッシュ外からの通信
 
 ![istio_envoy_istio_resource_ingress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_resource_ingress.png)
 
-
-
 ## マイクロサービス間の通信
 
 ![istio_envoy_istio_resource_service-to-service](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_resource_service-to-service.png)
-
-
 
 ## サービスメッシュ外への通信
 
@@ -107,8 +92,6 @@ Istioによるトラフィック管理は、通信方向の観点で3つの種�
 
 ![istio_envoy_envoy-flow_resource_egress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow_resource_egress.png)
 
-
-
 # 05. IstioによるEnvoyの抽象化に抗う
 
 Envoyはどのようにリクエストを処理するのでしょうか。
@@ -121,13 +104,9 @@ HTTPまたはTCPを処理する場合で、処理の流れが少しだけ異な�
 
 ![istio_envoy_envoy-flow_ingress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow_ingress.png)
 
-
-
 ## マイクロサービス間の通信
 
 ![istio_envoy_envoy-flow_service-to-service](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow_service-to-service.png)
-
-
 
 ## サービスメッシュ外への通信
 
