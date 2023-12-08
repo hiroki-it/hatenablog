@@ -6,7 +6,9 @@ Title: 【Istio⛵️】IstioがEnvoyのトラフィック管理を抽象化す�
 
 <br>
 
-Istioは、マイクロサービスアーキテクチャ上にサービスメッシュを実装するツールです。
+Istioは、 今、最もアツいCNCFプロジェクトです。
+
+マイクロサービスアーキテクチャ上にサービスメッシュを実装するツールです。
 
 サービスメッシュを実装するために、IstioはEnvoyの様々な機能を抽象化し、カスタムリソースでEnvoyを設定できるようにします。
 
@@ -18,7 +20,7 @@ Istioは、マイクロサービスアーキテクチャ上にサービスメッ
 
 # 02. Istioのトラフィック管理の種類
 
-IstioはEnvoyを使用してトラフィックを管理します。
+Istioは、Envoyを使用してトラフィックを管理します。
 
 Istioによるトラフィック管理は、通信方向の観点で3つの種類に分類できます。
 
@@ -30,7 +32,7 @@ Istioによるトラフィック管理は、通信方向の観点で3つの種�
 
 1. Istioコントロールプレーンは、KubernetesリソースやIstioカスタムリソースの設定を各Pod内の`istio-proxy`コンテナに提供します。
 2. クライアントは、サービスメッシュ外から内にリクエストを送信します。
-3. KubernetesCluster内に入ったリクエストは、Istio IngressGatewayのPodに到達します。
+3. Istio IngressGatewayのPodは、サービスメッシュ外からのリクエストを受信します。
 4. Istio IngressGatewayのPod内の`istio-proxy`コンテナは、KubernetesリソースやIstioカスタムリソースの設定に応じて、リクエストの宛先のPodを選択します。
 5. `istio-proxy`コンテナは、マイクロサービス (例：API Gateway相当のマイクロサービス) のPodにリクエストを送信します。
 
@@ -66,7 +68,19 @@ Istioによるトラフィック管理は、通信方向の観点で3つの種�
 
 # 03. トラフィック管理を宣言するためのリソース
 
+Istioは、KubernetesリソースやIstioカスタムリソースに基づいて、トラフィック管理を宣言します。
+
+通信方向ごとに、関係するリソースが異なります。
+
+<br>
+
 ## サービスメッシュ外からの通信
+
+1. クライアントはリクエストを送信します。
+2. GatewayとVirtualServiceの設定値からなるIstio IngressGatewayのPodは、サービスメッシュ外からのリクエストを受信します。
+3. Istio IngressGatewayのPodは、リクエストの宛先ポート / ホスト / パスに応じて、Serviceを選択します。
+4. Istio IngressGatewayのPodは、DestinationRuleの設定値に応じて、Podの`L7`ロードバランシングアルゴリズムを選択します。
+5. Podに`L7`ロードバランシングします。注意点として、Serviceの設定値を使用するだけで、Serviceの実体を介してロードバランシングするわけではないです。
 
 ![istio_envoy_istio_resource_ingress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_resource_ingress.png)
 
@@ -99,6 +113,8 @@ Envoyはどのようにリクエストを処理するのでしょうか。
 HTTPまたはTCPを処理する場合で、処理の流れが少しだけ異なります。
 
 今回は、HTTPを処理する場合のみ注目します。
+
+<br>
 
 ## サービスメッシュ外からの通信
 
