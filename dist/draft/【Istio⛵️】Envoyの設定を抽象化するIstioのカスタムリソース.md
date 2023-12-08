@@ -31,7 +31,7 @@ Istioによるトラフィック管理は、通信方向の観点で3つの種�
 1. Istioコントロールプレーンは、KubernetesリソースやIstioカスタムリソースの設定を各Pod内の`istio-proxy`コンテナに提供します。
 2. クライアントは、サービスメッシュ外から内にリクエストを送信します。
 3. KubernetesCluster内に入ったリクエストは、Istio IngressGatewayのPodに到達します。
-4. Istio IngressGatewayのPod内の`istio-proxy`コンテナは、KubernetesリソースやIstioカスタムリソースの設定に応じて、リクエストの宛先のPodを選択します。
+4.
 5. `istio-proxy`コンテナは、マイクロサービス (例：API Gateway相当のマイクロサービス) のPodにリクエストを送信します。
 
 ![istio_envoy_istio_ingress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_ingress.png)
@@ -43,9 +43,9 @@ Istioによるトラフィック管理は、通信方向の観点で3つの種�
 なお、HTTPS (相互TLS) を採用している前提です。
 
 1. Istioコントロールプレーンは、KubernetesリソースやIstioカスタムリソースの設定を各Pod内の`istio-proxy`コンテナに提供します。
-2. 送信元マイクロサービスは、`istio-proxy`コンテナにリクエストを送信します。
-3. `istio-proxy`コンテナは、KubernetesリソースやIstioカスタムリソースの設定に応じて、リクエストの宛先のPodを選択します。
-4. `istio-proxy`コンテナは、別のマイクロサービスのPodにHTTPSでリクエストを送信します。
+2. 送信元マイクロサービスは、`istio-proxy`コンテナにHTTPでリクエストを送信します。
+3. 送信元マイクロサービスPodの`istio-proxy`コンテナは、別のマイクロサービスのPodにHTTPSでリクエストを送信します。
+4. 宛先マイクロサービスPodの`istio-proxy`コンテナは、宛先マイクロサービスにHTTPでリクエストを送信します。
 
 ![istio_envoy_istio_service-to-service](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_service-to-service.png)
 
@@ -56,11 +56,8 @@ Istioによるトラフィック管理は、通信方向の観点で3つの種�
 なお、HTTPS (相互TLS) を採用している前提です。
 
 1. Istioコントロールプレーンは、KubernetesリソースやIstioカスタムリソースの設定を各Pod内の`istio-proxy`コンテナに提供します。
-2. 送信元マイクロサービスは、`istio-proxy`コンテナにリクエストを送信します。
-3. `istio-proxy`コンテナは、リクエストの宛先がエントリ済みか否かに応じて、リクエストを宛先を切り替えます。
-   1. 宛先がエントリ済みであれば、`istio-proxy`コンテナはリクエストの宛先にIstio EgressGatewayのPodを選択します。
-   2. 宛先が未エントリであれば、`istio-proxy`コンテナはリクエストの宛先にサービスメッシュ外 (`PassthrouCluster`) を選択します。
-4. `3`で選択した宛先にリクエストを送信します。
+2. 送信元マイクロサービスは、`istio-proxy`コンテナにHTTPでリクエストを送信します。送信元マイクロサービスはSSL証明書を持たないため、HTTPです。
+3. `3`で選択した宛先にHTTPSでリクエストを送信します。
 
 ![istio_envoy_istio_egress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_egress.png)
 
@@ -115,12 +112,20 @@ HTTPまたはTCPを処理する場合で、処理の流れが少しだけ異な�
 
 ## サービスメッシュ外からの通信
 
+Istio IngressGatewayのPod内の`istio-proxy`コンテナは、KubernetesリソースやIstioカスタムリソースの設定に応じて、リクエストの宛先のPodを選択します。
+
 ![istio_envoy_envoy-flow_ingress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow_ingress.png)
 
 ## マイクロサービス間の通信
 
+送信元マイクロサービスPodの`istio-proxy`コンテナは、KubernetesリソースやIstioカスタムリソースの設定に応じて、リクエストの宛先のPodを選択します。
+
 ![istio_envoy_envoy-flow_service-to-service](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow_service-to-service.png)
 
 ## サービスメッシュ外への通信
+
+1. `istio-proxy`コンテナは、リクエストの宛先がエントリ済みか否かに応じて、リクエストを宛先を切り替えます。
+   1. 宛先がエントリ済みであれば、`istio-proxy`コンテナはリクエストの宛先にIstio EgressGatewayのPodを選択します。
+   2. 宛先が未エントリであれば、`istio-proxy`コンテナはリクエストの宛先にサービスメッシュ外 (`PassthrouCluster`) を選択します。
 
 ![istio_envoy_envoy-flow_egress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow_egress.png)
