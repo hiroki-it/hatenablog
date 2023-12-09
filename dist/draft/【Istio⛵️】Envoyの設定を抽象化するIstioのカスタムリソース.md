@@ -93,9 +93,17 @@ Istioによるトラフィック管理は、通信方向の観点で3つの種�
 
 ## マイクロサービス間の通信
 
+マイクロサービスPodから別のマイクロサービスPodにリクエストを送信する場合です。
+
+なお、HTTPS (相互TLS) を採用している前提です。
+
 ![istio_envoy_istio_resource_service-to-service](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_resource_service-to-service.png)
 
 ## サービスメッシュ外への通信
+
+マイクロサービスPodからサービスメッシュ外にリクエストを送信する場合です。
+
+なお、HTTPS (相互TLS) を採用している前提です。
 
 ![istio_envoy_istio_resource_egress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_resource_egress.png)
 
@@ -121,7 +129,7 @@ Istioコントロールプレーンは、KubernetesリソースやIstioカスタ
 
 Istioコントロールプレーンは、Envoy翻訳レイヤーにて、KubernetesリソースやIstioカスタムリソースをEnvoyの設定値に翻訳します。
 
-以下は、その対応関係です。
+以下は、翻訳の対応関係です。
 
 <table>
 <thead>
@@ -189,19 +197,51 @@ Istioコントロールプレーンは、Envoy翻訳レイヤーにて、Kuberne
 
 ## サービスメッシュ外からの通信
 
+### 概要
+
+マイクロサービスPodからサービスメッシュ外にリクエストを送信する場合です。
+
+送信側と宛先側の`istio-proxy`コンテナで、いずれのリソースが関係するのかを整理しました。
+
+Gatewayのみ送信側`istio-proxy`コンテナに関係します。
+
+送信側と宛先側の`istio-proxy`コンテナの間で、Gateway以外は同じリソースが関係します。
+
 ![istio_envoy_istio-proxy_resource_ingress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio-proxy_resource_ingress.png)
+
+### 詳細
 
 ![istio_envoy_envoy-flow_resource_ingress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow_resource_ingress.png)
 
+<br>
+
 ## マイクロサービス間の通信
+
+### 概要
+
+マイクロサービスPodからサービスメッシュ外にリクエストを送信する場合です。
+
+なお、HTTPS (相互TLS) を採用している前提です。
 
 ![istio_envoy_istio-proxy_resource_service-to-service](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio-proxy_resource_service-to-service.png)
 
+### 詳細
+
 ![istio_envoy_envoy-flow_resource_service-to-service](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow_resource_service-to-service.png)
+
+<br>
 
 ## サービスメッシュ外への通信
 
+### 概要
+
+マイクロサービスPodからサービスメッシュ外にリクエストを送信する場合です。
+
+なお、HTTPS (相互TLS) を採用している前提です。
+
 ![istio_envoy_istio-proxy_resource_egress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio-proxy_resource_egress.png)
+
+### 詳細
 
 ![istio_envoy_envoy-flow_resource_egress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow_resource_egress.png)
 
