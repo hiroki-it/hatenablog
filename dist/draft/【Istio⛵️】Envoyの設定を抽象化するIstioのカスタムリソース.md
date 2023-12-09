@@ -8,7 +8,7 @@ Title: 【Istio⛵️】IstioがEnvoyのトラフィック管理を抽象化す�
 
 Istioは、マイクロサービスアーキテクチャ上にサービスメッシュを実装するツールです。
 
-サービスメッシュを実装するために、IstioはEnvoyの様々な機能を抽象化し、カスタムリソースでEnvoyを設定できるようにします。
+サービスメッシュを実装するために、IstioはEnvoyの様々な機能を抽象化し、KubernetesリソースやIstioカスタムリソースでEnvoyを設定できるようにします。
 
 今回は、Istioのトラフィック管理機能に注目し、Envoyをどのように抽象化しているのかを解説しようと思います👍
 
@@ -22,6 +22,8 @@ IstioはEnvoyを使用してトラフィックを管理します。
 
 Istioによるトラフィック管理は、通信方向の観点で3つの種類に分類できます。
 
+<br>
+
 ## サービスメッシュ外からの通信
 
 サービスメッシュ外からリクエストを送信する場合です。
@@ -29,41 +31,63 @@ Istioによるトラフィック管理は、通信方向の観点で3つの種�
 なお、HTTPS (相互TLS) を採用している前提です。
 
 1. Istioコントロールプレーンは、KubernetesリソースやIstioカスタムリソースの設定を各Pod内の`istio-proxy`コンテナに提供します。
-2. クライアントは、サービスメッシュ外から内にリクエストを送信します。
-3. KubernetesCluster内に入ったリクエストは、Istio IngressGatewayのPodに到達します。
-4.
-5. `istio-proxy`コンテナは、マイクロサービス (例：API Gateway相当のマイクロサービス) のPodにリクエストを送信します。
+2. クライアントは、リクエストをサービスメッシュ外から内に送信します。
+3. Istio IngressGateway Podの`istio-proxy`コンテナは、リクエストを受信します。
+4. Istio IngressGateway Podの`istio-proxy`コンテナは、HTTPSでリクエストを宛先マイクロサービス Pod (例：API Gateway相当のマイクロサービス) に送信します。
+5. マイクロサービスPodの`istio-proxy`コンテナは、リクエストを受信します。
+6. マイクロサービスPodの`istio-proxy`コンテナは、HTTPでリクエストを宛先マイクロサービスに送信します。
 
 ![istio_envoy_istio_ingress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_ingress.png)
 
+<br>
+
 ## マイクロサービス間の通信
 
-マイクロサービスのPodから別のマイクロサービスのPodにリクエストを送信する場合です。
+マイクロサービスPodから別のマイクロサービスPodにリクエストを送信する場合です。
 
 なお、HTTPS (相互TLS) を採用している前提です。
 
 1. Istioコントロールプレーンは、KubernetesリソースやIstioカスタムリソースの設定を各Pod内の`istio-proxy`コンテナに提供します。
 2. 送信元マイクロサービスは、`istio-proxy`コンテナにHTTPでリクエストを送信します。
-3. 送信元マイクロサービスPodの`istio-proxy`コンテナは、別のマイクロサービスのPodにHTTPSでリクエストを送信します。
-4. 宛先マイクロサービスPodの`istio-proxy`コンテナは、宛先マイクロサービスにHTTPでリクエストを送信します。
+3. 送信元マイクロサービスPodの`istio-proxy`コンテナは、HTTPSでリクエストを宛先マイクロサービスPodに送信します。
+4. 宛先マイクロサービスPodの`istio-proxy`コンテナは、リクエストを受信します。
+5. 宛先マイクロサービスPodの`istio-proxy`コンテナは、HTTPでリクエストを宛先マイクロサービスに送信します。
 
 ![istio_envoy_istio_service-to-service](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_service-to-service.png)
 
+<br>
+
 ## サービスメッシュ外への通信
 
-マイクロサービスのPodからサービスメッシュ外にリクエストを送信する場合です。
+マイクロサービスPodからサービスメッシュ外にリクエストを送信する場合です。
 
 なお、HTTPS (相互TLS) を採用している前提です。
 
 1. Istioコントロールプレーンは、KubernetesリソースやIstioカスタムリソースの設定を各Pod内の`istio-proxy`コンテナに提供します。
 2. 送信元マイクロサービスは、`istio-proxy`コンテナにHTTPでリクエストを送信します。送信元マイクロサービスはSSL証明書を持たないため、HTTPです。
-3. `3`で選択した宛先にHTTPSでリクエストを送信します。
+3. 送信元マイクロサービスPodの`istio-proxy`コンテナは、リクエストの宛先がエントリ済みか否かに応じて、リクエストの宛先を切り替えます。
+   1. 宛先がエントリ済みであれば、`istio-proxy`コンテナはリクエストの宛先にIstio EgressGateway Podを選択します。
+   2. 宛先が未エントリであれば、`istio-proxy`コンテナはリクエストの宛先にサービスメッシュ外を選択します。
+4. 選択した宛先にHTTPSでリクエストを送信します。
 
 ![istio_envoy_istio_egress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_egress.png)
+
+<br>
 
 # 03. トラフィック管理を宣言するためのリソース
 
 ## サービスメッシュ外からの通信
+
+サービスメッシュ外からリクエストを送信する場合です。
+
+なお、HTTPS (相互TLS) を採用している前提です。
+
+1. Istioコントロールプレーンは、KubernetesリソースやIstioカスタムリソースの設定を各Pod内の`istio-proxy`コンテナに提供します。
+2. クライアントは、リクエストをサービスメッシュ外から内に送信します。
+3. Istio IngressGateway Podの`istio-proxy`コンテナは、リクエストを受信します。
+4. Istio IngressGateway Podの`istio-proxy`コンテナは、HTTPSでリクエストを宛先マイクロサービス Pod (例：API Gateway相当のマイクロサービス) に送信します。
+5. マイクロサービスPodの`istio-proxy`コンテナは、リクエストを受信します。
+6. マイクロサービスPodの`istio-proxy`コンテナは、HTTPでリクエストを宛先マイクロサービスに送信します。
 
 ![istio_envoy_istio_resource_ingress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_resource_ingress.png)
 
@@ -77,24 +101,107 @@ Istioによるトラフィック管理は、通信方向の観点で3つの種�
 
 # 04. リソースとEnvoyの関係性
 
-|                  | Kubernetes<br> Service | Kubernetes<br> Endpoints | Istio<br> Gateway | Istio<br> VirtualService | Istio<br>DestinationRule | Istio<br> ServiceEntry | Istio<br> PeerAuthentication |
-| ---------------- | ---------------------- | ------------------------ | ----------------- | ------------------------ | ------------------------ | ---------------------- | ---------------------------- |
-| リスナー値       | ✅                     |                          | ✅                | ✅                       |                          |                        | ✅                           |
-| ルート値         | ✅                     |                          |                   | ✅<br>(HTTPの場合のみ)   |                          |                        |                              |
-| クラスター値     | ✅                     |                          |                   |                          | ✅                       | ✅                     | ✅                           |
-| エンドポイント値 |                        | ✅                       |                   |                          | ✅                       | ✅                     |                              |
+<br>
+
+## Istioコントロールプレーン
+
+### 仕組み
+
+Istioコントロールプレーンは、KubernetesリソースやIstioカスタムリソースを取得して、Envoyの設定値に翻訳します。
+
+仕組みを簡単に解説します。
+
+1. Istioコントロールプレーンは、リソース取得レイヤーにて、kube-apiserverからKubernetesリソースやIstioカスタムリソースの状態を取得します。
+2. Envoy翻訳レイヤーにて、取得したリソースの状態をEnvoyの設定値に変換します。
+3. `istio-proxy`配布レイヤーにて、`istio-proxy`コンテナをマイクロサービスPodに配布します。反対に、マイクロサービスPodが`istio-proxy`配布レイヤーから`istio-proxy`コンテナを取得しにいくこともあります。
+
+![istio_envoy_istio-proxy_resource_control-plane](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio-proxy_resource_control-plane.png)
+
+### リソースとEnvoyの翻訳関係
+
+Istioコントロールプレーンは、Envoy翻訳レイヤーにて、KubernetesリソースやIstioカスタムリソースをEnvoyの設定値に翻訳します。
+
+以下は、その対応関係です。
+
+<table>
+<thead>
+    <tr>
+      <th></th>
+      <th colspan="2" style="text-align: center;">Kubernetesリソース</th>
+      <th colspan="5" style="text-align: center;">Istioカスタムリソース</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+      <th style="text-align: center;"><nobr>Envoyの設定値</nobr></th>
+      <th style="text-align: center;">Service</th>
+      <th style="text-align: center;">Endpoints</th>
+      <th style="text-align: center;">Gateway</th>
+      <th style="text-align: center;">Virtual<br>Service</th>
+      <th style="text-align: center;">Destination<br>Rule</th>
+      <th style="text-align: center;">Service<br>Entry</th>
+      <th style="text-align: center;">Peer<br>Authentication</th>
+    </tr>
+    <tr>
+      <th style="text-align: center;"><nobr>リスナー</nobr></th>
+      <th style="text-align: center;">✅</th>
+      <th style="text-align: center;"></th>
+      <th style="text-align: center;">✅</th>
+      <th style="text-align: center;">✅</th>
+      <th style="text-align: center;"></th>
+      <th style="text-align: center;"></th>
+      <th style="text-align: center;">✅</th>
+    </tr>
+    <tr>
+      <th style="text-align: center;"><nobr>ルート</nobr></th>
+      <th style="text-align: center;">✅</th>
+      <th style="text-align: center;"></th>
+      <th style="text-align: center;"></th>
+      <th style="text-align: center;">✅ <br />(HTTPの場合のみ) </th>
+      <th style="text-align: center;"></th>
+      <th style="text-align: center;"></th>
+      <th style="text-align: center;"></th>
+    </tr>
+    <tr>
+      <th style="text-align: center;"><nobr>クラスター</nobr></th>
+      <th style="text-align: center;">✅</th>
+      <th style="text-align: center;"></th>
+      <th style="text-align: center;"></th>
+      <th style="text-align: center;"></th>
+      <th style="text-align: center;">✅</th>
+      <th style="text-align: center;">✅</th>
+      <th style="text-align: center;">✅</th>
+    </tr>
+    <tr>
+      <th style="text-align: center;"><nobr>エンドポイント</nobr></th>
+      <th style="text-align: center;"></th>
+      <th style="text-align: center;">✅</th>
+      <th style="text-align: center;"></th>
+      <th style="text-align: center;"></th>
+      <th style="text-align: center;">✅</th>
+      <th style="text-align: center;">✅</th>
+      <th style="text-align: center;"></th>
+    </tr>
+</tbody>
+</table>
 
 <br>
 
 ## サービスメッシュ外からの通信
 
+![istio_envoy_istio-proxy_resource_ingress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio-proxy_resource_ingress.png)
+
 ![istio_envoy_envoy-flow_resource_ingress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow_resource_ingress.png)
 
 ## マイクロサービス間の通信
 
+![istio_envoy_istio-proxy_resource_service-to-service](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio-proxy_resource_service-to-service.png)
+
 ![istio_envoy_envoy-flow_resource_service-to-service](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow_resource_service-to-service.png)
 
 ## サービスメッシュ外への通信
+
+![istio_envoy_istio-proxy_resource_egress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio-proxy_resource_egress.png)
 
 ![istio_envoy_envoy-flow_resource_egress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow_resource_egress.png)
 
@@ -112,20 +219,20 @@ HTTPまたはTCPを処理する場合で、処理の流れが少しだけ異な�
 
 ## サービスメッシュ外からの通信
 
-Istio IngressGatewayのPod内の`istio-proxy`コンテナは、KubernetesリソースやIstioカスタムリソースの設定に応じて、リクエストの宛先のPodを選択します。
+Istio IngressGateway Pod内の`istio-proxy`コンテナは、KubernetesリソースやIstioカスタムリソースの設定に応じて、リクエストの宛先Podを選択します。
 
 ![istio_envoy_envoy-flow_ingress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow_ingress.png)
 
 ## マイクロサービス間の通信
 
-送信元マイクロサービスPodの`istio-proxy`コンテナは、KubernetesリソースやIstioカスタムリソースの設定に応じて、リクエストの宛先のPodを選択します。
+送信元マイクロサービスPodの`istio-proxy`コンテナは、KubernetesリソースやIstioカスタムリソースの設定に応じて、リクエストの宛先Podを選択します。
 
 ![istio_envoy_envoy-flow_service-to-service](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow_service-to-service.png)
 
 ## サービスメッシュ外への通信
 
 1. `istio-proxy`コンテナは、リクエストの宛先がエントリ済みか否かに応じて、リクエストを宛先を切り替えます。
-   1. 宛先がエントリ済みであれば、`istio-proxy`コンテナはリクエストの宛先にIstio EgressGatewayのPodを選択します。
+   1. 宛先がエントリ済みであれば、`istio-proxy`コンテナはリクエストの宛先にIstio EgressGateway Podを選択します。
    2. 宛先が未エントリであれば、`istio-proxy`コンテナはリクエストの宛先にサービスメッシュ外 (`PassthrouCluster`) を選択します。
 
 ![istio_envoy_envoy-flow_egress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow_egress.png)
