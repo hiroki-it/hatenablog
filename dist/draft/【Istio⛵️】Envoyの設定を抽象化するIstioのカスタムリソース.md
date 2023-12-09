@@ -18,7 +18,7 @@ KubernetesリソースやIstioカスタムリソースを使用して、Envoyの
 
 # 02. Envoyのトラフィック管理を抽象化するリソース
 
-Istioは、KubernetesリソースやIstioカスタムリソースでEnvoyを抽象化します。
+Istioは、KubernetesリソースやIstioカスタムリソースでEnvoyを抽象化に関わります。
 
 本章では、どのようなリソースがEnvoyのトラフィック管理を抽象化しているか、通信の方向に分けて解説していきます。
 
@@ -164,7 +164,7 @@ Envoyを抽象化する責務を持つのは、Istioコントロールプレー�
 
 Istioコントロールプレーンは、KubernetesリソースやIstioカスタムリソースをEnvoyの設定値に翻訳します。
 
-以下は、翻訳の対応関係です。
+以下で、各リソースがいずれのEnvoyの設定値を抽象化しているかを整理しました。
 
 <table>
 <thead>
@@ -232,13 +232,13 @@ Istioコントロールプレーンは、KubernetesリソースやIstioカスタ
 
 ## サービスメッシュ外からの通信
 
-送信側と宛先側の`istio-proxy`コンテナで、いずれのリソースが関係するのかを整理しました。
-
-### 概要
+### 抽象化に関わるリソース
 
 サービスメッシュ内のPodから外のシステムにリクエストを送信する場合です。
 
-特に、以下のリソースが関係します。
+特に、以下のリソースが抽象化に関わります。
+
+なお、HTTPS (相互TLS) を採用している前提です。
 
 <table>
 <thead>
@@ -294,9 +294,9 @@ Istioコントロールプレーンは、KubernetesリソースやIstioカスタ
 
 1. Gatewayを使用しているため、送信側の`istio-proxy`コンテナでは、
 
-送信側と宛先側の`istio-proxy`コンテナの間で、Gateway以外は同じリソースが関係します。
+送信側と宛先側の`istio-proxy`コンテナの間で、Gateway以外は同じリソースが抽象化に関わります。
 
-Gatewayのみ送信側`istio-proxy`コンテナに関係します。
+Gatewayのみ送信側`istio-proxy`コンテナに関わります。
 
 ![istio_envoy_istio-proxy_resource_ingress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio-proxy_resource_ingress.png)
 
@@ -312,11 +312,65 @@ Gatewayのみ送信側`istio-proxy`コンテナに関係します。
 
 ## マイクロサービス間の通信
 
-### 概要
+### 抽象化に関わるリソース
 
 サービスメッシュ内のPodから外のシステムにリクエストを送信する場合です。
 
+特に、以下のリソースが抽象化に関わります。
+
 なお、HTTPS (相互TLS) を採用している前提です。
+
+<table>
+<thead>
+    <tr>
+      <th></th>
+      <th colspan="2" style="text-align: center;">Kubernetesリソース</th>
+      <th colspan="5" style="text-align: center;">Istioカスタムリソース</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+      <th style="text-align: center;"><nobr>Envoyの設定値</nobr></th>
+      <th style="text-align: center;">Service</th>
+      <th style="text-align: center;">Endpoints</th>
+      <th style="text-align: center;">Virtual<br>Service</th>
+      <th style="text-align: center;">Destination<br>Rule</th>
+      <th style="text-align: center;">Peer<br>Authentication</th>
+    </tr>
+    <tr>
+      <th style="text-align: center;"><nobr>リスナー</nobr></th>
+      <th style="text-align: center;">✅</th>
+      <th style="text-align: center;"></th>
+      <th style="text-align: center;">✅</th>
+      <th style="text-align: center;"></th>
+      <th style="text-align: center;">✅</th>
+    </tr>
+    <tr>
+      <th style="text-align: center;"><nobr>ルート</nobr></th>
+      <th style="text-align: center;">✅</th>
+      <th style="text-align: center;"></th>
+      <th style="text-align: center;">✅ <br />(HTTPの場合のみ) </th>
+      <th style="text-align: center;"></th>
+      <th style="text-align: center;"></th>
+    </tr>
+    <tr>
+      <th style="text-align: center;"><nobr>クラスター</nobr></th>
+      <th style="text-align: center;">✅</th>
+      <th style="text-align: center;"></th>
+      <th style="text-align: center;"></th>
+      <th style="text-align: center;">✅</th>
+      <th style="text-align: center;">✅</th>
+    </tr>
+    <tr>
+      <th style="text-align: center;"><nobr>エンドポイント</nobr></th>
+      <th style="text-align: center;"></th>
+      <th style="text-align: center;">✅</th>
+      <th style="text-align: center;"></th>
+      <th style="text-align: center;">✅</th>
+      <th style="text-align: center;"></th>
+    </tr>
+</tbody>
+</table>
 
 ![istio_envoy_istio-proxy_resource_service-to-service](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio-proxy_resource_service-to-service.png)
 
@@ -328,11 +382,65 @@ Gatewayのみ送信側`istio-proxy`コンテナに関係します。
 
 ## サービスメッシュ外への通信
 
-### 概要
+### 抽象化に関わるリソース
 
 サービスメッシュ内のPodから外のシステムにリクエストを送信する場合です。
 
+特に、以下のリソースが抽象化に関わります。
+
 なお、HTTPS (相互TLS) を採用している前提です。
+
+<table>
+<thead>
+    <tr>
+      <th></th>
+      <th colspan="2" style="text-align: center;">Kubernetesリソース</th>
+      <th colspan="5" style="text-align: center;">Istioカスタムリソース</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+      <th style="text-align: center;"><nobr>Envoyの設定値</nobr></th>
+      <th style="text-align: center;">Service</th>
+      <th style="text-align: center;">Endpoints</th>
+      <th style="text-align: center;">Gateway</th>
+      <th style="text-align: center;">Virtual<br>Service</th>
+      <th style="text-align: center;">Service<br>Entry</th>
+    </tr>
+    <tr>
+      <th style="text-align: center;"><nobr>リスナー</nobr></th>
+      <th style="text-align: center;">✅</th>
+      <th style="text-align: center;"></th>
+      <th style="text-align: center;">✅</th>
+      <th style="text-align: center;">✅</th>
+      <th style="text-align: center;"></th>
+    </tr>
+    <tr>
+      <th style="text-align: center;"><nobr>ルート</nobr></th>
+      <th style="text-align: center;">✅</th>
+      <th style="text-align: center;"></th>
+      <th style="text-align: center;"></th>
+      <th style="text-align: center;">✅ <br />(HTTPの場合のみ) </th>
+      <th style="text-align: center;"></th>
+    </tr>
+    <tr>
+      <th style="text-align: center;"><nobr>クラスター</nobr></th>
+      <th style="text-align: center;">✅</th>
+      <th style="text-align: center;"></th>
+      <th style="text-align: center;"></th>
+      <th style="text-align: center;"></th>
+      <th style="text-align: center;">✅</th>
+    </tr>
+    <tr>
+      <th style="text-align: center;"><nobr>エンドポイント</nobr></th>
+      <th style="text-align: center;"></th>
+      <th style="text-align: center;">✅</th>
+      <th style="text-align: center;"></th>
+      <th style="text-align: center;"></th>
+      <th style="text-align: center;">✅</th>
+    </tr>
+</tbody>
+</table>
 
 ![istio_envoy_istio-proxy_resource_egress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio-proxy_resource_egress.png)
 
