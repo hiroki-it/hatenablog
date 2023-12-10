@@ -59,7 +59,7 @@ KubernetesリソースやIstioカスタムリソースの状態がEnvoy設定値
 
 ## サービスメッシュ外への通信
 
-サービスメッシュ内のPodから外のシステム (例：データベース、ドメイン委譲先の外部API) にリクエストを送信する場合です。
+サービスメッシュ内のPodから外のシステム (例：データベース、ドメインレイヤー委譲先の外部API) にリクエストを送信する場合です。
 
 なお、Pod間通信にHTTPS (相互TLS) を採用している前提です。
 
@@ -124,7 +124,7 @@ Istioは、各リソースに状態に応じて、Envoyをプロセスとした`
 
 ## サービスメッシュ外への通信
 
-サービスメッシュ内のPodから外のシステム (例：データベース、ドメイン委譲先の外部API) にリクエストを送信する場合です。
+サービスメッシュ内のPodから外のシステム (例：データベース、ドメインレイヤー委譲先の外部API) にリクエストを送信する場合です。
 
 なお、Pod間通信にHTTPS (相互TLS) を採用している前提です。
 
@@ -169,7 +169,7 @@ Envoyを抽象化する責務を持つのは、Istioコントロールプレー�
 
 Istioコントロールプレーンは、KubernetesリソースやIstioカスタムリソースの状態をEnvoy設定値に翻訳します。
 
-以下で、各リソースがいずれのEnvoy設定値の抽象化に関わるのかを整理しました。
+以下の通り、各リソースがいずれのEnvoy設定値の抽象化に関わるのかを整理しました。
 
 <table>
 <thead>
@@ -239,7 +239,7 @@ Istioコントロールプレーンは、KubernetesリソースやIstioカスタ
 
 ### 抽象化に関わるリソース一覧
 
-サービスメッシュ内のPodから外のシステム (例：データベース、ドメイン委譲先の外部API) にリクエストを送信する場合、以下のリソースが抽象化に関わります。
+サービスメッシュ内のPodから外のシステム (例：データベース、ドメインレイヤー委譲先の外部API) にリクエストを送信する場合、以下のリソースが抽象化に関わります。
 
 なお、Pod間通信にHTTPS (相互TLS) を採用している前提です。
 
@@ -311,11 +311,14 @@ Istioコントロールプレーンは、KubernetesリソースやIstioカスタ
 
 前述の表を参考に、各リソースとEnvoy設定値の関係を実際の処理の流れに適用します。
 
+![istio_envoy_envoy-flow_resource_ingress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow_resource_ingress.png)
+
 Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリソース (Gateway、VirtualService、DestinationRule、PeerAuthentication) を翻訳します。
 
-また、翻訳結果をIstio IngressGateway Podやこれの宛先Podの`istio-proxy`コンテナに適用します。
+以下の通り、翻訳結果をIstio IngressGateway Podやこれの宛先Podの`istio-proxy`コンテナに適用します。
 
-![istio_envoy_envoy-flow_resource_ingress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow_resource_ingress.png)
+- Gatewayの翻訳結果は送信元Podのみで使用します。
+- Gateway以外のリソースの翻訳結果は、送信元Podと宛先のPodの両方で共有します。
 
 <br>
 
@@ -403,11 +406,15 @@ Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリ�
 
 前述の表を参考に、各リソースとEnvoy設定値の関係を実際の処理の流れに適用します。
 
+![istio_envoy_envoy-flow_resource_service-to-service](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow_resource_service-to-service.png)
+
 Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリソース (VirtualService、DestinationRule、PeerAuthentication) を翻訳します。
 
 また、翻訳結果を送信元Podや宛先Podの`istio-proxy`コンテナに適用します。
 
-![istio_envoy_envoy-flow_resource_service-to-service](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow_resource_service-to-service.png)
+リソースの翻訳結果に関しては、送信元Podと宛先Podの両方で使用します。
+
+- 全てのリソースの翻訳結果を、送信元Podと宛先のPodの両方で共有します。
 
 <br>
 
@@ -423,7 +430,7 @@ Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリ�
 
 ### 抽象化に関わるリソース
 
-サービスメッシュ内のPodから外のシステム (例：データベース、ドメイン委譲先の外部API) にリクエストを送信する場合、以下のリソースが抽象化に関わります。
+サービスメッシュ内のPodから外のシステム (例：データベース、ドメインレイヤー委譲先の外部API) にリクエストを送信する場合、以下のリソースが抽象化に関わります。
 
 なお、Pod間通信にHTTPS (相互TLS) を採用している前提です。
 
@@ -541,7 +548,7 @@ Istioが各リソースの状態をEnvoy設定値をどのように翻訳して�
 
 ## サービスメッシュ外への通信
 
-サービスメッシュ内のPodから外のシステム (例：データベース、ドメイン委譲先の外部API) にリクエストを送信する場合です。
+サービスメッシュ内のPodから外のシステム (例：データベース、ドメインレイヤー委譲先の外部API) にリクエストを送信する場合です。
 
 なお、Pod間通信にHTTPS (相互TLS) を採用している前提です。
 
@@ -550,5 +557,24 @@ Istioが各リソースの状態をEnvoy設定値をどのように翻訳して�
    2. 宛先が未エントリであれば、`istio-proxy`コンテナはリクエストの宛先にサービスメッシュ外 (`PassthrouCluster`) を選択します。
 
 ![istio_envoy_envoy-flow_egress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow_egress.png)
+
+<br>
+
+# 参考
+
+- Istioのトラフィック管理における通信方向の種類
+  - https://www.envoyproxy.io/docs/envoy/latest/intro/deployment_types/deployment_types
+- Istioコントロールプレーンのアーキテクチャとレイヤー責務
+  - https://docs.google.com/document/d/1S5ygkxR1alNI8cWGG4O4iV8zp8dA6Oc23zQCvFxr83U/edit#heading=h.a1bsj2j5pan1
+  - https://github.com/istio/istio/blob/master/architecture/networking/pilot.md
+- IstioとEnvoyの設定値の関係
+  - https://youtu.be/XAKY24b7XjQ?si=pnfA7Fnr72KY-kd-
+  - https://www.slideshare.net/AspenMesh/debugging-your-debugging-tools-what-to-do-when-your-service-mesh-goes-down#19
+- Envoyや`istio-proxy`コンテナのリクエスト処理の流れ
+  - https://youtu.be/XAKY24b7XjQ?si=pnfA7Fnr72KY-kd-
+  - https://www.zhaohuabing.com/post/2018-09-25-istio-traffic-management-impl-intro/
+- HTTPの処理に関係するネットワークフィルターやHTTPフィルター
+  - https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/http/http_connection_management
+  - https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_filters/router_filter
 
 <br>
