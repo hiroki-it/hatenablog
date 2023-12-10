@@ -1,5 +1,5 @@
 ---
-Title: 【Istio⛵️】IstioがEnvoyのトラフィック管理を抽象化する仕組み
+Title: 【Istio⛵️】IstioがEnvoyの抽象化によりトラフィックを管理する仕組み
 ---
 
 # 01. はじめに
@@ -8,7 +8,7 @@ Title: 【Istio⛵️】IstioがEnvoyのトラフィック管理を抽象化す�
 
 Istio⛵️は、Envoyを抽象化し、サービスメッシュを実装するツールです。
 
-KubernetesリソースやIstioカスタムリソースを使用して、Envoyの設定を抽象化し、Envoyを簡単に扱えるようにします。
+開発者は、KubernetesリソースやIstioカスタムリソースの状態に基づいて、Envoyを設定できるようになります。
 
 今回は、Istioのトラフィック管理に注目し、各リソースがEnvoyをどのように抽象化してトラフィック管理を実装しているのか、を解説しようと思います👍
 
@@ -16,13 +16,13 @@ KubernetesリソースやIstioカスタムリソースを使用して、Envoyの
 
 <br>
 
-# 02. Envoyのトラフィック管理を抽象化するリソース
+# 02. 様々なリソースがEnvoy抽象化に関わる
 
-Istioは、KubernetesリソースやIstioカスタムリソースでEnvoyを抽象化に関わります。
+KubernetesリソースやIstioカスタムリソースの状態がEnvoy設定値に関わります。
 
 本章では、どのようなリソースがEnvoyのトラフィック管理を抽象化しているか、通信の方向に分けて解説していきます。
 
-ひとまず、Envoyの話はしません。
+ひとまず、Envoyの具体的な設定までは言及しません。
 
 <br>
 
@@ -72,13 +72,17 @@ Istioは、KubernetesリソースやIstioカスタムリソースでEnvoyを抽�
 
 <br>
 
-# 03. トラフィック管理を宣言するためのリソース
+# 03. Istioはリソースの状態に応じて`istio-proxy`コンテナを作成する
 
-前章では、各リソースによって抽象化されたEnvoyまで言及しませんでした。
+前章では、KubernetesリソースやIstioカスタムリソースによって抽象化されたEnvoyまで言及しませんでした。
 
 本章では、もう少し具体化します。
 
-Istioが、Envoyを持つ`istio-proxy`を使用して、どのようにトラフィックを管理しているのかを解説します。
+Istioは、各リソースに状態に応じて、Envoyをプロセスとした`istio-proxy`コンテナを作成します。
+
+この`istio-proxy`コンテナを使用して、Istioがどのようにトラフィックを管理しているのかを解説します。
+
+ひとまず、Envoyの具体的な設定までは言及しません。
 
 <br>
 
@@ -136,13 +140,13 @@ Istioが、Envoyを持つ`istio-proxy`を使用して、どのようにトラフ
 
 <br>
 
-# 04. 各リソースとEnvoyの関係性
+# 04. Istioはリソースの状態をEnvoy設定値に翻訳する
 
-前章では、`istio-proxy`のEnvoyの設定値まで、言及しませんでした。
+前章では、`istio-proxy`コンテナ内のEnvoy設定値まで、言及しませんでした。
 
-本章では、もう少し具体化します。
+本章では、さらに具体化します。
 
-各リソースが`istio-proxy`のEnvoyの設定値をどのように抽象化しているのか、を解説します。
+Istioが各リソースの状態をEnvoy設定値をどのように翻訳しているのか、を解説します。
 
 <br>
 
@@ -155,16 +159,18 @@ Envoyを抽象化する責務を持つのは、Istioコントロールプレー�
 ここでは、IstioコントロールプレーンがEnvoyを抽象化する仕組みを簡単に解説します。
 
 1. Istioコントロールプレーンは、リソース取得レイヤーにて、kube-apiserverからKubernetesリソースやIstioカスタムリソースの状態を取得します。
-2. Envoy翻訳レイヤーにて、取得したリソースの状態をEnvoyの設定値に変換します。
+2. Envoy翻訳レイヤーにて、取得したリソースの状態をEnvoy設定値に変換します。
 3. `istio-proxy`配布レイヤーにて、`istio-proxy`コンテナをPodに配布します。反対に、Podが`istio-proxy`配布レイヤーから`istio-proxy`コンテナを取得しにいくこともあります。
 
 ![istio_envoy_istio-proxy_resource_control-plane](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio-proxy_resource_control-plane.png)
 
 ### 各リソースとEnvoy設定値の関係
 
-Istioコントロールプレーンは、KubernetesリソースやIstioカスタムリソースをEnvoyの設定値に翻訳します。
+Istioコントロールプレーンは、KubernetesリソースやIstioカスタムリソースの状態をEnvoy設定値に翻訳します。
 
-以下で、各リソースがいずれのEnvoyの設定値を抽象化しているかを整理しました。
+以下で、各リソースがいずれのEnvoy設定値の抽象化に関わるのかを整理しました。
+
+Envoyは、
 
 <table>
 <thead>
@@ -176,7 +182,7 @@ Istioコントロールプレーンは、KubernetesリソースやIstioカスタ
 </thead>
 <tbody>
     <tr>
-      <th style="text-align: center;"><nobr>Envoyの設定値</nobr></th>
+      <th style="text-align: center;"><nobr>Envoy設定値</nobr></th>
       <th style="text-align: center;">Service</th>
       <th style="text-align: center;">Endpoints</th>
       <th style="text-align: center;">Gateway</th>
@@ -250,7 +256,7 @@ Istioコントロールプレーンは、KubernetesリソースやIstioカスタ
 </thead>
 <tbody>
     <tr>
-      <th style="text-align: center;"><nobr>Envoyの設定値</nobr></th>
+      <th style="text-align: center;"><nobr>Envoy設定値</nobr></th>
       <th style="text-align: center;">Service</th>
       <th style="text-align: center;">Endpoints</th>
       <th style="text-align: center;">Gateway</th>
@@ -270,7 +276,7 @@ Istioコントロールプレーンは、KubernetesリソースやIstioカスタ
       <th style="text-align: center;">✅</th>
       <th style="text-align: center;"></th>
       <th style="text-align: center;"></th>
-      <th style="text-align: center;">✅ <br />(HTTPの場合のみ) </th>
+      <th style="text-align: center;">✅ <br />(HTTP/Sのみ) </th>
       <th style="text-align: center;"></th>
     </tr>
     <tr>
@@ -292,21 +298,21 @@ Istioコントロールプレーンは、KubernetesリソースやIstioカスタ
 </tbody>
 </table>
 
-1. Gatewayを使用しているため、送信側の`istio-proxy`コンテナでは、
+<br>
 
-送信側と宛先側の`istio-proxy`コンテナの間で、Gateway以外は同じリソースが抽象化に関わります。
+### トラフィック管理に当てはめる
 
-Gatewayのみ送信側`istio-proxy`コンテナに関わります。
+Istio IngressGateway Podの`istio-proxy`コンテナでのみ、GatewayがEnvoyのリスナーを抽象化します。
+
+トラフィック管理Envoy設定値に照らし合わせていきます。
 
 ![istio_envoy_istio-proxy_resource_ingress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio-proxy_resource_ingress.png)
-
-### 詳細
-
-具体的にEnvoyの設定値に照らし合わせていきます。
 
 1.
 
 ![istio_envoy_envoy-flow_resource_ingress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow_resource_ingress.png)
+
+<br>
 
 <br>
 
@@ -330,7 +336,7 @@ Gatewayのみ送信側`istio-proxy`コンテナに関わります。
 </thead>
 <tbody>
     <tr>
-      <th style="text-align: center;"><nobr>Envoyの設定値</nobr></th>
+      <th style="text-align: center;"><nobr>Envoy設定値</nobr></th>
       <th style="text-align: center;">Service</th>
       <th style="text-align: center;">Endpoints</th>
       <th style="text-align: center;">Virtual<br>Service</th>
@@ -372,9 +378,11 @@ Gatewayのみ送信側`istio-proxy`コンテナに関わります。
 </tbody>
 </table>
 
-![istio_envoy_istio-proxy_resource_service-to-service](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio-proxy_resource_service-to-service.png)
+<br>
 
-### 詳細
+### Envoy設定値
+
+![istio_envoy_istio-proxy_resource_service-to-service](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio-proxy_resource_service-to-service.png)
 
 ![istio_envoy_envoy-flow_resource_service-to-service](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow_resource_service-to-service.png)
 
@@ -400,7 +408,7 @@ Gatewayのみ送信側`istio-proxy`コンテナに関わります。
 </thead>
 <tbody>
     <tr>
-      <th style="text-align: center;"><nobr>Envoyの設定値</nobr></th>
+      <th style="text-align: center;"><nobr>Envoy設定値</nobr></th>
       <th style="text-align: center;">Service</th>
       <th style="text-align: center;">Endpoints</th>
       <th style="text-align: center;">Gateway</th>
@@ -442,11 +450,15 @@ Gatewayのみ送信側`istio-proxy`コンテナに関わります。
 </tbody>
 </table>
 
-![istio_envoy_istio-proxy_resource_egress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio-proxy_resource_egress.png)
-
 ### 詳細
 
 ![istio_envoy_envoy-flow_resource_egress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow_resource_egress.png)
+
+<br>
+
+![istio_envoy_istio-proxy_resource_egress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio-proxy_resource_egress.png)
+
+<br>
 
 # 05. IstioによるEnvoyの抽象化に抗う
 
