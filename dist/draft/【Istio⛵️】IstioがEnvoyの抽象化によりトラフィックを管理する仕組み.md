@@ -266,7 +266,7 @@ Istioコントロールプレーンは、KubernetesリソースやIstioカスタ
       <th style="text-align: center;"><nobr>Envoy設定値</nobr></th>
       <th style="text-align: center;">Service</th>
       <th style="text-align: center;">Endpoints</th>
-      <th style="text-align: center;">Gateway<br>(IngressGateway)</th>
+      <th style="text-align: center;">Gateway<br><nobr>(IngressGatewayとして)</nobr></th>
       <th style="text-align: center;">Virtual<br>Service</th>
       <th style="text-align: center;">Destination<br>Rule</th>
       <th style="text-align: center;">Service<br>Entry</th>
@@ -459,7 +459,7 @@ Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリ�
       <th style="text-align: center;"><nobr>Envoy設定値</nobr></th>
       <th style="text-align: center;">Service</th>
       <th style="text-align: center;">Endpoints</th>
-      <th style="text-align: center;">Gateway<br>(EgressGateway)</th>
+      <th style="text-align: center;">Gateway<br><nobr>(EgressGatewayとして)</nobr></th>
       <th style="text-align: center;">Virtual<br>Service</th>
       <th style="text-align: center;">Destination<br>Rule</th>
       <th style="text-align: center;">Service<br>Entry</th>
@@ -539,13 +539,15 @@ Istioは、Istioカスタムリソース (Gateway、VirtualService、Destination
 
 本章では、さらに具体化します。
 
-Istioが各リソースの状態をEnvoy設定値をどのように翻訳しているのかを解説します。
+各リソースの状態の翻訳によって、Envoyの設定値がどのようになっているのかを解説します。
 
 <br>
 
 ## サービスメッシュ外からの通信
 
 ### 通信への適用
+
+具体的な値を調査したい...
 
 ![istio_envoy_envoy-flow_ingress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow_ingress.png)
 
@@ -555,6 +557,8 @@ Istioが各リソースの状態をEnvoy設定値をどのように翻訳して�
 
 ### 通信への適用
 
+具体的な値を調査したい...
+
 ![istio_envoy_envoy-flow_service-to-service](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow_service-to-service.png)
 
 <br>
@@ -562,6 +566,8 @@ Istioが各リソースの状態をEnvoy設定値をどのように翻訳して�
 ## サービスメッシュ外への通信
 
 ### 通信への適用
+
+具体的な値を調査したい...
 
 ![istio_envoy_envoy-flow_egress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow_egress.png)
 
