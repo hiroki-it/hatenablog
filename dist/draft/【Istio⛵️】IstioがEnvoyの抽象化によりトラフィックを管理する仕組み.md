@@ -163,7 +163,7 @@ Envoyを抽象化する責務を持つのは、Istioコントロールプレー�
 
 ![istio_envoy_istio-proxy_resource_control-plane](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio-proxy_resource_control-plane.png)
 
-### 各リソースとEnvoy設定値の関係
+### 各リソースとEnvoy設定値の関係一覧
 
 Istioコントロールプレーンは、KubernetesリソースやIstioカスタムリソースの状態をEnvoy設定値に翻訳します。
 
@@ -235,7 +235,7 @@ Istioコントロールプレーンは、KubernetesリソースやIstioカスタ
 
 ## サービスメッシュ外からの通信
 
-### 抽象化に関わるリソース
+### 抽象化に関わるリソース一覧
 
 サービスメッシュ内のPodから外のシステムにリクエストを送信する場合、以下のリソースが抽象化に関わります。
 
@@ -307,7 +307,7 @@ Istioコントロールプレーンは、KubernetesリソースやIstioカスタ
 
 ### 通信への適用
 
-各リソースがサービスメッシュ外からの通信のどの部分に関わるのかを解説します。
+サービスメッシュ外からの通信に関して、各リソースとEnvoy設定値の関係を整理します。
 
 Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリソース (Gateway、VirtualService、DestinationRule、PeerAuthentication) を翻訳します。
 
@@ -325,7 +325,7 @@ Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリ�
 
 ## マイクロサービス間の通信
 
-### 抽象化に関わるリソース
+### 抽象化に関わるリソース一覧
 
 サービスメッシュ内のPodから別のPodにリクエストを送信する場合、以下のリソースが抽象化に関わります。
 
@@ -397,7 +397,7 @@ Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリ�
 
 ### 通信への適用
 
-各リソースがマイクロサービス間の通信のどの部分に関わるのかを解説します。
+マイクロサービス間の通信に関して、各リソースとEnvoy設定値の関係を整理します。
 
 Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリソース (VirtualService、DestinationRule、PeerAuthentication) を翻訳します。
 
@@ -487,7 +487,7 @@ Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリ�
 
 ### 通信への適用
 
-各リソースがサービスメッシュ外への通信のどの部分に関わるのかを解説します。
+サービスメッシュ外への通信に関して、各リソースとEnvoy設定値の関係を整理します。
 
 Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリソース (VirtualService、DestinationRule、ServiceEntry、PeerAuthentication) を翻訳します。
 
