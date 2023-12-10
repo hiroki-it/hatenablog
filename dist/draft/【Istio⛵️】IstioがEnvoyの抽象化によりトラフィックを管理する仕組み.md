@@ -215,7 +215,7 @@ Istioコントロールプレーンは、KubernetesリソースやIstioカスタ
       <th style="text-align: center;">✅</th>
       <th style="text-align: center;"></th>
       <th style="text-align: center;"></th>
-      <th style="text-align: center;">✅<br><nobr>(HTTPの場合のみ)</nobr></th>
+      <th style="text-align: center;">✅<br><nobr>(HTTPのみ)</nobr></th>
       <th style="text-align: center;"></th>
       <th style="text-align: center;"></th>
       <th style="text-align: center;"></th>
@@ -287,7 +287,7 @@ Istioコントロールプレーンは、KubernetesリソースやIstioカスタ
       <th style="text-align: center;">✅</th>
       <th style="text-align: center;"></th>
       <th style="text-align: center;"></th>
-      <th style="text-align: center;">✅<br><nobr>(HTTPの場合のみ)</nobr></th>
+      <th style="text-align: center;">✅<br><nobr>(HTTPのみ)</nobr></th>
       <th style="text-align: center;"></th>
       <th style="text-align: center;">×</th>
       <th style="text-align: center;"></th>
@@ -384,7 +384,7 @@ Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリ�
       <th style="text-align: center;">✅</th>
       <th style="text-align: center;"></th>
       <th style="text-align: center;">×</th>
-      <th style="text-align: center;">✅<br><nobr>(HTTPの場合のみ)</nobr></th>
+      <th style="text-align: center;">✅<br><nobr>(HTTPのみ)</nobr></th>
       <th style="text-align: center;"></th>
       <th style="text-align: center;">×</th>
       <th style="text-align: center;"></th>
@@ -480,7 +480,7 @@ Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリ�
       <th style="text-align: center;">✅</th>
       <th style="text-align: center;"></th>
       <th style="text-align: center;"></th>
-      <th style="text-align: center;">✅<br><nobr>(HTTPの場合のみ)</nobr></th>
+      <th style="text-align: center;">✅<br><nobr>(HTTPのみ)</nobr></th>
       <th style="text-align: center;"></th>
       <th style="text-align: center;"></th>
       <th style="text-align: center;"></th>
