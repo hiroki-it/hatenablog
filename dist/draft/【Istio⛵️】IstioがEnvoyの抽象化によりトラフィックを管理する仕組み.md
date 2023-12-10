@@ -38,7 +38,7 @@ KubernetesリソースやIstioカスタムリソースの状態がEnvoy設定値
    1. Kubernetesリソース (Service、Endpoints) やIstioカスタムリソース (VirtualService、DestinationRule) に応じて、適切な宛先Podを選択します。
    2. PeerAuthenticationにより、宛先Podへの通信が相互TLSになります。
    3. 宛先Podに送信します。
-4. 宛先PodはHTTPSリクエストを受信します。
+4. 最終的に、宛先PodはHTTPSリクエストを受信します。
 
 ![istio_envoy_istio_resource_ingress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_resource_ingress.png)
 
@@ -52,7 +52,7 @@ KubernetesリソースやIstioカスタムリソースの状態がEnvoy設定値
    1. Kubernetesリソース (Service、Endpoints) やIstioカスタムリソース (VirtualService、DestinationRule) に応じて、適切な宛先Podを選択します。
    2. PeerAuthenticationにより、宛先Podへの通信が相互TLSになります。
    3. 宛先Podに送信します。
-2. 宛先PodはHTTPSリクエストを受信します。
+2. 最終的に、宛先PodはHTTPSリクエストを受信します。
 
 ![istio_envoy_istio_resource_service-to-service](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_resource_service-to-service.png)
 
@@ -77,7 +77,7 @@ KubernetesリソースやIstioカスタムリソースの状態がEnvoy設定値
 4. Istio EgressGateway Podは、HTTPSリクエストをエントリ済システムに`L7`ロードバランシングします。
    1. Istioカスタムリソース (VirtualService、DestinationRule) に応じて、適切なエントリ済システムを選択します。
    2. エントリ済システムに送信します。
-5. エントリ済システムはHTTPSリクエストを受信します。
+5. 最終的に、エントリ済システムはHTTPSリクエストを受信します。
 
 ![istio_envoy_istio_resource_egress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_resource_egress.png)
 
@@ -126,7 +126,7 @@ Istioは、各リソースに状態に応じて、Envoyをプロセスとした`
 3. 送信元Pod内の`istio-proxy`コンテナは、HTTPSリクエストを宛先Podに`L7`ロードバランシングします。
 4. 宛先Pod内の`istio-proxy`コンテナは、リクエストを受信します。
 5. 宛先Pod内の`istio-proxy`コンテナは、HTTPリクエストを宛先マイクロサービスに送信します。
-6. 宛先マイクロサービスはHTTPSリクエストを受信します。
+6. 最終的に、宛先マイクロサービスはHTTPSリクエストを受信します。
 
 ![istio_envoy_istio_service-to-service](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_service-to-service.png)
 
@@ -145,7 +145,7 @@ Istioは、各リソースに状態に応じて、Envoyをプロセスとした`
    2. 宛先が未エントリであれば、`istio-proxy`コンテナはリクエストの宛先に外のシステムを選択します。
 4. ここでは、宛先がエントリ済であったとします。送信元Pod内の`istio-proxy`コンテナは、HTTPSリクエストをIstio EgressGateway Podに`L7`ロードバランシングします。
 5. Istio EgressGateway Podは、HTTPSリクエストをエントリ済システムに`L7`ロードバランシングします。
-6. エントリ済システムはHTTPSリクエストを受信します。
+6. 最終的に、エントリ済システムはHTTPSリクエストを受信します。
 
 ![istio_envoy_istio_egress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_egress.png)
 
@@ -266,7 +266,7 @@ Istioコントロールプレーンは、KubernetesリソースやIstioカスタ
       <th style="text-align: center;"><nobr>Envoy設定値</nobr></th>
       <th style="text-align: center;">Service</th>
       <th style="text-align: center;">Endpoints</th>
-      <th style="text-align: center;">Gateway<br>(IngressGatewayとして)</th>
+      <th style="text-align: center;">Gateway<br>(IngressGateway)</th>
       <th style="text-align: center;">Virtual<br>Service</th>
       <th style="text-align: center;">Destination<br>Rule</th>
       <th style="text-align: center;">Service<br>Entry</th>
@@ -321,14 +321,16 @@ Istioコントロールプレーンは、KubernetesリソースやIstioカスタ
 
 前述の表を参考に、各リソースとEnvoy設定値の関係を実際の処理の流れに適用します。
 
+ここでは、Envoyの処理の流れの説明は省略します。
+
 ![istio_envoy_envoy-flow_resource_ingress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow_resource_ingress.png)
 
 Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリソース (Gateway、VirtualService、DestinationRule、PeerAuthentication) を翻訳します。
 
 以下の通り、翻訳結果をIstio IngressGateway Podやこれの宛先Podの`istio-proxy`コンテナに適用します。
 
-- Gatewayの翻訳結果は送信元Podのみで使用します。
-- Gateway以外のリソースの翻訳結果は、送信元Podと宛先Podの両方で共有します。Pod間で、関わるリソースは同じ順番です。
+- Gatewayの翻訳結果をIstio IngressGateway Podのみで使用します。
+- Gateway以外のリソースの翻訳結果を、Istio IngressGateway Podと宛先Podの両方で共有します。Pod間で、関わるリソースは同じ順番です。
 
 <br>
 
@@ -416,6 +418,8 @@ Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリ�
 
 前述の表を参考に、各リソースとEnvoy設定値の関係を実際の処理の流れに適用します。
 
+ここでは、Envoyの処理の流れの説明は省略します。
+
 ![istio_envoy_envoy-flow_resource_service-to-service](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow_resource_service-to-service.png)
 
 Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリソース (VirtualService、DestinationRule、PeerAuthentication) を翻訳します。
@@ -455,7 +459,7 @@ Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリ�
       <th style="text-align: center;"><nobr>Envoy設定値</nobr></th>
       <th style="text-align: center;">Service</th>
       <th style="text-align: center;">Endpoints</th>
-      <th style="text-align: center;">Gateway<br>(EgressGatewayとして)</th>
+      <th style="text-align: center;">Gateway<br>(EgressGateway)</th>
       <th style="text-align: center;">Virtual<br>Service</th>
       <th style="text-align: center;">Destination<br>Rule</th>
       <th style="text-align: center;">Service<br>Entry</th>
@@ -508,13 +512,16 @@ Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリ�
 
 前述の表を参考に、各リソースとEnvoy設定値の関係を実際の処理の流れに適用します。
 
+ここでは、Envoyの処理の流れの説明は省略します。
+
 ![istio_envoy_envoy-flow_resource_egress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow_resource_egress.png)
 
 Istioは、Istioカスタムリソース (Gateway、VirtualService、DestinationRule、ServiceEntry) を翻訳します。
 
 以下の通り、翻訳結果を送信元PodやIstio EgressGateway Podの`istio-proxy`コンテナに適用します。
 
-- 全てのリソースの翻訳結果を、送信元PodとIstio EgressGateway Podの両方で共有します。Pod間で、関わるリソースは同じ順番です。
+- Gateway、エントリ済システムの宛先リソース (VirtualService `Y`、DestinationRule` Y`、ServiceEntry) の翻訳結果をIstio EgressGateway Podのみで使用します。
+- Gateway以外のリソースの翻訳結果を、Istio IngressGateway Podと宛先Podの両方で共有します。Pod間で、関わるリソースは同じ順番です。
 
 <br>
 
@@ -538,75 +545,7 @@ Istioが各リソースの状態をEnvoy設定値をどのように翻訳して�
 
 ## サービスメッシュ外からの通信
 
-### 抽象化された設定値
-
-<table>
-<thead>
-    <tr>
-      <th></th>
-      <th colspan="2" style="text-align: center;">Kubernetesリソース</th>
-      <th colspan="5" style="text-align: center;">Istioカスタムリソース</th>
-    </tr>
-</thead>
-<tbody>
-    <tr>
-      <th style="text-align: center;"><nobr>Envoy設定値</nobr></th>
-      <th style="text-align: center;">Service</th>
-      <th style="text-align: center;">Endpoints</th>
-      <th style="text-align: center;">Gateway</th>
-      <th style="text-align: center;">Virtual<br>Service</th>
-      <th style="text-align: center;">Destination<br>Rule</th>
-      <th style="text-align: center;">Service<br>Entry</th>
-      <th style="text-align: center;">Peer<br>Authentication</th>
-    </tr>
-    <tr>
-      <th style="text-align: center;"><nobr>リスナー</nobr></th>
-      <th style="text-align: center;">✅</th>
-      <th style="text-align: center;"></th>
-      <th style="text-align: center;">✅</th>
-      <th style="text-align: center;">✅</th>
-      <th style="text-align: center;"></th>
-      <th style="text-align: center;">×</th>
-      <th style="text-align: center;">✅</th>
-    </tr>
-    <tr>
-      <th style="text-align: center;"><nobr>ルート</nobr></th>
-      <th style="text-align: center;">✅</th>
-      <th style="text-align: center;"></th>
-      <th style="text-align: center;"></th>
-      <th style="text-align: center;">✅<br><nobr>(HTTPの場合のみ)</nobr></th>
-      <th style="text-align: center;"></th>
-      <th style="text-align: center;">×</th>
-      <th style="text-align: center;"></th>
-    </tr>
-    <tr>
-      <th style="text-align: center;"><nobr>クラスター</nobr></th>
-      <th style="text-align: center;">✅</th>
-      <th style="text-align: center;"></th>
-      <th style="text-align: center;"></th>
-      <th style="text-align: center;"></th>
-      <th style="text-align: center;">✅</th>
-      <th style="text-align: center;">×</th>
-      <th style="text-align: center;">✅</th>
-    </tr>
-    <tr>
-      <th style="text-align: center;"><nobr>エンドポイント</nobr></th>
-      <th style="text-align: center;"></th>
-      <th style="text-align: center;">✅</th>
-      <th style="text-align: center;"></th>
-      <th style="text-align: center;"></th>
-      <th style="text-align: center;">✅</th>
-      <th style="text-align: center;">×</th>
-      <th style="text-align: center;"></th>
-    </tr>
-</tbody>
-</table>
-
 ### 通信への適用
-
-サービスメッシュ外から内にリクエストを送信する場合です。
-
-なお、Pod間通信にHTTPS (相互TLS) を採用している前提です。
 
 ![istio_envoy_envoy-flow_ingress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow_ingress.png)
 
@@ -614,75 +553,7 @@ Istioが各リソースの状態をEnvoy設定値をどのように翻訳して�
 
 ## マイクロサービス間の通信
 
-### 抽象化された設定値
-
-<table>
-<thead>
-    <tr>
-      <th></th>
-      <th colspan="2" style="text-align: center;">Kubernetesリソース</th>
-      <th colspan="5" style="text-align: center;">Istioカスタムリソース</th>
-    </tr>
-</thead>
-<tbody>
-    <tr>
-      <th style="text-align: center;"><nobr>Envoy設定値</nobr></th>
-      <th style="text-align: center;">Service</th>
-      <th style="text-align: center;">Endpoints</th>
-      <th style="text-align: center;">Gateway</th>
-      <th style="text-align: center;">Virtual<br>Service</th>
-      <th style="text-align: center;">Destination<br>Rule</th>
-      <th style="text-align: center;">Service<br>Entry</th>
-      <th style="text-align: center;">Peer<br>Authentication</th>
-    </tr>
-    <tr>
-      <th style="text-align: center;"><nobr>リスナー</nobr></th>
-      <th style="text-align: center;">✅</th>
-      <th style="text-align: center;"></th>
-      <th style="text-align: center;">×</th>
-      <th style="text-align: center;">✅</th>
-      <th style="text-align: center;"></th>
-      <th style="text-align: center;">×</th>
-      <th style="text-align: center;">✅</th>
-    </tr>
-    <tr>
-      <th style="text-align: center;"><nobr>ルート</nobr></th>
-      <th style="text-align: center;">✅</th>
-      <th style="text-align: center;"></th>
-      <th style="text-align: center;">×</th>
-      <th style="text-align: center;">✅<br><nobr>(HTTPの場合のみ)</nobr></th>
-      <th style="text-align: center;"></th>
-      <th style="text-align: center;">×</th>
-      <th style="text-align: center;"></th>
-    </tr>
-    <tr>
-      <th style="text-align: center;"><nobr>クラスター</nobr></th>
-      <th style="text-align: center;">✅</th>
-      <th style="text-align: center;"></th>
-      <th style="text-align: center;">×</th>
-      <th style="text-align: center;"></th>
-      <th style="text-align: center;">✅</th>
-      <th style="text-align: center;">×</th>
-      <th style="text-align: center;">✅</th>
-    </tr>
-    <tr>
-      <th style="text-align: center;"><nobr>エンドポイント</nobr></th>
-      <th style="text-align: center;"></th>
-      <th style="text-align: center;">✅</th>
-      <th style="text-align: center;">×</th>
-      <th style="text-align: center;"></th>
-      <th style="text-align: center;">✅</th>
-      <th style="text-align: center;">×</th>
-      <th style="text-align: center;"></th>
-    </tr>
-</tbody>
-</table>
-
 ### 通信への適用
-
-サービスメッシュ内のPodから別のPodにリクエストを送信する場合です。
-
-なお、Pod間通信にHTTPS (相互TLS) を採用している前提です。
 
 ![istio_envoy_envoy-flow_service-to-service](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow_service-to-service.png)
 
@@ -690,81 +561,19 @@ Istioが各リソースの状態をEnvoy設定値をどのように翻訳して�
 
 ## サービスメッシュ外への通信
 
-### 抽象化された設定値
-
-<table>
-<thead>
-    <tr>
-      <th></th>
-      <th colspan="2" style="text-align: center;">Kubernetesリソース</th>
-      <th colspan="5" style="text-align: center;">Istioカスタムリソース</th>
-    </tr>
-</thead>
-<tbody>
-    <tr>
-      <th style="text-align: center;"><nobr>Envoy設定値</nobr></th>
-      <th style="text-align: center;">Service</th>
-      <th style="text-align: center;">Endpoints</th>
-      <th style="text-align: center;">Gateway</th>
-      <th style="text-align: center;">Virtual<br>Service</th>
-      <th style="text-align: center;">Destination<br>Rule</th>
-      <th style="text-align: center;">Service<br>Entry</th>
-      <th style="text-align: center;">Peer<br>Authentication</th>
-    </tr>
-    <tr>
-      <th style="text-align: center;"><nobr>リスナー</nobr></th>
-      <th style="text-align: center;">×</th>
-      <th style="text-align: center;">×</th>
-      <th style="text-align: center;">✅</th>
-      <th style="text-align: center;">✅</th>
-      <th style="text-align: center;"></th>
-      <th style="text-align: center;"></th>
-      <th style="text-align: center;">×</th>
-    </tr>
-    <tr>
-      <th style="text-align: center;"><nobr>ルート</nobr></th>
-      <th style="text-align: center;">×</th>
-      <th style="text-align: center;">×</th>
-      <th style="text-align: center;"></th>
-      <th style="text-align: center;">✅<br><nobr>(HTTPの場合のみ)</nobr></th>
-      <th style="text-align: center;"></th>
-      <th style="text-align: center;"></th>
-      <th style="text-align: center;">×</th>
-    </tr>
-    <tr>
-      <th style="text-align: center;"><nobr>クラスター</nobr></th>
-      <th style="text-align: center;">×</th>
-      <th style="text-align: center;">×</th>
-      <th style="text-align: center;"></th>
-      <th style="text-align: center;"></th>
-      <th style="text-align: center;">✅</th>
-      <th style="text-align: center;">✅</th>
-      <th style="text-align: center;">×</th>
-    </tr>
-    <tr>
-      <th style="text-align: center;"><nobr>エンドポイント</nobr></th>
-      <th style="text-align: center;">×</th>
-      <th style="text-align: center;">×</th>
-      <th style="text-align: center;"></th>
-      <th style="text-align: center;"></th>
-      <th style="text-align: center;">✅</th>
-      <th style="text-align: center;">✅</th>
-      <th style="text-align: center;">×</th>
-    </tr>
-</tbody>
-</table>
-
 ### 通信への適用
 
-サービスメッシュ内のPodから外のシステム (例：データベース、ドメインレイヤー委譲先の外部API) にリクエストを送信する場合です。
-
-なお、Pod間通信にHTTPS (相互TLS) を採用している前提です。
-
-1. `istio-proxy`コンテナは、リクエストの宛先がServiceEntryでエントリ済みか否かに応じて、リクエストを宛先を切り替えます。
-   1. 宛先がエントリ済みであれば、`istio-proxy`コンテナはリクエストの宛先にIstio EgressGateway Podを選択します。
-   2. 宛先が未エントリであれば、`istio-proxy`コンテナはリクエストの宛先にサービスメッシュ外 (`PassthrouCluster`) を選択します。
-
 ![istio_envoy_envoy-flow_egress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow_egress.png)
+
+<br>
+
+# 06. おわりに
+
+Istioによる抽象化の恩恵を感じられました。
+
+やっぱIstioむずいっす!!
+
+最後の章で、IstioによるEnvoyの抽象化に抗いきれなかったので、正月に調査しておこうと思います。
 
 <br>
 
