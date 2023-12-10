@@ -10,7 +10,7 @@ Istio⛵️は、Envoyを抽象化し、サービスメッシュを実装する�
 
 開発者は、KubernetesリソースやIstioカスタムリソースの状態に基づいて、Envoyを設定できるようになります。
 
-今回は、Istioのトラフィック管理に注目し、各リソースがEnvoyをどのように抽象化してトラフィック管理を実装しているのか、を解説しようと思います👍
+今回は、Istioのトラフィック管理に注目し、各リソースがEnvoyをどのように抽象化してトラフィック管理を実装しているのかを解説しようと思います👍
 
 なお、Istioのサービスメッシュ方式には、サイドカープロキシメッシュとアンビエントメッシュ (Nodeエージェントメッシュ) があり、今回はサイドカープロキシメッシュについて言及します。
 
@@ -145,7 +145,7 @@ Istioは、各リソースに状態に応じて、Envoyをプロセスとした`
 
 本章では、さらに具体化します。
 
-Istioが各リソースの状態をEnvoy設定値をどのように翻訳しているのか、を解説します。
+Istioが各リソースの状態をEnvoy設定値をどのように翻訳しているのかを解説します。
 
 <br>
 
@@ -307,7 +307,7 @@ Istioコントロールプレーンは、KubernetesリソースやIstioカスタ
 
 ### 通信への適用
 
-サービスメッシュ外からの通信に関して、各リソースとEnvoy設定値の関係を整理します。
+前述の表を参考に、各リソースとEnvoy設定値の関係を実際の処理の流れに適用します。
 
 Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリソース (Gateway、VirtualService、DestinationRule、PeerAuthentication) を翻訳します。
 
@@ -317,7 +317,9 @@ Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリ�
 
 <br>
 
-リソースだけに注目すると、サービスメッシュ外からの通信で、各リソースは以下の抽象化に関わります。
+リソースがEnvoy設定値間で重複しています。
+
+重複を排除すると、サービスメッシュ外からの通信で、各リソースは以下の抽象化に関わります。
 
 ![istio_envoy_istio-proxy_resource_ingress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio-proxy_resource_ingress.png)
 
@@ -397,7 +399,7 @@ Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリ�
 
 ### 通信への適用
 
-マイクロサービス間の通信に関して、各リソースとEnvoy設定値の関係を整理します。
+前述の表を参考に、各リソースとEnvoy設定値の関係を実際の処理の流れに適用します。
 
 Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリソース (VirtualService、DestinationRule、PeerAuthentication) を翻訳します。
 
@@ -409,7 +411,9 @@ Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリ�
 
 <br>
 
-リソースだけに注目すると、マイクロサービス間の通信で、各リソースは以下の抽象化に関わります。
+リソースがEnvoy設定値間で重複しています。
+
+重複を排除すると、マイクロサービス間の通信で、各リソースは以下の抽象化に関わります。
 
 ![istio_envoy_istio-proxy_resource_service-to-service](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio-proxy_resource_service-to-service.png)
 
@@ -487,7 +491,7 @@ Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリ�
 
 ### 通信への適用
 
-サービスメッシュ外への通信に関して、各リソースとEnvoy設定値の関係を整理します。
+前述の表を参考に、各リソースとEnvoy設定値の関係を実際の処理の流れに適用します。
 
 Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリソース (VirtualService、DestinationRule、ServiceEntry、PeerAuthentication) を翻訳します。
 
@@ -497,7 +501,9 @@ Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリ�
 
 <br>
 
-リソースだけに注目すると、サービスメッシュ外への通信で、各リソースは以下の抽象化に関わります。
+リソースがEnvoy設定値間で重複しています。
+
+重複を排除すると、サービスメッシュ外への通信で、各リソースは以下の抽象化に関わります。
 
 ![istio_envoy_istio-proxy_resource_egress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio-proxy_resource_egress.png)
 
@@ -505,13 +511,11 @@ Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリ�
 
 # 05. IstioによるEnvoyの抽象化に抗う
 
-Envoyはどのようにリクエストを処理するのでしょうか。
+前章では、Envoy設定値に関わる各リソースの状態まで、言及しませんでした。
 
-HTTPまたはTCPを処理する場合で、処理の流れが少しだけ異なります。
+本章では、さらにさらに具体化します。
 
-今回は、HTTPを処理する場合のみ注目します。
-
-具体的な値を見ながら解説します。
+Istioが各リソースの状態をEnvoy設定値をどのように翻訳しているのかを解説します。
 
 <br>
 
@@ -521,7 +525,7 @@ HTTPまたはTCPを処理する場合で、処理の流れが少しだけ異な�
 
 なお、HTTPS (相互TLS) を採用している前提です。
 
-Istio IngressGateway Pod内の`istio-proxy`コンテナは、KubernetesリソースやIstioカスタムリソースの設定に応じて、リクエストの宛先Podを選択します。
+
 
 ![istio_envoy_envoy-flow_ingress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow_ingress.png)
 
@@ -531,7 +535,7 @@ Istio IngressGateway Pod内の`istio-proxy`コンテナは、Kubernetesリソー
 
 なお、HTTPS (相互TLS) を採用している前提です。
 
-送信元Pod内の`istio-proxy`コンテナは、KubernetesリソースやIstioカスタムリソースの設定に応じて、リクエストの宛先Podを選択します。
+
 
 ![istio_envoy_envoy-flow_service-to-service](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow_service-to-service.png)
 
