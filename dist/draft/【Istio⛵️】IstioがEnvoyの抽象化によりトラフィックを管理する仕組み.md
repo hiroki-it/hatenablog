@@ -203,7 +203,7 @@ Istioコントロールプレーンは、KubernetesリソースやIstioカスタ
       <th style="text-align: center;">✅</th>
       <th style="text-align: center;"></th>
       <th style="text-align: center;"></th>
-      <th style="text-align: center;">✅ <br />(HTTPの場合のみ) </th>
+      <th style="text-align: center;">✅<br><nobr>(HTTPの場合のみ)</nobr></th>
       <th style="text-align: center;"></th>
       <th style="text-align: center;"></th>
       <th style="text-align: center;"></th>
@@ -237,9 +237,7 @@ Istioコントロールプレーンは、KubernetesリソースやIstioカスタ
 
 ### 抽象化に関わるリソース
 
-サービスメッシュ内のPodから外のシステムにリクエストを送信する場合です。
-
-特に、以下のリソースが抽象化に関わります。
+サービスメッシュ内のPodから外のシステムにリクエストを送信する場合、以下のリソースが抽象化に関わります。
 
 なお、HTTPS (相互TLS) を採用している前提です。
 
@@ -277,7 +275,7 @@ Istioコントロールプレーンは、KubernetesリソースやIstioカスタ
       <th style="text-align: center;">✅</th>
       <th style="text-align: center;"></th>
       <th style="text-align: center;"></th>
-      <th style="text-align: center;">✅ <br />(HTTPの場合のみ) </th>
+      <th style="text-align: center;">✅<br><nobr>(HTTPの場合のみ)</nobr></th>
       <th style="text-align: center;"></th>
       <th style="text-align: center;">×</th>
       <th style="text-align: center;"></th>
@@ -308,6 +306,8 @@ Istioコントロールプレーンは、KubernetesリソースやIstioカスタ
 <br>
 
 ### 通信への適用
+
+各リソースがサービスメッシュ外からの通信のどの部分に関わるのかを解説します。
 
 Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリソース (Gateway、VirtualService、DestinationRule、PeerAuthentication) を翻訳します。
 
@@ -327,9 +327,7 @@ Istioは、GatewayをEnvoyリスナーに翻訳し、Istio IngressGateway Podの
 
 ### 抽象化に関わるリソース
 
-サービスメッシュ内のPodから外のシステムにリクエストを送信する場合です。
-
-特に、以下のリソースが抽象化に関わります。
+サービスメッシュ内のPodから別のPodにリクエストを送信する場合、以下のリソースが抽象化に関わります。
 
 なお、HTTPS (相互TLS) を採用している前提です。
 
@@ -367,7 +365,7 @@ Istioは、GatewayをEnvoyリスナーに翻訳し、Istio IngressGateway Podの
       <th style="text-align: center;">✅</th>
       <th style="text-align: center;"></th>
       <th style="text-align: center;">×</th>
-      <th style="text-align: center;">✅ <br />(HTTPの場合のみ) </th>
+      <th style="text-align: center;">✅<br><nobr>(HTTPの場合のみ)</nobr></th>
       <th style="text-align: center;"></th>
       <th style="text-align: center;">×</th>
       <th style="text-align: center;"></th>
@@ -399,9 +397,11 @@ Istioは、GatewayをEnvoyリスナーに翻訳し、Istio IngressGateway Podの
 
 ### 通信への適用
 
+各リソースがマイクロサービス間の通信のどの部分に関わるのかを解説します。
+
 Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリソース (VirtualService、DestinationRule、PeerAuthentication) を翻訳します。
 
-また、翻訳結果をIstio IngressGateway Podやこれの宛先Podの`istio-proxy`コンテナに適用します。
+また、翻訳結果を送信元Podや宛先Podの`istio-proxy`コンテナに適用します。
 
 ![istio_envoy_istio-proxy_resource_service-to-service](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio-proxy_resource_service-to-service.png)
 
@@ -413,9 +413,7 @@ Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリ�
 
 ### 抽象化に関わるリソース
 
-サービスメッシュ内のPodから外のシステムにリクエストを送信する場合です。
-
-特に、以下のリソースが抽象化に関わります。
+サービスメッシュ内のPodから外のシステムにリクエストを送信する場合、以下のリソースが抽象化に関わります。
 
 なお、HTTPS (相互TLS) を採用している前提です。
 
@@ -442,7 +440,7 @@ Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリ�
       <th style="text-align: center;"><nobr>リスナー</nobr></th>
       <th style="text-align: center;">✅</th>
       <th style="text-align: center;"></th>
-      <th style="text-align: center;">×</th>
+      <th style="text-align: center;">✅</th>
       <th style="text-align: center;">✅</th>
       <th style="text-align: center;"></th>
       <th style="text-align: center;"></th>
@@ -452,8 +450,8 @@ Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリ�
       <th style="text-align: center;"><nobr>ルート</nobr></th>
       <th style="text-align: center;">✅</th>
       <th style="text-align: center;"></th>
-      <th style="text-align: center;">×</th>
-      <th style="text-align: center;">✅ <br />(HTTPの場合のみ) </th>
+      <th style="text-align: center;"></th>
+      <th style="text-align: center;">✅<br><nobr>(HTTPの場合のみ)</nobr></th>
       <th style="text-align: center;"></th>
       <th style="text-align: center;"></th>
       <th style="text-align: center;"></th>
@@ -462,7 +460,7 @@ Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリ�
       <th style="text-align: center;"><nobr>クラスター</nobr></th>
       <th style="text-align: center;">✅</th>
       <th style="text-align: center;"></th>
-      <th style="text-align: center;">×</th>
+      <th style="text-align: center;"></th>
       <th style="text-align: center;"></th>
       <th style="text-align: center;">✅</th>
       <th style="text-align: center;">✅</th>
@@ -472,7 +470,7 @@ Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリ�
       <th style="text-align: center;"><nobr>エンドポイント</nobr></th>
       <th style="text-align: center;"></th>
       <th style="text-align: center;">✅</th>
-      <th style="text-align: center;">×</th>
+      <th style="text-align: center;"></th>
       <th style="text-align: center;"></th>
       <th style="text-align: center;">✅</th>
       <th style="text-align: center;">✅</th>
@@ -482,6 +480,12 @@ Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリ�
 </table>
 
 ### 通信への適用
+
+各リソースがサービスメッシュ外への通信のどの部分に関わるのかを解説します。
+
+Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリソース (VirtualService、DestinationRule、ServiceEntry、PeerAuthentication) を翻訳します。
+
+また、翻訳結果を送信元PodやIstioEgressGateway Podの`istio-proxy`コンテナに適用します。
 
 ![istio_envoy_envoy-flow_resource_egress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow_resource_egress.png)
 
