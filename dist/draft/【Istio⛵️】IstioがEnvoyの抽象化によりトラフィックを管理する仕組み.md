@@ -313,13 +313,13 @@ Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリ�
 
 また、翻訳結果をIstio IngressGateway Podやこれの宛先Podの`istio-proxy`コンテナに適用します。
 
-![istio_envoy_istio-proxy_resource_ingress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio-proxy_resource_ingress.png)
-
-Istioは、GatewayをEnvoyリスナーに翻訳し、Istio IngressGateway Podの`istio-proxy`コンテナに適用します。
-
 ![istio_envoy_envoy-flow_resource_ingress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow_resource_ingress.png)
 
 <br>
+
+リソースだけに注目すると、サービスメッシュ外からの通信で、各リソースは以下の抽象化に関わります。
+
+![istio_envoy_istio-proxy_resource_ingress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio-proxy_resource_ingress.png)
 
 <br>
 
@@ -403,9 +403,15 @@ Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリ�
 
 また、翻訳結果を送信元Podや宛先Podの`istio-proxy`コンテナに適用します。
 
-![istio_envoy_istio-proxy_resource_service-to-service](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio-proxy_resource_service-to-service.png)
+
 
 ![istio_envoy_envoy-flow_resource_service-to-service](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow_resource_service-to-service.png)
+
+<br>
+
+リソースだけに注目すると、マイクロサービス間の通信で、各リソースは以下の抽象化に関わります。
+
+![istio_envoy_istio-proxy_resource_service-to-service](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio-proxy_resource_service-to-service.png)
 
 <br>
 
@@ -490,6 +496,8 @@ Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリ�
 ![istio_envoy_envoy-flow_resource_egress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow_resource_egress.png)
 
 <br>
+
+リソースだけに注目すると、サービスメッシュ外への通信で、各リソースは以下の抽象化に関わります。
 
 ![istio_envoy_istio-proxy_resource_egress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio-proxy_resource_egress.png)
 
