@@ -55,9 +55,11 @@ KubernetesリソースやIstioカスタムリソースの状態がEnvoy設定値
 
 ![istio_envoy_istio_resource_service-to-service](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_resource_service-to-service.png)
 
+<br>
+
 ## サービスメッシュ外への通信
 
-サービスメッシュ内のPodから外のシステムにリクエストを送信する場合です。
+サービスメッシュ内のPodから外のシステム (例：Cluster外のマイクロサービスやデータベース) にリクエストを送信する場合です。
 
 なお、HTTPS (相互TLS) を採用している前提です。
 
@@ -122,7 +124,7 @@ Istioは、各リソースに状態に応じて、Envoyをプロセスとした`
 
 ## サービスメッシュ外への通信
 
-サービスメッシュ内のPodから外のシステムにリクエストを送信する場合です。
+サービスメッシュ内のPodから外のシステム (例：Cluster外のマイクロサービスやデータベース) にリクエストを送信する場合です。
 
 なお、HTTPS (相互TLS) を採用している前提です。
 
@@ -145,7 +147,7 @@ Istioは、各リソースに状態に応じて、Envoyをプロセスとした`
 
 本章では、さらに具体化します。
 
-Istioが各リソースの状態をEnvoy設定値をどのように翻訳しているのかを解説します。
+Istioが各リソースをいずれのEnvoy設定値に翻訳しているのかを解説します。
 
 <br>
 
@@ -237,7 +239,7 @@ Istioコントロールプレーンは、KubernetesリソースやIstioカスタ
 
 ### 抽象化に関わるリソース一覧
 
-サービスメッシュ内のPodから外のシステムにリクエストを送信する場合、以下のリソースが抽象化に関わります。
+サービスメッシュ内のPodから外のシステム (例：Cluster外のマイクロサービスやデータベース) にリクエストを送信する場合、以下のリソースが抽象化に関わります。
 
 なお、HTTPS (相互TLS) を採用している前提です。
 
@@ -423,7 +425,7 @@ Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリ�
 
 ### 抽象化に関わるリソース
 
-サービスメッシュ内のPodから外のシステムにリクエストを送信する場合、以下のリソースが抽象化に関わります。
+サービスメッシュ内のPodから外のシステム (例：Cluster外のマイクロサービスやデータベース) にリクエストを送信する場合、以下のリソースが抽象化に関わります。
 
 なお、HTTPS (相互TLS) を採用している前提です。
 
@@ -529,6 +531,8 @@ Istioが各リソースの状態をEnvoy設定値をどのように翻訳して�
 
 ![istio_envoy_envoy-flow_ingress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow_ingress.png)
 
+<br>
+
 ## マイクロサービス間の通信
 
 サービスメッシュ内のPodから別のPodにリクエストを送信する場合です。
@@ -539,9 +543,11 @@ Istioが各リソースの状態をEnvoy設定値をどのように翻訳して�
 
 ![istio_envoy_envoy-flow_service-to-service](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow_service-to-service.png)
 
+<br>
+
 ## サービスメッシュ外への通信
 
-サービスメッシュ内のPodから外のシステムにリクエストを送信する場合です。
+サービスメッシュ内のPodから外のシステム (例：Cluster外のマイクロサービスやデータベース) にリクエストを送信する場合です。
 
 なお、HTTPS (相互TLS) を採用している前提です。
 
