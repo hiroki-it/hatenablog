@@ -266,7 +266,7 @@ Istioコントロールプレーンは、KubernetesリソースやIstioカスタ
       <th style="text-align: center;"><nobr>Envoy設定値</nobr></th>
       <th style="text-align: center;">Service</th>
       <th style="text-align: center;">Endpoints</th>
-      <th style="text-align: center;">Gateway</th>
+      <th style="text-align: center;">Gateway<br>(IngressGatewayとして)</th>
       <th style="text-align: center;">Virtual<br>Service</th>
       <th style="text-align: center;">Destination<br>Rule</th>
       <th style="text-align: center;">Service<br>Entry</th>
@@ -455,7 +455,7 @@ Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリ�
       <th style="text-align: center;"><nobr>Envoy設定値</nobr></th>
       <th style="text-align: center;">Service</th>
       <th style="text-align: center;">Endpoints</th>
-      <th style="text-align: center;">Gateway</th>
+      <th style="text-align: center;">Gateway<br>(EgressGatewayとして)</th>
       <th style="text-align: center;">Virtual<br>Service</th>
       <th style="text-align: center;">Destination<br>Rule</th>
       <th style="text-align: center;">Service<br>Entry</th>
@@ -463,43 +463,43 @@ Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリ�
     </tr>
     <tr>
       <th style="text-align: center;"><nobr>リスナー</nobr></th>
-      <th style="text-align: center;">×</th>
-      <th style="text-align: center;">×</th>
+      <th style="text-align: center;">✅</th>
+      <th style="text-align: center;"></th>
       <th style="text-align: center;">✅</th>
       <th style="text-align: center;">✅</th>
       <th style="text-align: center;"></th>
       <th style="text-align: center;"></th>
-      <th style="text-align: center;">×</th>
+      <th style="text-align: center;">✅</th>
     </tr>
     <tr>
       <th style="text-align: center;"><nobr>ルート</nobr></th>
-      <th style="text-align: center;">×</th>
-      <th style="text-align: center;">×</th>
+      <th style="text-align: center;">✅</th>
+      <th style="text-align: center;"></th>
       <th style="text-align: center;"></th>
       <th style="text-align: center;">✅<br><nobr>(HTTPの場合のみ)</nobr></th>
       <th style="text-align: center;"></th>
       <th style="text-align: center;"></th>
-      <th style="text-align: center;">×</th>
+      <th style="text-align: center;"></th>
     </tr>
     <tr>
       <th style="text-align: center;"><nobr>クラスター</nobr></th>
-      <th style="text-align: center;">×</th>
-      <th style="text-align: center;">×</th>
+      <th style="text-align: center;">✅</th>
+      <th style="text-align: center;"></th>
       <th style="text-align: center;"></th>
       <th style="text-align: center;"></th>
       <th style="text-align: center;">✅</th>
       <th style="text-align: center;">✅</th>
-      <th style="text-align: center;">×</th>
+      <th style="text-align: center;">✅</th>
     </tr>
     <tr>
       <th style="text-align: center;"><nobr>エンドポイント</nobr></th>
-      <th style="text-align: center;">×</th>
-      <th style="text-align: center;">×</th>
+      <th style="text-align: center;"></th>
+      <th style="text-align: center;">✅</th>
       <th style="text-align: center;"></th>
       <th style="text-align: center;"></th>
       <th style="text-align: center;">✅</th>
       <th style="text-align: center;">✅</th>
-      <th style="text-align: center;">×</th>
+      <th style="text-align: center;"></th>
     </tr>
 </tbody>
 </table>
