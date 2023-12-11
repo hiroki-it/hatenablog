@@ -317,14 +317,13 @@ Istioコントロールプレーンは、KubernetesリソースやIstioカスタ
     </tr>
 </tbody>
 </table>
+![istio_envoy_envoy-flow](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow.png)
 
 <br>
 
 ### 通信への適用
 
 前述の表を参考に、各リソースとEnvoy設定値の関係を実際の処理の流れに適用します。
-
-ここでは、Envoyの処理の流れの説明は省略します。
 
 ![istio_envoy_envoy-flow_resource_ingress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow_resource_ingress.png)
 
@@ -421,8 +420,6 @@ Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリ�
 
 前述の表を参考に、各リソースとEnvoy設定値の関係を実際の処理の流れに適用します。
 
-ここでは、Envoyの処理の流れの説明は省略します。
-
 ![istio_envoy_envoy-flow_resource_service-to-service](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow_resource_service-to-service.png)
 
 Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリソース (VirtualService、DestinationRule、PeerAuthentication) を翻訳します。
@@ -515,8 +512,6 @@ Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリ�
 
 前述の表を参考に、各リソースとEnvoy設定値の関係を実際の処理の流れに適用します。
 
-ここでは、Envoyの処理の流れの説明は省略します。
-
 ![istio_envoy_envoy-flow_resource_egress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow_resource_egress.png)
 
 Istioは、Istioカスタムリソース (Gateway、VirtualService、DestinationRule、ServiceEntry) を翻訳します。
@@ -538,6 +533,8 @@ Istioは、Istioカスタムリソース (Gateway、VirtualService、Destination
 
 # 05. IstioによるEnvoyの抽象化に抗う
 
+この辺になってくると、ほとんどの人にとってはどうでもよくて、自己満です!!
+
 前章では、Envoy設定値に関わる各リソースの状態まで、言及しませんでした。
 
 本章では、さらに具体化します。
@@ -553,21 +550,27 @@ $ kubectl exec \
     -n foo-namespace \
     -c istio-proxy \
     -- bash -c "curl http://localhost:15000/config_dump?resource={dynamic_listeners}" | yq -P
+```
 
+```bash
 # ルート値
 $ kubectl exec \
     -it foo-pod \
     -n foo-namespace \
     -c istio-proxy \
     -- bash -c "curl http://localhost:15000/config_dump?resource={dynamic_route_configs}" | yq -P
+```
 
+```bash
 # クラスター値
 $ kubectl exec \
     -it foo-pod \
     -n foo-namespace \
     -c istio-proxy \
     -- bash -c "curl http://localhost:15000/config_dump?resource={dynamic_active_clusters}" | yq -P
+```
 
+```bash
 # エンドポイント値
 $ kubectl exec \
     -it foo-pod \
@@ -642,7 +645,7 @@ $ kubectl exec \
 
 Istioが、各リソースを使用してEnvoyをどのように抽象化してトラフィック管理を実装しているのか、を解説していきました。
 
-やっぱIstioむずいっす!!
+やっぱIstioむずいっす。
 
 俺たちの戦いはこれからだ!!
 
