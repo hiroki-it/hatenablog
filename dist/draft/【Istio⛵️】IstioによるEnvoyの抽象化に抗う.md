@@ -1,5 +1,5 @@
 ---
-Title: 【Istio⛵️】IstioがEnvoyの抽象化によりトラフィックを管理する仕組み
+Title: 【Istio⛵️】IstioによるEnvoyの抽象化に抗う
 ---
 
 # 01. はじめに
