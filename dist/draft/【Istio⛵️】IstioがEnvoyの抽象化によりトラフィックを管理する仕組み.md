@@ -8,13 +8,15 @@ Title: 【Istio⛵️】IstioがEnvoyの抽象化によりトラフィックを�
 
 Istio⛵️は、Envoyを抽象化し、サービスメッシュを実装するツールです。
 
-開発者は、KubernetesリソースやIstioカスタムリソースの状態に基づいて、Envoyを設定できるようになります。
+開発者は、KubernetesリソースやIstioカスタムリソースを作成するだけで、Envoyを設定できるようになります。
 
 今回は、Istioのトラフィック管理に注目します。
 
 Istioが、各リソースを使用して、Envoyをどのように抽象化してトラフィック管理を実装しているのかを解説しようと思います👍
 
 なお、Istioのサービスメッシュ方式には、サイドカープロキシメッシュとアンビエントメッシュ (Nodeエージェントメッシュ) があり、今回はサイドカープロキシメッシュについて言及します。
+
+![istio_envoy](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy.png)
 
 <br>
 
@@ -30,7 +32,7 @@ KubernetesリソースやIstioカスタムリソースの状態がEnvoy設定値
 
 ## サービスメッシュ外からの通信
 
-サービスメッシュ外から内にリクエストを送信する場合です。
+サービスメッシュ外から内にリクエストを送信する場合に関わるリソースです。
 
 なお、Pod間通信にHTTPS (相互TLS) を採用している前提です。
 
@@ -46,7 +48,7 @@ KubernetesリソースやIstioカスタムリソースの状態がEnvoy設定値
 
 ## マイクロサービス間の通信
 
-サービスメッシュ内のPodから別のPodにリクエストを送信する場合です。
+サービスメッシュ内のPodから別のPodにリクエストを送信する場合に関わるリソースです。
 
 なお、Pod間通信にHTTPS (相互TLS) を採用している前提です。
 
@@ -62,7 +64,7 @@ KubernetesリソースやIstioカスタムリソースの状態がEnvoy設定値
 
 ## サービスメッシュ外への通信
 
-サービスメッシュ内のPodから外のシステム (例：データベース、ドメインレイヤー委譲先の外部API) にリクエストを送信する場合です。
+サービスメッシュ内のPodから外のシステム (例：データベース、ドメインレイヤー委譲先の外部API) にリクエストを送信する場合に関わるリソースです。
 
 なお、Pod間通信にHTTPS (相互TLS) を採用している前提です。
 
@@ -102,7 +104,7 @@ Istioは、各リソースに状態に応じて、Envoyをプロセスとした`
 
 ## サービスメッシュ外からの通信
 
-サービスメッシュ外から内にリクエストを送信する場合です。
+サービスメッシュ外から内にリクエストを送信する場合の`istio-proxy`コンテナです。
 
 なお、Pod間通信にHTTPS (相互TLS) を採用している前提です。
 
@@ -120,7 +122,7 @@ Istioは、各リソースに状態に応じて、Envoyをプロセスとした`
 
 ## マイクロサービス間の通信
 
-サービスメッシュ内のPodから別のPodにリクエストを送信する場合です。
+サービスメッシュ内のPodから別のPodにリクエストを送信する場合の`istio-proxy`コンテナです。
 
 なお、Pod間通信にHTTPS (相互TLS) を採用している前提です。
 
@@ -137,7 +139,7 @@ Istioは、各リソースに状態に応じて、Envoyをプロセスとした`
 
 ## サービスメッシュ外への通信
 
-サービスメッシュ内のPodから外のシステム (例：データベース、ドメインレイヤー委譲先の外部API) にリクエストを送信する場合です。
+サービスメッシュ内のPodから外のシステム (例：データベース、ドメインレイヤー委譲先の外部API) にリクエストを送信する場合の`istio-proxy`コンテナです。
 
 なお、Pod間通信にHTTPS (相互TLS) を採用している前提です。
 
@@ -180,7 +182,11 @@ Envoyを抽象化する責務を持つのは、Istioコントロールプレー�
 
 ### 各リソースとEnvoy設定値の関係一覧
 
-Istioコントロールプレーンは、KubernetesリソースやIstioカスタムリソースの状態をEnvoy設定値に翻訳します。
+Envoyの処理の流れです。
+
+![istio_envoy_envoy-flow](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow.png)
+
+Istioコントロールプレーンは、KubernetesリソースやIstioカスタムリソースの状態をEnvoy設定値に翻訳し、処理の流れに適用します。
 
 以下の通り、各リソースがいずれのEnvoy設定値の抽象化に関わるのかを整理しました。
 
@@ -317,7 +323,6 @@ Istioコントロールプレーンは、KubernetesリソースやIstioカスタ
     </tr>
 </tbody>
 </table>
-![istio_envoy_envoy-flow](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow.png)
 
 <br>
 
