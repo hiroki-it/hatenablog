@@ -220,11 +220,11 @@ Istioコントロールプレーンは、KubernetesリソースやIstioカスタ
       <th style="text-align: center;">✅</th>
     </tr>
     <tr>
-      <th style="text-align: center;"><nobr>ルート</nobr></th>
+      <th style="text-align: center;"><nobr>ルート</nobr><br><nobr>(HTTPのみ)</nobr></th>
       <th style="text-align: center;">✅</th>
       <th style="text-align: center;"></th>
       <th style="text-align: center;"></th>
-      <th style="text-align: center;">✅<br><nobr>(HTTPのみ)</nobr></th>
+      <th style="text-align: center;">✅</th>
       <th style="text-align: center;"></th>
       <th style="text-align: center;"></th>
       <th style="text-align: center;"></th>
@@ -292,11 +292,11 @@ Istioコントロールプレーンは、KubernetesリソースやIstioカスタ
       <th style="text-align: center;">✅</th>
     </tr>
     <tr>
-      <th style="text-align: center;"><nobr>ルート</nobr></th>
+      <th style="text-align: center;"><nobr>ルート</nobr><br><nobr>(HTTPのみ)</nobr></th>
       <th style="text-align: center;">✅</th>
       <th style="text-align: center;"></th>
       <th style="text-align: center;"></th>
-      <th style="text-align: center;">✅<br><nobr>(HTTPのみ)</nobr></th>
+      <th style="text-align: center;">✅</th>
       <th style="text-align: center;"></th>
       <th style="text-align: center;">×</th>
       <th style="text-align: center;"></th>
@@ -387,11 +387,11 @@ Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリ�
       <th style="text-align: center;">✅</th>
     </tr>
     <tr>
-      <th style="text-align: center;"><nobr>ルート</nobr></th>
+      <th style="text-align: center;"><nobr>ルート</nobr><br><nobr>(HTTPのみ)</nobr></th>
       <th style="text-align: center;">✅</th>
       <th style="text-align: center;"></th>
       <th style="text-align: center;">×</th>
-      <th style="text-align: center;">✅<br><nobr>(HTTPのみ)</nobr></th>
+      <th style="text-align: center;">✅</th>
       <th style="text-align: center;"></th>
       <th style="text-align: center;">×</th>
       <th style="text-align: center;"></th>
@@ -481,11 +481,11 @@ Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリ�
       <th style="text-align: center;">✅</th>
     </tr>
     <tr>
-      <th style="text-align: center;"><nobr>ルート</nobr></th>
+      <th style="text-align: center;"><nobr>ルート</nobr><br><nobr>(HTTPのみ)</nobr></th>
       <th style="text-align: center;">✅</th>
       <th style="text-align: center;"></th>
       <th style="text-align: center;"></th>
-      <th style="text-align: center;">✅<br><nobr>(HTTPのみ)</nobr></th>
+      <th style="text-align: center;">✅</th>
       <th style="text-align: center;"></th>
       <th style="text-align: center;"></th>
       <th style="text-align: center;"></th>
