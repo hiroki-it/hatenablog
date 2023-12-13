@@ -73,13 +73,11 @@ KubernetesリソースやIstioカスタムリソースの状態がEnvoy設定値
 1. 送信元Podは、リクエストの宛先がServiceEntryでエントリ済みか否かに応じて、リクエストの宛先を切り替えます。
    1. 宛先がエントリ済みであれば、送信元Podはリクエストの宛先にIstio EgressGateway Podを選択します。
    2. 宛先が未エントリであれば、送信元Podはリクエストの宛先に外のシステムを選択します。
-2. ここでは、宛先がエントリ済であったとします。送信元Podは、HTTPSリクエストをIstio EgressGateway PodにHTTPSリダイレクトします。
-
+2. ここでは、宛先がエントリ済であったとします。送信元Podは、HTTPSリクエストの向き先をIstio EgressGateway Podに変更します。
    1. エントリ済システム宛にリクエストを送信すると、VirtualService`X`が宛先をIstio EgressGateway Podに変えます。
    2. Kubernetesリソース (Service、Endpoints) やDestinationRule`X`に応じて、適切なIstio EgressGateway Podを選択します。
    3. 宛先Podに送信します。
    4. PeerAuthenticationにより、宛先Podへの通信が相互TLSになります。
-
 3. Istio EgressGateway Podは、HTTPSリクエストを受信します。
 4. Istio EgressGateway Podは、HTTPSリクエストをエントリ済システムに`L7`ロードバランシングします。
    1. Istioカスタムリソース (VirtualService、DestinationRule) に応じて、適切なエントリ済システムを選択します。
@@ -344,7 +342,7 @@ Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリ�
 
 <br>
 
-リソースがEnvoy設定値間で重複しています。
+リソースがEnvoy設定値間で重複していてわかりにくいので、少し簡略化します。
 
 重複を排除すると、各リソースは以下の抽象化に関わります。
 
@@ -438,7 +436,7 @@ Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリ�
 
 <br>
 
-リソースがEnvoy設定値間で重複しています。
+リソースがEnvoy設定値間で重複していてわかりにくいので、少し簡略化します。
 
 重複を排除すると、各リソースは以下の抽象化に関わります。
 
@@ -531,7 +529,7 @@ Istioは、Istioカスタムリソース (Gateway、VirtualService、Destination
 
 <br>
 
-リソースがEnvoy設定値間で重複しています。
+リソースがEnvoy設定値間で重複していてわかりにくいので、少し簡略化します。
 
 重複を排除すると、各リソースは以下の抽象化に関わります。
 
@@ -634,13 +632,11 @@ $ kubectl exec \
 > 1. 送信元Podは、リクエストの宛先がServiceEntryでエントリ済みか否かに応じて、リクエストの宛先を切り替えます。
 >    1. 宛先がエントリ済みであれば、送信元Podはリクエストの宛先にIstio EgressGateway Podを選択します。
 >    2. 宛先が未エントリであれば、送信元Podはリクエストの宛先に外のシステムを選択します。
-> 2. ここでは、宛先がエントリ済であったとします。送信元Podは、HTTPSリクエストをIstio EgressGateway PodにHTTPSリダイレクトします。
->
+> 2. ここでは、宛先がエントリ済であったとします。送信元Podは、HTTPSリクエストの向き先をIstio EgressGateway Podに変更します。
 >    1. エントリ済システム宛にリクエストを送信すると、VirtualService`X`が宛先をIstio EgressGateway Podに変えます。
 >    2. Kubernetesリソース (Service、Endpoints) やDestinationRule`X`に応じて、適切なIstio EgressGateway Podを選択します。
 >    3. 宛先Podに送信します。
 >    4. PeerAuthenticationにより、宛先Podへの通信が相互TLSになります。
->
 > 3. Istio EgressGateway Podは、HTTPSリクエストを受信します。
 > 4. Istio EgressGateway Podは、HTTPSリクエストをエントリ済システムに`L7`ロードバランシングします。
 >    1. Istioカスタムリソース (VirtualService、DestinationRule) に応じて、適切なエントリ済システムを選択します。
@@ -653,9 +649,11 @@ $ kubectl exec \
 
 Istioが、各リソースを使用してEnvoyをどのように抽象化してトラフィック管理を実装しているのか、を解説していきました。
 
-やっぱIstioむずいっす。
+今回もIstioで優勝しちゃいました😭
 
-俺たちの戦いはこれからだ!!
+ただ、IstioがEnvoyをいい感じに抽象化してくれるので、開発者はEnvoyの設定を深く理解する必要はないです。
+
+にしても、やっぱ Istio ムズいっす!!
 
 <br>
 
@@ -680,5 +678,8 @@ Istioが、各リソースを使用してEnvoyをどのように抽象化して�
 - Istio EgressGatewayの仕組み
   - https://reitsma.io/blog/using-istio-to-mitm-our-users-traffic
   - https://discuss.istio.io/t/ingress-egress-serviceentry-data-flow-issues-for-istio-api-gateway/14202
+- Istioの相互TLSについて
+  - https://jimmysong.io/en/blog/understanding-the-tls-encryption-in-istio/
+  - https://jimmysong.io/en/blog/istio-certificates-management/
 
 <br>
