@@ -667,6 +667,8 @@ Istioが、各リソースを使用してEnvoyをどのように抽象化して�
 - IstioとEnvoyの設定値の関係
   - https://youtu.be/XAKY24b7XjQ?si=pnfA7Fnr72KY-kd-
   - https://www.slideshare.net/AspenMesh/debugging-your-debugging-tools-what-to-do-when-your-service-mesh-goes-down#19
+- Envoyのエンドポイントから取得できるJSON (情報ちょっと古いかもしれないけど)
+    - https://github.com/zhaohuabing/bookinfo-bookinfo-config-dump/blob/master/reviews-config-dump
 - Envoyプロセスのリクエスト処理の流れ
   - www.amazon.co.jp/dp/B09XN9RDY1
   - https://www.zhaohuabing.com/post/2018-09-25-istio-traffic-management-impl-intro/
@@ -678,8 +680,11 @@ Istioが、各リソースを使用してEnvoyをどのように抽象化して�
 - Istio EgressGatewayの仕組み
   - https://reitsma.io/blog/using-istio-to-mitm-our-users-traffic
   - https://discuss.istio.io/t/ingress-egress-serviceentry-data-flow-issues-for-istio-api-gateway/14202
+  - https://discuss.istio.io/t/fail-to-apply-virtualservice-and-gateway-to-egress-gateway-on-port-80/3161
 - Istioの相互TLSについて
   - https://jimmysong.io/en/blog/understanding-the-tls-encryption-in-istio/
   - https://jimmysong.io/en/blog/istio-certificates-management/
+- IstioのSSL証明書の配布について
+  - https://www.zhaohuabing.com/post/2020-05-25-istio-certificate/
 
 <br>
