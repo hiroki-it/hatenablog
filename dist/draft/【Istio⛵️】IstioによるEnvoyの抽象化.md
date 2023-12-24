@@ -668,7 +668,7 @@ Istioが、各リソースを使用してEnvoyをどのように抽象化して�
   - https://youtu.be/XAKY24b7XjQ?si=pnfA7Fnr72KY-kd-
   - https://www.slideshare.net/AspenMesh/debugging-your-debugging-tools-what-to-do-when-your-service-mesh-goes-down#19
 - Envoyのエンドポイントから取得できるJSON (情報ちょっと古いかもしれないけど)
-    - https://github.com/zhaohuabing/bookinfo-bookinfo-config-dump/blob/master/reviews-config-dump
+  - https://github.com/zhaohuabing/bookinfo-bookinfo-config-dump/blob/master/reviews-config-dump
 - Envoyプロセスのリクエスト処理の流れ
   - www.amazon.co.jp/dp/B09XN9RDY1
   - https://www.zhaohuabing.com/post/2018-09-25-istio-traffic-management-impl-intro/
