@@ -152,6 +152,16 @@ Istioは、各リソースに状態に応じて、Envoyをプロセスとした`
 5. Istio EgressGateway Podは、HTTPSリクエストをエントリ済システムに`L7`ロードバランシングします。
 6. 最終的に、エントリ済システムはHTTPSリクエストを受信します。
 
+<div class="text-box">
+Istio EgressGatewayを使用しなくとも、サービスメッシュ外に通信できます。
+<br>
+<br>
+しかし、Istio EgressGatewayを使わないと、サイドカーを経由せずにマイクロサービスから外部システムに直接リクエストを送信できるようになってしまい、システムの安全性が低くなります。
+<blockquote>
+<ul><li>[https:https://istio.io/latest/docs/tasks/traffic-management/egress/egress-control/#security-note]</li></ul>
+</blockquote>
+</div>
+
 <br>
 
 # 04. Istioはリソースの状態をEnvoy設定値に翻訳する
