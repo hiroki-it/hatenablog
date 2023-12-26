@@ -153,7 +153,7 @@ Istioは、各リソースに状態に応じて、Envoyをプロセスとした`
 6. 最終的に、エントリ済システムはHTTPSリクエストを受信します。
 
 <div class="text-box">
-Istio EgressGatewayを使用しなくとも、サービスメッシュ外に通信できます。
+Istio EgressGatewayを使用しなくとも、サービスメッシュ外の登録済システムと通信できます。
 <br>
 <br>
 しかし、Istio EgressGatewayを使わないと、サイドカーを経由せずにマイクロサービスから外部システムに直接リクエストを送信できるようになってしまい、システムの安全性が低くなります。
@@ -544,6 +544,16 @@ Istioは、Istioカスタムリソース (Gateway、VirtualService、Destination
 重複を排除すると、各リソースは以下の抽象化に関わります。
 
 ![istio_envoy_istio-proxy_resource_egress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio-proxy_resource_egress.png)
+
+<div class="text-box">
+Istio EgressGatewayを使用しなくとも、ServiceEntryだけでサービスメッシュ外の登録済みシステムと通信できます。
+<br>
+<br>
+しかし、前の章の注意書き同様に、Istio EgressGatewayを使わないと、サイドカーを経由せずにマイクロサービスから外部システムに直接リクエストを送信できるようになってしまい、システムの安全性が低くなります。
+<blockquote>
+<ul><li>[https:https://istio.io/latest/docs/tasks/traffic-management/egress/egress-control/#security-note]</li></ul>
+</blockquote>
+</div>
 
 <br>
 
