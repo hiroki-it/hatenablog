@@ -29,9 +29,9 @@ Istio⛵️のサービスメッシュのトラフィック管理をトラブル
 
 ![istio_envoy](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy.png)
 
-IstioとEnvoyの設定の対応関係について、まとまった情報が全然ないのよー！
+ですが、IstioとEnvoyの設定の対応関係について、まとまった情報が全然ないのよー！
 
-そこで、KubernetesリソースやIstioリソースに基づいて、IstioがEnvoyのトラフィック管理をどのように抽象化するのかを解説します。
+今回は、KubernetesリソースやIstioリソースに基づいて、IstioがEnvoyのトラフィック管理の設定をどのように抽象化するのかを解説します。
 
 Istioのサービスメッシュ方式には、サイドカープロキシメッシュとアンビエントメッシュ (Nodeエージェントメッシュ) があり、今回はサイドカープロキシメッシュについて言及します。
 
@@ -48,11 +48,11 @@ Istioのサービスメッシュ方式には、サイドカープロキシメッ
 
 # 02. 様々なリソースがEnvoy抽象化に関わる
 
-Istioは、KubernetesリソースやIstioカスタムリソースに基づいて、Envoyのトラフィック管理を設定します。
+Istioは、KubernetesリソースやIstioカスタムリソースに基づいて、Envoyのトラフィック管理の設定値を管理します。
 
 本章では、どのようなリソースがトラフィック管理に関係しているのかを通信の方向に分けて解説していきます。
 
-ひとまず、`istio-proxy`コンテナやEnvoyまでは言及しません。
+KubernetesリソースやIstioカスタムリソースまでに話をとどめ、`istio-proxy`コンテナやEnvoyには言及しません。
 
 <br>
 
