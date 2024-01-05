@@ -2,21 +2,47 @@
 Title: 【Istio⛵️】IstioによるEnvoyの抽象化に抗う
 ---
 
-# 01. はじめに
+# この記事から得られる知識
+
+この記事を読むと、以下を **"完全に理解"** できます✌️
+
+- Istioの通信方向に応じたトラフィック管理の仕組み
+- IstioのカスタムリソースとEnvoyの設定値の対応関係
 
 <br>
 
-Istio⛵️は、Envoyを抽象化し、サービスメッシュを実装するツールです。
+[:contents]
 
-開発者は、KubernetesリソースやIstioカスタムリソースを作成するだけで、Envoyを設定できるようになります。
+<br>
 
-今回は、Istioのトラフィック管理に注目します。
+# 01. はじめに
 
-Istioが、各リソースを使用して、Envoyをどのように抽象化してトラフィック管理を実装しているのかを解説しようと思います👍
+どうも、**俺 a.k.a いすてぃ男**です。
 
-なお、Istioのサービスメッシュ方式には、サイドカープロキシメッシュとアンビエントメッシュ (Nodeエージェントメッシュ) があり、今回はサイドカープロキシメッシュについて言及します。
+![istio-icon](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio-icon.png)
+
+<br>
+
+Istio⛵️のサービスメッシュの不具合を調査するとき、IstioはもちろんEnvoyについても知識が必要です。
+
+これは、IstioがEnvoyの設定値を抽象化し、開発者に代わってEnvoyを管理してくれているためです。
 
 ![istio_envoy](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy.png)
+
+今回は、Istioの様々なEnvoyの抽象化のうち、トラフィック管理に注目します。
+
+KubernetesリソースやIstioリソースに基づいて、IstioがEnvoyのトラフィック管理をどのように抽象化するのかを解説します。
+
+Istioのサービスメッシュ方式には、サイドカープロキシメッシュとアンビエントメッシュ (Nodeエージェントメッシュ) があり、今回はサイドカープロキシメッシュについて言及します。
+
+それでは、もりもり布教していきます😗
+
+<div class="text-box">
+記事中のこのボックスは、補足情報を記載しています。
+<br>
+<br>
+飛ばしていただいても大丈夫ですが、読んでもらえるとより理解が深まるはずです👍
+</div>
 
 <br>
 
