@@ -320,6 +320,23 @@ flowchart TD
 5. 設定した負荷分散方式 (例：ラウンドロビン、など) に応じて、クラスター配下のエンドポイントを選びます。
 6. パケットの`L7`ヘッダーを暗号化した上で、エンドポイントに`L7`ロードバランシングします。
 
+<div class="text-box">
+IstioはEnvoyのフィルターの設定値をEnvoyFilterで抽象化します。
+<br>
+<br>
+ただ、フィルターのデフォルト値で十分であり、開発者が設定値を変更しなければならないようなユースケースが少ないです。
+<br>
+<br>
+そこで、Envoyのフィルターについては補足的に解説します。
+<br>
+<br>
+HTTPSのリクエストの場合、以下の順でリクエストを処理します。
+<img src="https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-filter.png" alt="istio_envoy_envoy-filter">
+<br>
+<br>
+リスナーフィルター、ネットワークフィルター、HTTPフィルターに属するいくつかのフィルターが必要であり、これらはデフォルトで有効になっています (ここでは個別のフィルター名は省略します)。
+</div>
+
 <br>
 
 ## 各リソースとEnvoy設定値の関係一覧
