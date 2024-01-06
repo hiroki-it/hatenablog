@@ -77,7 +77,7 @@ flowchart TD
     classDef yellow fill :#FFFF88;
     class 宛先 yellow
 
-    classDef blue fill :#326CE5, font-color: white;
+    classDef blue fill :#326CE5, color: white;
     class Gateway,VirtualService,DestinationRule,Service,Endpoints blue
 ```
 
@@ -114,7 +114,7 @@ flowchart TD
     classDef yellow fill :#FFFF88;
     class 宛先 yellow
 
-    classDef blue fill :#326CE5, font-color: white;
+    classDef blue fill :#326CE5, color: white
     class VirtualService,DestinationRule,Service,Endpoints blue
 ```
 
@@ -155,7 +155,7 @@ flowchart TD
     classDef yellow fill :#FFFF88;
     class 宛先 yellow
 
-    classDef blue fill :#326CE5, font-color: white;
+    classDef blue fill :#326CE5, color: white;
     class Gateway,VirtualServiceX,VirtualServiceY,DestinationRuleX,DestinationRuleY,Service,Endpoints,ServiceEntry blue
 ```
 
@@ -291,11 +291,11 @@ Envoyは、以下のような仕組みで、リクエストを送信元から宛
 ```mermaid
 flowchart TD
     送信元 --> リスナー
-    リスナー(<font weight=bold>リスナー) --> フィルター
-    フィルター(<font weight=bold>フィルター) --> ルート
-    ルート(<font weight=bold>ルート) --> クラスター
-    クラスター(<font weight=bold>クラスター) --> エンドポイント
-    エンドポイント(<font weight=bold>エンドポイント) --> 宛先
+    リスナー(リスナー) --> フィルター
+    フィルター(フィルター) --> ルート
+    ルート(ルート) --> クラスター
+    クラスター(クラスター) --> エンドポイント
+    エンドポイント(エンドポイント) --> 宛先
 
     classDef sly fill :#CCFFFF;
     class 送信元 sly
@@ -303,7 +303,7 @@ flowchart TD
     classDef yellow fill :#FFFF88;
     class 宛先 yellow
 
-    classDef red fill :#EA6B66;
+    classDef red fill :#EA6B66, font-weight :bold
     class リスナー,フィルター,ルート,クラスター,エンドポイント red
 ```
 
