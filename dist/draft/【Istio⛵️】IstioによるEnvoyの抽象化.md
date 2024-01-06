@@ -50,9 +50,9 @@ Istioのサービスメッシュ方式には、サイドカープロキシメッ
 
 Istioは、KubernetesリソースやIstioカスタムリソースに基づいて、Envoyのトラフィック管理の設定値を管理します。
 
-本章では、どのようなリソースがトラフィック管理に関係しているのかを通信の方向に分けて解説していきます。
+まずは、どのようなリソースがトラフィック管理に関係しているのかを通信の方向に分けて解説していきます。
 
-KubernetesリソースやIstioカスタムリソースまでに話をとどめ、`istio-proxy`コンテナやEnvoyには言及しません。
+話を簡単にするために、一旦`istio-proxy`コンテナやEnvoyには言及しません。
 
 <br>
 
@@ -60,15 +60,10 @@ KubernetesリソースやIstioカスタムリソースまでに話をとどめ�
 
 サービスメッシュ外から内にリクエストを送信する場合に関わるリソースです。
 
-なお、Pod間通信にHTTPS (相互TLS) を採用している前提です。
-
-1. クライアントは、リクエストをサービスメッシュ外から内に送信します。
-2. Istio IngressGateway Podは、リクエストを受信します。
-3. Istio IngressGateway Podは、HTTPSリクエストを宛先Podに`L7`ロードバランシングします。
-   1. Kubernetesリソース (Service、Endpoints) やIstioカスタムリソース (VirtualService、DestinationRule) に応じて、適切な宛先Podを選択します。
-   2. 宛先Podに送信します。
-   3. PeerAuthenticationにより、宛先Podへの通信が相互TLSになります。
-4. 最終的に、宛先PodはHTTPSリクエストを受信します。
+1. クライアントは、リクエストをサービスメッシュ外から`L7`ロードバランサーにリクエストを送信します。
+2. `L7`ロードバランサーは、Istio IngressGateway Podにリクエストを受信します。
+3. Istio IngressGateway Podは、宛先Podとの間に相互TLSの接続を確立します。
+4. Istio IngressGateway Podは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリソース (VirtualService、DestinationRule) に応じて、リクエストを宛先Podに`L7`ロードバランシングします。
 
 ![istio_envoy_istio_resource_ingress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_resource_ingress.png)
 
@@ -76,15 +71,10 @@ KubernetesリソースやIstioカスタムリソースまでに話をとどめ�
 
 サービスメッシュ内のPodから別のPodにリクエストを送信する場合に関わるリソースです。
 
-なお、Pod間通信にHTTPS (相互TLS) を採用している前提です。
-
 ![istio_envoy_istio_resource_service-to-service](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_resource_service-to-service.png)
 
-1. 送信元Podは、HTTPSリクエストを宛先Podに`L7`ロードバランシングします。
-   1. Kubernetesリソース (Service、Endpoints) やIstioカスタムリソース (VirtualService、DestinationRule) に応じて、適切な宛先Podを選択します。
-   2. 宛先Podに送信します。
-   3. PeerAuthenticationにより、宛先Podへの通信が相互TLSになります。
-2. 最終的に、宛先PodはHTTPSリクエストを受信します。
+1. Istio IngressGateway Podは、宛先Podとの間に相互TLSの接続を確立します。
+2. Istio IngressGateway Podは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリソース (VirtualService、DestinationRule) に応じて、リクエストを宛先Podに`L7`ロードバランシングします。
 
 <br>
 
@@ -92,21 +82,13 @@ KubernetesリソースやIstioカスタムリソースまでに話をとどめ�
 
 サービスメッシュ内のPodから外のシステム (例：データベース、ドメインレイヤー委譲先の外部API) にリクエストを送信する場合に関わるリソースです。
 
-なお、Pod間通信にHTTPS (相互TLS) を採用している前提です。
-
 1. 送信元Podは、リクエストの宛先がServiceEntryでエントリ済みか否かに応じて、リクエストの宛先を切り替えます。
    1. 宛先がエントリ済みであれば、送信元Podはリクエストの宛先にIstio EgressGateway Podを選択します。
    2. 宛先が未エントリであれば、送信元Podはリクエストの宛先に外のシステムを選択します。
-2. ここでは、宛先がエントリ済であったとします。送信元Podは、HTTPSリクエストの向き先をIstio EgressGateway Podに変更します。
-   1. エントリ済システム宛にリクエストを送信すると、VirtualService`X`が宛先をIstio EgressGateway Podに変えます。
-   2. Kubernetesリソース (Service、Endpoints) やDestinationRule`X`に応じて、適切なIstio EgressGateway Podを選択します。
-   3. 宛先Podに送信します。
-   4. PeerAuthenticationにより、宛先Podへの通信が相互TLSになります。
-3. Istio EgressGateway Podは、HTTPSリクエストを受信します。
-4. Istio EgressGateway Podは、HTTPSリクエストをエントリ済システムに`L7`ロードバランシングします。
-   1. Istioカスタムリソース (VirtualService、DestinationRule) に応じて、適切なエントリ済システムを選択します。
-   2. エントリ済システムに送信します。
-5. 最終的に、エントリ済システムはHTTPSリクエストを受信します。
+2. 送信元Pddは、宛先Podとの間に相互TLSの接続を確立します。
+3. `1`で宛先がエントリ済であったとします。送信元Podは、リクエストの向き先をIstio EgressGateway Podに変更します。
+4. 送信元Podは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリソース (VirtualService、DestinationRule) に応じて、Istio EgressGateway Podに`L7`ロードバランシングします。
+5. Istio EgressGateway Podは、リクエストをエントリ済システムに`L7`ロードバランシングします。
 
 ![istio_envoy_istio_resource_egress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_resource_egress.png)
 
@@ -130,15 +112,13 @@ Istioは、各リソースに状態に応じて、Envoyをプロセスとした`
 
 サービスメッシュ外から内にリクエストを送信する場合の`istio-proxy`コンテナです。
 
-なお、Pod間通信にHTTPS (相互TLS) を採用している前提です。
-
 1. Istioコントロールプレーンは、KubernetesリソースやIstioカスタムリソースの設定を各Pod内の`istio-proxy`コンテナに提供します。
 2. クライアントは、リクエストをサービスメッシュ外から内に送信します。
 3. Istio IngressGateway Pod内の`istio-proxy`コンテナは、リクエストを受信します。
-4. Istio IngressGateway Pod内の`istio-proxy`コンテナは、HTTPSリクエストを宛先Podに`L7`ロードバランシングします。
+4. Istio IngressGateway Pod内の`istio-proxy`コンテナは、リクエストを宛先Podに`L7`ロードバランシングします。
 5. 宛先Pod内の`istio-proxy`コンテナは、リクエストを受信します。
 6. 宛先Pod内の`istio-proxy`コンテナは、HTTPリクエストを宛先マイクロサービスに送信します。
-7. 宛先マイクロサービスはHTTPSリクエストを受信します。
+7. 宛先マイクロサービスはリクエストを受信します。
 
 ![istio_envoy_istio_ingress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_ingress.png)
 
@@ -148,14 +128,11 @@ Istioは、各リソースに状態に応じて、Envoyをプロセスとした`
 
 サービスメッシュ内のPodから別のPodにリクエストを送信する場合の`istio-proxy`コンテナです。
 
-なお、Pod間通信にHTTPS (相互TLS) を採用している前提です。
-
 1. Istioコントロールプレーンは、KubernetesリソースやIstioカスタムリソースの設定を各Pod内の`istio-proxy`コンテナに提供します。
 2. 送信元Pod内のマイクロサービスは、`istio-proxy`コンテナにHTTPリクエストを送信します。
-3. 送信元Pod内の`istio-proxy`コンテナは、HTTPSリクエストを宛先Podに`L7`ロードバランシングします。
+3. 送信元Pod内の`istio-proxy`コンテナは、リクエストを宛先Podに`L7`ロードバランシングします。
 4. 宛先Pod内の`istio-proxy`コンテナは、リクエストを受信します。
 5. 宛先Pod内の`istio-proxy`コンテナは、HTTPリクエストを宛先マイクロサービスに送信します。
-6. 最終的に、宛先マイクロサービスはHTTPSリクエストを受信します。
 
 ![istio_envoy_istio_service-to-service](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_service-to-service.png)
 
@@ -165,16 +142,13 @@ Istioは、各リソースに状態に応じて、Envoyをプロセスとした`
 
 サービスメッシュ内のPodから外のシステム (例：データベース、ドメインレイヤー委譲先の外部API) にリクエストを送信する場合の`istio-proxy`コンテナです。
 
-なお、Pod間通信にHTTPS (相互TLS) を採用している前提です。
-
 1. Istioコントロールプレーンは、KubernetesリソースやIstioカスタムリソースの設定を各Pod内の`istio-proxy`コンテナに提供します。
 2. 送信元Pod内のマイクロサービスは、`istio-proxy`コンテナにHTTPリクエストを送信します。
 3. 送信元Pod内の`istio-proxy`コンテナは、リクエストの宛先がServiceEntryでエントリ済みか否かに応じて、リクエストの宛先を切り替えます。
    1. 宛先がエントリ済みであれば、`istio-proxy`コンテナはリクエストの宛先にIstio EgressGateway Podを選択します。
    2. 宛先が未エントリであれば、`istio-proxy`コンテナはリクエストの宛先に外のシステムを選択します。
-4. ここでは、宛先がエントリ済であったとします。送信元Pod内の`istio-proxy`コンテナは、HTTPSリクエストをIstio EgressGateway Podに`L7`ロードバランシングします。
-5. Istio EgressGateway Podは、HTTPSリクエストをエントリ済システムに`L7`ロードバランシングします。
-6. 最終的に、エントリ済システムはHTTPSリクエストを受信します。
+4. ここでは、宛先がエントリ済であったとします。送信元Pod内の`istio-proxy`コンテナは、リクエストをIstio EgressGateway Podに`L7`ロードバランシングします。
+5. Istio EgressGateway Podは、リクエストをエントリ済システムに`L7`ロードバランシングします。
 
 ![istio_envoy_istio_egress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_egress.png)
 
@@ -297,8 +271,6 @@ Istioコントロールプレーンは、KubernetesリソースやIstioカスタ
 
 サービスメッシュ内のPodから外のシステム (例：データベース、ドメインレイヤー委譲先の外部API) にリクエストを送信する場合、以下のリソースが抽象化に関わります。
 
-なお、Pod間通信にHTTPS (相互TLS) を採用している前提です。
-
 <table>
 <thead>
     <tr>
@@ -392,8 +364,6 @@ Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリ�
 
 サービスメッシュ内のPodから別のPodにリクエストを送信する場合、以下のリソースが抽象化に関わります。
 
-なお、Pod間通信にHTTPS (相互TLS) を採用している前提です。
-
 <table>
 <thead>
     <tr>
@@ -485,8 +455,6 @@ Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリ�
 ### 抽象化に関わるリソース
 
 サービスメッシュ内のPodから外のシステム (例：データベース、ドメインレイヤー委譲先の外部API) にリクエストを送信する場合、以下のリソースが抽象化に関わります。
-
-なお、Pod間通信にHTTPS (相互TLS) を採用している前提です。
 
 <table>
 <thead>
@@ -643,11 +611,10 @@ $ kubectl exec \
 
 > 1. クライアントは、リクエストをサービスメッシュ外から内に送信します。
 > 2. Istio IngressGateway Podは、リクエストを受信します。
-> 3. Istio IngressGateway Podは、HTTPSリクエストを宛先Podに`L7`ロードバランシングします。
+> 3. Istio IngressGateway Podは、リクエストを宛先Podに`L7`ロードバランシングします。
 >    1. Kubernetesリソース (Service、Endpoints) やIstioカスタムリソース (VirtualService、DestinationRule) に応じて、適切な宛先Podを選択します。
 >    2. 宛先Podに送信します。
 >    3. PeerAuthenticationにより、宛先Podへの通信が相互TLSになります。
-> 4. 最終的に、宛先PodはHTTPSリクエストを受信します。
 
 <br>
 
@@ -659,11 +626,10 @@ $ kubectl exec \
 
 抽象化された後の処理の流れと見比べると、雰囲気をつかめます👍
 
-> 1. 送信元Podは、HTTPSリクエストを宛先Podに`L7`ロードバランシングします。
+> 1. 送信元Podは、リクエストを宛先Podに`L7`ロードバランシングします。
 >    1. Kubernetesリソース (Service、Endpoints) やIstioカスタムリソース (VirtualService、DestinationRule) に応じて、適切な宛先Podを選択します。
 >    2. 宛先Podに送信します。
 >    3. PeerAuthenticationにより、宛先Podへの通信が相互TLSになります。
-> 2. 最終的に、宛先PodはHTTPSリクエストを受信します。
 
 <br>
 
@@ -678,16 +644,15 @@ $ kubectl exec \
 > 1. 送信元Podは、リクエストの宛先がServiceEntryでエントリ済みか否かに応じて、リクエストの宛先を切り替えます。
 >    1. 宛先がエントリ済みであれば、送信元Podはリクエストの宛先にIstio EgressGateway Podを選択します。
 >    2. 宛先が未エントリであれば、送信元Podはリクエストの宛先に外のシステムを選択します。
-> 2. ここでは、宛先がエントリ済であったとします。送信元Podは、HTTPSリクエストの向き先をIstio EgressGateway Podに変更します。
+> 2. ここでは、宛先がエントリ済であったとします。送信元Podは、リクエストの向き先をIstio EgressGateway Podに変更します。
 >    1. エントリ済システム宛にリクエストを送信すると、VirtualService`X`が宛先をIstio EgressGateway Podに変えます。
 >    2. Kubernetesリソース (Service、Endpoints) やDestinationRule`X`に応じて、適切なIstio EgressGateway Podを選択します。
 >    3. 宛先Podに送信します。
 >    4. PeerAuthenticationにより、宛先Podへの通信が相互TLSになります。
-> 3. Istio EgressGateway Podは、HTTPSリクエストを受信します。
-> 4. Istio EgressGateway Podは、HTTPSリクエストをエントリ済システムに`L7`ロードバランシングします。
+> 3. Istio EgressGateway Podは、リクエストを受信します。
+> 4. Istio EgressGateway Podは、リクエストをエントリ済システムに`L7`ロードバランシングします。
 >    1. Istioカスタムリソース (VirtualService、DestinationRule) に応じて、適切なエントリ済システムを選択します。
 >    2. エントリ済システムに送信します。
-> 5. 最終的に、エントリ済システムはHTTPSリクエストを受信します。
 
 <br>
 
