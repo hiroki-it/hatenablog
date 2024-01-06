@@ -85,6 +85,8 @@ flowchart TD
 
 ![istio_envoy_istio_resource_ingress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_resource_ingress.png)
 
+以下の説明は、図中の番号に対応しています。
+
 1. クライアントは、リクエストをサービスメッシュ外から`L7`ロードバランサーにリクエストを送信します。
 2. `L7`ロードバランサーは、Istio IngressGateway Podにリクエストを送信します。
 3. Istio IngressGateway Podは、宛先Podとの間で相互TLS認証を実施します。
@@ -119,6 +121,8 @@ flowchart TD
 各リソースは、以下のような仕組みで、リクエストをPodまで届けます。
 
 ![istio_envoy_istio_resource_service-to-service](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_resource_service-to-service.png)
+
+以下の説明は、図中の番号に対応しています。
 
 1. Istio IngressGateway Podは、宛先Podとの間で相互TLS認証を実施します。
 2. Istio IngressGateway Podは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリソース (VirtualService、DestinationRule) の設定に応じて、リクエストを宛先Podに`L7`ロードバランシングします。
@@ -158,6 +162,8 @@ flowchart TD
 各リソースは、以下のような仕組みで、リクエストをPodまで届けます。
 
 ![istio_envoy_istio_resource_egress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_resource_egress.png)
+
+以下の説明は、図中の番号に対応しています。
 
 1. 送信元Podは、リクエストの宛先がServiceEntryでエントリ済みか否かの設定に応じて、リクエストの宛先を切り替えます。
    1. 宛先がエントリ済みであれば、送信元Podはリクエストの宛先にIstio EgressGateway Podを選択します。
@@ -205,11 +211,13 @@ Istioコントロールプレーンは異なる責務を担う複数のレイヤ
 
 ![istio_envoy_istio_ingress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_ingress.png)
 
-1. Istioコントロールプレーンは、KubernetesリソースやIstioカスタムリソースの設定をPod内の`istio-proxy`コンテナに提供します。
+以下の説明は、図中の番号に対応しています。
+
+1. Istioコントロールプレーンは、翻訳されたEnvoyの設定をPod内の`istio-proxy`コンテナに提供します。
 2. クライアントは、リクエストをサービスメッシュ外から`L7`ロードバランサーにリクエストを送信します。
 3. `L7`ロードバランサーは、Istio IngressGateway Podにリクエストを送信します。
 4. Istio IngressGateway Pod内のiptablesは、リクエストを`istio-proxy`コンテナにリダイレクトします。
-5. Istio IngressGateway Pod内の`istio-proxy`コンテナは、宛先Podを決定し、相互TLS認証を実施します。
+5. Istio IngressGateway Pod内の`istio-proxy`コンテナは、宛先Podを決定し、また相互TLS認証を実施します。
 6. Istio IngressGateway Pod内の`istio-proxy`コンテナは、リクエストを宛先Podに`L7`ロードバランシングします。
 7. 宛先Pod内のiptablesは、リクエストを`istio-proxy`コンテナにリダイレクトします。
 8. 宛先Pod内の`istio-proxy`コンテナは、リクエストを宛先マイクロサービスに送信します。
@@ -224,11 +232,14 @@ Istioコントロールプレーンは異なる責務を担う複数のレイヤ
 
 ![istio_envoy_istio_service-to-service](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_service-to-service.png)
 
-1. Istioコントロールプレーンは、KubernetesリソースやIstioカスタムリソースの設定をPod内の`istio-proxy`コンテナに提供します。
-2. 送信元Pod内のマイクロサービスは、`istio-proxy`コンテナにHTTPリクエストを送信します。
-3. 送信元Pod内の`istio-proxy`コンテナは、リクエストを宛先Podに`L7`ロードバランシングします。
-4. 宛先Pod内の`istio-proxy`コンテナは、リクエストを受信します。
-5. 宛先Pod内の`istio-proxy`コンテナは、HTTPリクエストを宛先マイクロサービスに送信します。
+以下の説明は、図中の番号に対応しています。
+
+1. Istioコントロールプレーンは、翻訳されたEnvoyの設定をPod内の`istio-proxy`コンテナに提供します。
+2. 送信元Pod内のiptablesは、リクエストを`istio-proxy`コンテナにリダイレクトします。
+3. 送信元Pod内の`istio-proxy`コンテナは、宛先Podを決定し、また相互TLS認証を実施します。
+4. 送信元Pod内の`istio-proxy`コンテナは、リクエストを宛先Podに`L7`ロードバランシングします。
+5. 宛先Pod内のiptablesは、リクエストを`istio-proxy`コンテナにリダイレクトします。
+6. 宛先Pod内の`istio-proxy`コンテナは、リクエストを宛先マイクロサービスに送信します。
 
 <br>
 
@@ -240,13 +251,16 @@ Istioコントロールプレーンは異なる責務を担う複数のレイヤ
 
 ![istio_envoy_istio_egress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_egress.png)
 
-1. Istioコントロールプレーンは、KubernetesリソースやIstioカスタムリソースの設定をPod内の`istio-proxy`コンテナに提供します。
-2. 送信元Pod内のマイクロサービスは、`istio-proxy`コンテナにHTTPリクエストを送信します。
-3. 送信元Pod内の`istio-proxy`コンテナは、リクエストの宛先がServiceEntryでエントリ済みか否かに応じて、リクエストの宛先を切り替えます。
+以下の説明は、図中の番号に対応しています。
+
+1. Istioコントロールプレーンは、翻訳されたEnvoyの設定をPod内の`istio-proxy`コンテナに提供します。
+2. 送信元Pod内のiptablesは、リクエストを`istio-proxy`コンテナにリダイレクトします。
+3. 送信元Pod内の`istio-proxy`コンテナは、宛先Podを決定し、また相互TLS認証を実施します。この時、ServiceEntryで宛先がエントリ済みか否かに応じて、リクエストの宛先を切り替えます。
    1. 宛先がエントリ済みであれば、`istio-proxy`コンテナはリクエストの宛先にIstio EgressGateway Podを選択します。
    2. 宛先が未エントリであれば、`istio-proxy`コンテナはリクエストの宛先に外のシステムを選択します。
 4. ここでは、宛先がエントリ済であったとします。送信元Pod内の`istio-proxy`コンテナは、リクエストをIstio EgressGateway Podに`L7`ロードバランシングします。
-5. Istio EgressGateway Podは、リクエストをエントリ済システムに`L7`ロードバランシングします。
+5. 宛先Pod内のiptablesは、リクエストを`istio-proxy`コンテナにリダイレクトします。
+6. 宛先Pod内の`istio-proxy`コンテナは、リクエストをエントリ済システムに`L7`ロードバランシングします。
 
 <div class="text-box">
 Istio EgressGatewayを使用しなくとも、サービスメッシュ外の登録済システムと通信できます。
