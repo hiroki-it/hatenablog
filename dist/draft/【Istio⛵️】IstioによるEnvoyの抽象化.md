@@ -60,7 +60,7 @@ Istioは、KubernetesリソースやIstioカスタムリソースの設定に応
 
 サービスメッシュ外から内にリクエストを送信する場合に関わるリソースです。
 
-リソースは、以下のような順番で紐付き、送信元から宛先までリクエストを届けます。
+リソースは、以下の順で紐付き、送信元から宛先までリクエストを届けます。
 
 ```mermaid
 flowchart TD
@@ -81,7 +81,7 @@ flowchart TD
     class Gateway,VirtualService,DestinationRule,Service,Endpoints blue
 ```
 
-各リソースは、以下のような仕組みで、リクエストを送信元から宛先まで届けます。
+各リソースは、以下の仕組みで、リクエストを送信元から宛先まで届けます。
 
 ![istio_envoy_istio_resource_ingress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_resource_ingress.png)
 
@@ -98,7 +98,7 @@ flowchart TD
 
 サービスメッシュ内のPodから別のPodにリクエストを送信する場合に関わるリソースです。
 
-リソースは、以下のような順番で紐付き、送信元から宛先までリクエストを届けます。
+リソースは、以下の順で紐付き、送信元から宛先までリクエストを届けます。
 
 ```mermaid
 flowchart TD
@@ -118,7 +118,7 @@ flowchart TD
     class VirtualService,DestinationRule,Service,Endpoints blue
 ```
 
-各リソースは、以下のような仕組みで、リクエストを送信元から宛先まで届けます。
+各リソースは、以下の仕組みで、リクエストを送信元から宛先まで届けます。
 
 ![istio_envoy_istio_resource_service-to-service](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_resource_service-to-service.png)
 
@@ -133,7 +133,7 @@ flowchart TD
 
 サービスメッシュ内のPodから外のシステム (例：データベース、ドメインレイヤー委譲先の外部API) にリクエストを送信する場合に関わるリソースです。
 
-リソースは、以下のような順番で紐付き、送信元から宛先までリクエストを届けます。
+リソースは、以下の順で紐付き、送信元から宛先までリクエストを届けます。
 
 複数のVirtualServiceとDestinationが登場するため、これらには便宜上`X`と`Y`をつけています。
 
@@ -159,7 +159,7 @@ flowchart TD
     class Gateway,VirtualServiceX,VirtualServiceY,DestinationRuleX,DestinationRuleY,Service,Endpoints,ServiceEntry blue
 ```
 
-各リソースは、以下のような仕組みで、リクエストを送信元から宛先まで届けます。
+各リソースは、以下の仕組みで、リクエストを送信元から宛先まで届けます。
 
 ![istio_envoy_istio_resource_egress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_resource_egress.png)
 
@@ -207,7 +207,7 @@ Istioコントロールプレーンは異なる責務を担う複数のレイヤ
 
 サービスメッシュ外から内にリクエストを送信する場合の`istio-proxy`コンテナです。
 
-各リソースは、以下のような仕組みで、リクエストを送信元から宛先まで届けます。
+各リソースは、以下の仕組みで、リクエストを送信元から宛先まで届けます。
 
 ![istio_envoy_istio_ingress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_ingress.png)
 
@@ -228,7 +228,7 @@ Istioコントロールプレーンは異なる責務を担う複数のレイヤ
 
 サービスメッシュ内のPodから別のPodにリクエストを送信する場合の`istio-proxy`コンテナです。
 
-各リソースは、以下のような仕組みで、リクエストを送信元から宛先まで届けます。
+各リソースは、以下の仕組みで、リクエストを送信元から宛先まで届けます。
 
 ![istio_envoy_istio_service-to-service](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_service-to-service.png)
 
@@ -247,7 +247,7 @@ Istioコントロールプレーンは異なる責務を担う複数のレイヤ
 
 サービスメッシュ内のPodから外のシステム (例：データベース、ドメインレイヤー委譲先の外部API) にリクエストを送信する場合の`istio-proxy`コンテナです。
 
-各リソースは、以下のような仕組みで、リクエストを送信元から宛先まで届けます。
+各リソースは、以下の仕組みで、リクエストを送信元から宛先まで届けます。
 
 ![istio_envoy_istio_egress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_egress.png)
 
@@ -284,18 +284,18 @@ Istio EgressGatewayを使用しなくとも、サービスメッシュ外の登�
 
 <br>
 
-## 各リソースとEnvoy設定値の関係一覧
+## Envoyの仕組み
 
-Envoyは、以下のような仕組みで、リクエストを送信元から宛先まで届けます。
+Envoyでは、設定値が以下の順で紐付き、リクエストを送信元から宛先まで届けます。
 
 ```mermaid
 flowchart TD
-    送信元 --> リスナー
-    リスナー(リスナー) --> フィルター
-    フィルター(フィルター) --> ルート
-    ルート(ルート) --> クラスター
-    クラスター(クラスター) --> エンドポイント
-    エンドポイント(エンドポイント) --> 宛先
+    送信元 --> リスナー値
+    リスナー値(リスナー値) --> フィルター
+    フィルター(フィルター) --> ルート値
+    ルート値(ルート値) --> クラスター値
+    クラスター値(クラスター値) --> エンドポイント値
+    エンドポイント値(エンドポイント値) --> 宛先
 
     classDef sly fill :#CCFFFF;
     class 送信元 sly
@@ -304,12 +304,25 @@ flowchart TD
     class 宛先 yellow
 
     classDef red fill :#EA6B66, font-weight :bold
-    class リスナー,フィルター,ルート,クラスター,エンドポイント red
+    class リスナー値,フィルター,ルート値,クラスター値,エンドポイント値 red
 ```
 
 各処理がどのような責務を持っているのかをもう少し詳しく見てみましょう。
 
 ![istio_envoy_envoy-flow](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow.png)
+
+以下の説明は、図中の番号に対応しています。
+
+1. リクエストの宛先ポートで、リスナーを絞り込みます。
+2. 通信の種類 (例：HTTP、HTTPS、TCP、UDP、など) に応じてフィルターを選び、各フィルターがパケットのヘッダー (例：`L3`、`L4`、`L7`、など) を処理します。
+3. リクエストの宛先ポートで、ルートを絞り込みます。
+4. リクエストの宛先ホスト/パスで、クラスターを絞り込みます。
+5. 設定した負荷分散方式 (例：ラウンドロビン、など) に応じて、クラスター配下のエンドポイントを選びます。
+6. パケットの`L7`ヘッダーを暗号化した上で、エンドポイントに`L7`ロードバランシングします。
+
+<br>
+
+## 各リソースとEnvoy設定値の関係一覧
 
 Istioコントロールプレーンは、KubernetesリソースやIstioカスタムリソースの設定をEnvoy設定値に翻訳し、処理の流れに適用します。
 
@@ -463,7 +476,7 @@ Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリ�
 以下の通り、翻訳結果をIstio IngressGateway Podやこれの宛先Podの`istio-proxy`コンテナに適用します。
 
 - Gatewayの翻訳結果をIstio IngressGateway Podのみで使用します。
-- Gateway以外のリソースの翻訳結果を、Istio IngressGateway Podと宛先Podの両方で共有します。Pod間で、関わるリソースは同じ順番です。
+- Gateway以外のリソースの翻訳結果を、Istio IngressGateway Podと宛先Podの両方で共有します。Pod間で、関わるリソースは同じ順です。
 
 <br>
 
@@ -555,7 +568,7 @@ Istioは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリ�
 
 以下の通り、翻訳結果を送信元Podや宛先Podの`istio-proxy`コンテナに適用します。
 
-- 全てのリソースの翻訳結果を、送信元Podと宛先Podの両方で共有します。Pod間で、関わるリソースは同じ順番です。
+- 全てのリソースの翻訳結果を、送信元Podと宛先Podの両方で共有します。Pod間で、関わるリソースは同じ順です。
 
 <br>
 
@@ -646,7 +659,7 @@ Istioは、Istioカスタムリソース (Gateway、VirtualService、Destination
 以下の通り、翻訳結果を送信元PodやIstio EgressGateway Podの`istio-proxy`コンテナに適用します。
 
 - Gateway、エントリ済システムの宛先リソース (VirtualService `Y`、DestinationRule` Y`、ServiceEntry) の翻訳結果をIstio EgressGateway Podのみで使用します。
-- Gateway以外のリソースの翻訳結果を、Istio IngressGateway Podと宛先Podの両方で共有します。Pod間で、関わるリソースは同じ順番です。
+- Gateway以外のリソースの翻訳結果を、Istio IngressGateway Podと宛先Podの両方で共有します。Pod間で、関わるリソースは同じ順です。
 
 <br>
 
