@@ -65,11 +65,11 @@ Istioは、KubernetesリソースやIstioカスタムリソースの設定に応
 ```mermaid
 flowchart TD
     送信元 --> Gateway
-    Gateway(<font color=white>Gateway) --> VirtualService
-    VirtualService(<font color=white>VirtualService) --> DestinationRule
-    DestinationRule(<font color=white>DestinationRule) --> Service
-    Service(<font color=white>Service) --> Endpoints
-    Endpoints(<font color=white>Endpoints) --> 宛先
+    Gateway(Gateway) --> VirtualService
+    VirtualService(VirtualService) --> DestinationRule
+    DestinationRule(DestinationRule) --> Service
+    Service(Service) --> Endpoints
+    Endpoints(Endpoints) --> 宛先
 
     classDef sly fill :#CCFFFF;
     class 送信元 sly
@@ -77,7 +77,7 @@ flowchart TD
     classDef yellow fill :#FFFF88;
     class 宛先 yellow
 
-    classDef blue fill :#326CE5;
+    classDef blue fill :#326CE5, font-color: white;
     class Gateway,VirtualService,DestinationRule,Service,Endpoints blue
 ```
 
@@ -103,10 +103,10 @@ flowchart TD
 ```mermaid
 flowchart TD
     送信元 --> VirtualService
-    VirtualService(<font color=white>VirtualService) --> DestinationRule
-    DestinationRule(<font color=white>DestinationRule) --> Service
-    Service(<font color=white>Service) --> Endpoints
-    Endpoints(<font color=white>Endpoints) --> 宛先
+    VirtualService(VirtualService) --> DestinationRule
+    DestinationRule(DestinationRule) --> Service
+    Service(Service) --> Endpoints
+    Endpoints(Endpoints) --> 宛先
 
     classDef sly fill :#CCFFFF;
     class 送信元 sly
@@ -114,7 +114,7 @@ flowchart TD
     classDef yellow fill :#FFFF88;
     class 宛先 yellow
 
-    classDef blue fill :#326CE5;
+    classDef blue fill :#326CE5, font-color: white;
     class VirtualService,DestinationRule,Service,Endpoints blue
 ```
 
@@ -140,14 +140,14 @@ flowchart TD
 ```mermaid
 flowchart TD
     送信元 --> VirtualServiceX
-    VirtualServiceX(<font color=white>VirtualService X) --> DestinationRuleX
-    DestinationRuleX(<font color=white>DestinationRule X) --> Service
-    Service(<font color=white>Service) --> Endpoints
-    Endpoints(<font color=white>Endpoints) --> Gateway
-    Gateway(<font color=white>Gateway) --> VirtualServiceY
-    VirtualServiceY(<font color=white>VirtualService Y) --> DestinationRuleY
-    DestinationRuleY(<font color=white>DestinationRule Y) --> ServiceEntry
-    ServiceEntry(<font color=white>ServiceEntry) --> 宛先
+    VirtualServiceX(VirtualService X) --> DestinationRuleX
+    DestinationRuleX(DestinationRule X) --> Service
+    Service(Service) --> Endpoints
+    Endpoints(Endpoints) --> Gateway
+    Gateway(Gateway) --> VirtualServiceY
+    VirtualServiceY(VirtualService Y) --> DestinationRuleY
+    DestinationRuleY(DestinationRule Y) --> ServiceEntry
+    ServiceEntry(ServiceEntry) --> 宛先
 
     classDef sly fill :#CCFFFF;
     class 送信元 sly
@@ -155,7 +155,7 @@ flowchart TD
     classDef yellow fill :#FFFF88;
     class 宛先 yellow
 
-    classDef blue fill :#326CE5;
+    classDef blue fill :#326CE5, font-color: white;
     class Gateway,VirtualServiceX,VirtualServiceY,DestinationRuleX,DestinationRuleY,Service,Endpoints,ServiceEntry blue
 ```
 
