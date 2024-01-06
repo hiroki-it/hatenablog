@@ -63,6 +63,8 @@ Istioは、KubernetesリソースやIstioカスタムリソースの設定に応
 以下のような順番でリソースが紐付き、リクエストをPodまで届けます。
 
 ```
+送信元
+⬇︎
 Gateway
 ⬇︎
 VirtualService
@@ -72,6 +74,8 @@ DestinationRule
 Service
 ⬇︎
 Endpoints
+⬇︎
+宛先
 ```
 
 1. クライアントは、リクエストをサービスメッシュ外から`L7`ロードバランサーにリクエストを送信します。
@@ -88,6 +92,8 @@ Endpoints
 以下のような順番でリソースが紐付き、リクエストをPodまで届けます。
 
 ```
+送信元
+⬇︎
 VirtualService
 ⬇︎
 DestinationRule
@@ -95,6 +101,8 @@ DestinationRule
 Service
 ⬇︎
 Endpoints
+⬇︎
+宛先
 ```
 
 1. Istio IngressGateway Podは、宛先Podとの間で相互TLS認証を実施します。
@@ -111,6 +119,8 @@ Endpoints
 以下のような順番でリソースが紐付き、リクエストをPodまで届けます。
 
 ```
+送信元
+⬇︎
 VirtualService
 ⬇︎
 DestinationRule
@@ -126,6 +136,8 @@ VirtualService
 DestinationRule
 ⬇︎
 ServiceEntry
+⬇︎
+宛先
 ```
 
 1. 送信元Podは、リクエストの宛先がServiceEntryでエントリ済みか否かに応じて、リクエストの宛先を切り替えます。
