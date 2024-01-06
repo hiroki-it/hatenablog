@@ -87,6 +87,8 @@ Endpoints
 3. Istio IngressGateway Podは、宛先Podとの間で相互TLS認証を実施します。
 4. Istio IngressGateway Podは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリソース (VirtualService、DestinationRule) に応じて、リクエストを宛先Podに`L7`ロードバランシングします。
 
+<br>
+
 ## マイクロサービス間の通信
 
 サービスメッシュ内のPodから別のPodにリクエストを送信する場合に関わるリソースです。
@@ -178,6 +180,8 @@ Envoyの設定については、次章以降で解説します。
 
 以下のような
 
+![istio_envoy_istio_ingress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_ingress.png)
+
 1. Istioコントロールプレーンは、KubernetesリソースやIstioカスタムリソースの設定を各Pod内の`istio-proxy`コンテナに提供します。
 2. クライアントは、リクエストをサービスメッシュ外から内に送信します。
 3. Istio IngressGateway Pod内の`istio-proxy`コンテナは、リクエストを受信します。
@@ -186,21 +190,19 @@ Envoyの設定については、次章以降で解説します。
 6. 宛先Pod内の`istio-proxy`コンテナは、HTTPリクエストを宛先マイクロサービスに送信します。
 7. 宛先マイクロサービスはリクエストを受信します。
 
-![istio_envoy_istio_ingress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_ingress.png)
-
 <br>
 
 ## マイクロサービス間の通信
 
 サービスメッシュ内のPodから別のPodにリクエストを送信する場合の`istio-proxy`コンテナです。
 
+![istio_envoy_istio_service-to-service](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_service-to-service.png)
+
 1. Istioコントロールプレーンは、KubernetesリソースやIstioカスタムリソースの設定を各Pod内の`istio-proxy`コンテナに提供します。
 2. 送信元Pod内のマイクロサービスは、`istio-proxy`コンテナにHTTPリクエストを送信します。
 3. 送信元Pod内の`istio-proxy`コンテナは、リクエストを宛先Podに`L7`ロードバランシングします。
 4. 宛先Pod内の`istio-proxy`コンテナは、リクエストを受信します。
 5. 宛先Pod内の`istio-proxy`コンテナは、HTTPリクエストを宛先マイクロサービスに送信します。
-
-![istio_envoy_istio_service-to-service](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_service-to-service.png)
 
 <br>
 
@@ -248,11 +250,11 @@ Envoyを抽象化する責務を持つのは、Istioコントロールプレー�
 
 ここでは、Istioコントロールプレーンは異なる責務を担う複数のレイヤーから構成されています。
 
+![istio_envoy_istio-proxy_resource_control-plane](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio-proxy_resource_control-plane.png)
+
 1. Istioコントロールプレーンは、リソース取得レイヤーにて、kube-apiserverからKubernetesリソースやIstioカスタムリソースの設定を取得します。
 2. Envoy翻訳レイヤーにて、取得したリソースの設定をEnvoy設定値に変換します。
 3. `istio-proxy`配布レイヤーにて、`istio-proxy`コンテナをPodに配布します。反対に、Podが`istio-proxy`配布レイヤーから`istio-proxy`コンテナを取得しにいくこともあります。
-
-![istio_envoy_istio-proxy_resource_control-plane](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio-proxy_resource_control-plane.png)
 
 ### 各リソースとEnvoy設定値の関係一覧
 
