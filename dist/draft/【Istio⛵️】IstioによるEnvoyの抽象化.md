@@ -65,11 +65,11 @@ Istioは、KubernetesリソースやIstioカスタムリソースの設定に応
 ```mermaid
 flowchart TD
     送信元 --> Gateway
-    Gateway(Gateway) --> VirtualService
-    VirtualService(VirtualService) --> DestinationRule
-    DestinationRule(DestinationRule) --> Service
-    Service(Service) --> Endpoints
-    Endpoints(Endpoints) --> 宛先
+    Gateway(<font color=white>Gateway) --> VirtualService
+    VirtualService(<font color=white>VirtualService) --> DestinationRule
+    DestinationRule(<font color=white>DestinationRule) --> Service
+    Service(<font color=white>Service) --> Endpoints
+    Endpoints(<font color=white>Endpoints) --> 宛先
 
     classDef sly fill :#CCFFFF;
     class 送信元 sly
@@ -103,10 +103,10 @@ flowchart TD
 ```mermaid
 flowchart TD
     送信元 --> VirtualService
-    VirtualService(VirtualService) --> DestinationRule
-    DestinationRule(DestinationRule) --> Service
-    Service(Service) --> Endpoints
-    Endpoints(Endpoints) --> 宛先
+    VirtualService(<font color=white>VirtualService) --> DestinationRule
+    DestinationRule(<font color=white>DestinationRule) --> Service
+    Service(<font color=white>Service) --> Endpoints
+    Endpoints(<font color=white>Endpoints) --> 宛先
 
     classDef sly fill :#CCFFFF;
     class 送信元 sly
@@ -140,14 +140,14 @@ flowchart TD
 ```mermaid
 flowchart TD
     送信元 --> VirtualServiceX
-    VirtualServiceX(VirtualService X) --> DestinationRuleX
-    DestinationRuleX(DestinationRule X) --> Service
-    Service(Service) --> Endpoints
-    Endpoints(Endpoints) --> Gateway
-    Gateway(Gateway) --> VirtualServiceY
-    VirtualServiceY(VirtualService Y) --> DestinationRuleY
-    DestinationRuleY(DestinationRule Y) --> ServiceEntry
-    ServiceEntry(ServiceEntry) --> 宛先
+    VirtualServiceX(<font color=white>VirtualService X) --> DestinationRuleX
+    DestinationRuleX(<font color=white>DestinationRule X) --> Service
+    Service(<font color=white>Service) --> Endpoints
+    Endpoints(<font color=white>Endpoints) --> Gateway
+    Gateway(<font color=white>Gateway) --> VirtualServiceY
+    VirtualServiceY(<font color=white>VirtualService Y) --> DestinationRuleY
+    DestinationRuleY(<font color=white>DestinationRule Y) --> ServiceEntry
+    ServiceEntry(<font color=white>ServiceEntry) --> 宛先
 
     classDef sly fill :#CCFFFF;
     class 送信元 sly
@@ -291,11 +291,11 @@ Envoyは、以下のような仕組みで、リクエストを送信元から宛
 ```mermaid
 flowchart TD
     送信元 --> リスナー
-    リスナー(リスナー) --> フィルター
-    フィルター(フィルター) --> ルート
-    ルート(ルート) --> クラスター
-    クラスター(クラスター) --> エンドポイント
-    エンドポイント(エンドポイント) --> 宛先
+    リスナー(<font weight=bold>リスナー) --> フィルター
+    フィルター(<font weight=bold>フィルター) --> ルート
+    ルート(<font weight=bold>ルート) --> クラスター
+    クラスター(<font weight=bold>クラスター) --> エンドポイント
+    エンドポイント(<font weight=bold>エンドポイント) --> 宛先
 
     classDef sly fill :#CCFFFF;
     class 送信元 sly
