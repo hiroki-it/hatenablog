@@ -62,20 +62,23 @@ Istioは、KubernetesリソースやIstioカスタムリソースの設定に応
 
 リソースは、以下のような順番で紐付き、リクエストをPodまで届けます。
 
-```
-送信元
-⬇︎
-Gateway
-⬇︎
-VirtualService
-⬇︎
-DestinationRule
-⬇︎
-Service
-⬇︎
-Endpoints
-⬇︎
-宛先
+```mermaid
+flowchart TD
+    送信元 --> Gateway
+    Gateway(Gateway) --> VirtualService
+    VirtualService(VirtualService) --> DestinationRule
+    DestinationRule(DestinationRule) --> Service
+    Service(Service) --> Endpoints
+    Endpoints(Endpoints) --> 宛先
+
+    classDef sly fill :#CCFFFF;
+    class 送信元 sly
+
+    classDef yellow fill :#FFFF88;
+    class 宛先 yellow
+
+    classDef blue fill :#326CE5;
+    class Gateway,VirtualService,DestinationRule,Service,Endpoints blue
 ```
 
 各リソースは、以下のような仕組みで、リクエストをPodまで届けます。
@@ -83,7 +86,7 @@ Endpoints
 ![istio_envoy_istio_resource_ingress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_resource_ingress.png)
 
 1. クライアントは、リクエストをサービスメッシュ外から`L7`ロードバランサーにリクエストを送信します。
-2. `L7`ロードバランサーは、Istio IngressGateway Podにリクエストを受信します。
+2. `L7`ロードバランサーは、Istio IngressGateway Podにリクエストを　送信します。
 3. Istio IngressGateway Podは、宛先Podとの間で相互TLS認証を実施します。
 4. Istio IngressGateway Podは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリソース (VirtualService、DestinationRule) に応じて、リクエストを宛先Podに`L7`ロードバランシングします。
 
@@ -95,18 +98,22 @@ Endpoints
 
 リソースは、以下のような順番で紐付き、リクエストをPodまで届けます。
 
-```
-送信元
-⬇︎
-VirtualService
-⬇︎
-DestinationRule
-⬇︎
-Service
-⬇︎
-Endpoints
-⬇︎
-宛先
+```mermaid
+flowchart TD
+    送信元 --> VirtualService
+    VirtualService(VirtualService) --> DestinationRule
+    DestinationRule(DestinationRule) --> Service
+    Service(Service) --> Endpoints
+    Endpoints(Endpoints) --> 宛先
+
+    classDef sly fill :#CCFFFF;
+    class 送信元 sly
+
+    classDef yellow fill :#FFFF88;
+    class 宛先 yellow
+
+    classDef blue fill :#326CE5;
+    class VirtualService,DestinationRule,Service,Endpoints blue
 ```
 
 各リソースは、以下のような仕組みで、リクエストをPodまで届けます。
@@ -124,26 +131,26 @@ Endpoints
 
 リソースは、以下のような順番で紐付き、リクエストをPodまで届けます。
 
-```
-送信元
-⬇︎
-VirtualService
-⬇︎
-DestinationRule
-⬇︎
-Service
-⬇︎
-Endpoints
-⬇︎
-Gateway
-⬇︎
-VirtualService
-⬇︎
-DestinationRule
-⬇︎
-ServiceEntry
-⬇︎
-宛先
+```mermaid
+flowchart TD
+    送信元 --> VirtualServiceX
+    VirtualServiceX(VirtualService X) --> DestinationRuleX
+    DestinationRuleX(DestinationRule X) --> Service
+    Service(Service) --> Endpoints
+    Endpoints(Endpoints) --> Gateway
+    Gateway(Gateway) --> VirtualServiceY
+    VirtualServiceY(VirtualService Y) --> DestinationRuleY
+    DestinationRuleY(DestinationRule Y) --> ServiceEntry
+    ServiceEntry(ServiceEntry) --> 宛先
+
+    classDef sly fill :#CCFFFF;
+    class 送信元 sly
+
+    classDef yellow fill :#FFFF88;
+    class 宛先 yellow
+
+    classDef blue fill :#326CE5;
+    class Gateway,VirtualServiceX,VirtualServiceY,DestinationRuleX,DestinationRuleY,Service,Endpoints,ServiceEntry blue
 ```
 
 各リソースは、以下のような仕組みで、リクエストをPodまで届けます。
@@ -183,7 +190,7 @@ Envoyの設定については、次章以降で解説します。
 ![istio_envoy_istio_ingress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_ingress.png)
 
 1. Istioコントロールプレーンは、KubernetesリソースやIstioカスタムリソースの設定を各Pod内の`istio-proxy`コンテナに提供します。
-2. クライアントは、リクエストをサービスメッシュ外から内に送信します。
+2. クライアントは、リクエストをサービスメッシュ外から`L7`ロードバランサーにリクエストを送信します。
 3. Istio IngressGateway Pod内の`istio-proxy`コンテナは、リクエストを受信します。
 4. Istio IngressGateway Pod内の`istio-proxy`コンテナは、リクエストを宛先Podに`L7`ロードバランシングします。
 5. 宛先Pod内の`istio-proxy`コンテナは、リクエストを受信します。
