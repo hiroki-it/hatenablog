@@ -31,7 +31,7 @@ Istio⛵️のサービスメッシュのトラフィック管理をトラブル
 
 ですが、IstioとEnvoyの設定の対応関係について、まとまった情報が全然ないのよー！
 
-今回は、KubernetesリソースやIstioリソースに基づいて、IstioがEnvoyのトラフィック管理の設定をどのように抽象化するのかを解説します。
+今回は、KubernetesリソースやIstioリソースの設定に応じて、IstioがEnvoyのトラフィック管理の設定をどのように抽象化するのかを解説します。
 
 Istioのサービスメッシュ方式には、サイドカープロキシメッシュとアンビエントメッシュ (Nodeエージェントメッシュ) があり、今回はサイドカープロキシメッシュについて言及します。
 
@@ -48,11 +48,11 @@ Istioのサービスメッシュ方式には、サイドカープロキシメッ
 
 # 02. 様々なリソースがEnvoy抽象化に関わる
 
-Istioは、KubernetesリソースやIstioカスタムリソースに基づいて、Envoyのトラフィック管理の設定値を管理します。
+Istioは、KubernetesリソースやIstioカスタムリソースの設定に応じて、Envoyのトラフィック管理の設定値を管理します。
 
 まずは、どのようなリソースがトラフィック管理に関係しているのかを通信の方向に分けて解説していきます。
 
-話を簡単にするために、一旦`istio-proxy`コンテナやEnvoyには言及しません。
+`istio-proxy`コンテナやEnvoyについては、次章以降で解説します。
 
 <br>
 
@@ -60,9 +60,23 @@ Istioは、KubernetesリソースやIstioカスタムリソースに基づいて
 
 サービスメッシュ外から内にリクエストを送信する場合に関わるリソースです。
 
+以下のような順番でリソースが紐付き、リクエストをPodまで届けます。
+
+```
+Gateway
+⬇︎
+VirtualService
+⬇︎
+DestinationRule
+⬇︎
+Service
+⬇︎
+Endpoints
+```
+
 1. クライアントは、リクエストをサービスメッシュ外から`L7`ロードバランサーにリクエストを送信します。
 2. `L7`ロードバランサーは、Istio IngressGateway Podにリクエストを受信します。
-3. Istio IngressGateway Podは、宛先Podとの間に相互TLSの接続を確立します。
+3. Istio IngressGateway Podは、宛先Podとの間で相互TLS認証を実施します。
 4. Istio IngressGateway Podは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリソース (VirtualService、DestinationRule) に応じて、リクエストを宛先Podに`L7`ロードバランシングします。
 
 ![istio_envoy_istio_resource_ingress](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_resource_ingress.png)
@@ -71,10 +85,22 @@ Istioは、KubernetesリソースやIstioカスタムリソースに基づいて
 
 サービスメッシュ内のPodから別のPodにリクエストを送信する場合に関わるリソースです。
 
-![istio_envoy_istio_resource_service-to-service](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_resource_service-to-service.png)
+以下のような順番でリソースが紐付き、リクエストをPodまで届けます。
 
-1. Istio IngressGateway Podは、宛先Podとの間に相互TLSの接続を確立します。
+```
+VirtualService
+⬇︎
+DestinationRule
+⬇︎
+Service
+⬇︎
+Endpoints
+```
+
+1. Istio IngressGateway Podは、宛先Podとの間で相互TLS認証を実施します。
 2. Istio IngressGateway Podは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリソース (VirtualService、DestinationRule) に応じて、リクエストを宛先Podに`L7`ロードバランシングします。
+
+![istio_envoy_istio_resource_service-to-service](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio_resource_service-to-service.png)
 
 <br>
 
@@ -82,11 +108,31 @@ Istioは、KubernetesリソースやIstioカスタムリソースに基づいて
 
 サービスメッシュ内のPodから外のシステム (例：データベース、ドメインレイヤー委譲先の外部API) にリクエストを送信する場合に関わるリソースです。
 
+以下のような順番でリソースが紐付き、リクエストをPodまで届けます。
+
+```
+VirtualService
+⬇︎
+DestinationRule
+⬇︎
+Service
+⬇︎
+Endpoints
+⬇︎
+Gateway
+⬇︎
+VirtualService
+⬇︎
+DestinationRule
+⬇︎
+ServiceEntry
+```
+
 1. 送信元Podは、リクエストの宛先がServiceEntryでエントリ済みか否かに応じて、リクエストの宛先を切り替えます。
    1. 宛先がエントリ済みであれば、送信元Podはリクエストの宛先にIstio EgressGateway Podを選択します。
    2. 宛先が未エントリであれば、送信元Podはリクエストの宛先に外のシステムを選択します。
-2. 送信元Pddは、宛先Podとの間に相互TLSの接続を確立します。
-3. `1`で宛先がエントリ済であったとします。送信元Podは、リクエストの向き先をIstio EgressGateway Podに変更します。
+2. 送信元Podは、宛先Podとの間で相互TLS認証を実施します。
+3. (1) で宛先がエントリ済であったとします。送信元Podは、リクエストの向き先をIstio EgressGateway Podに変更します。
 4. 送信元Podは、Kubernetesリソース (Service、Endpoints) やIstioカスタムリソース (VirtualService、DestinationRule) に応じて、Istio EgressGateway Podに`L7`ロードバランシングします。
 5. Istio EgressGateway Podは、リクエストをエントリ済システムに`L7`ロードバランシングします。
 
@@ -94,23 +140,25 @@ Istioは、KubernetesリソースやIstioカスタムリソースに基づいて
 
 <br>
 
-# 03. Istioはリソースの状態に応じて`istio-proxy`コンテナを作成する
+# 03. Istioはリソースの設定に応じて`istio-proxy`コンテナを作成する
 
 前章では、KubernetesリソースやIstioカスタムリソースによって抽象化されたEnvoyまで言及しませんでした。
 
-本章では、もう少し具体化します。
+本章では、解説をもう少し具体化します。
 
 Istioは、各リソースに状態に応じて、Envoyをプロセスとした`istio-proxy`コンテナを作成します。
 
 この`istio-proxy`コンテナを使用して、Istioがどのようにトラフィックを管理しているのかを解説します。
 
-ひとまず、Envoyの具体的な設定までは言及しません。
+Envoyの設定については、次章以降で解説します。
 
 <br>
 
 ## サービスメッシュ外からの通信
 
 サービスメッシュ外から内にリクエストを送信する場合の`istio-proxy`コンテナです。
+
+以下のような
 
 1. Istioコントロールプレーンは、KubernetesリソースやIstioカスタムリソースの設定を各Pod内の`istio-proxy`コンテナに提供します。
 2. クライアントは、リクエストをサービスメッシュ外から内に送信します。
@@ -164,7 +212,7 @@ Istio EgressGatewayを使用しなくとも、サービスメッシュ外の登�
 
 <br>
 
-# 04. Istioはリソースの状態をEnvoy設定値に翻訳する
+# 04. Istioはリソースの設定をEnvoy設定値に翻訳する
 
 前章では、`istio-proxy`コンテナ内のEnvoy設定値まで、言及しませんでした。
 
@@ -182,8 +230,8 @@ Envoyを抽象化する責務を持つのは、Istioコントロールプレー�
 
 ここでは、Istioコントロールプレーンは異なる責務を担う複数のレイヤーから構成されています。
 
-1. Istioコントロールプレーンは、リソース取得レイヤーにて、kube-apiserverからKubernetesリソースやIstioカスタムリソースの状態を取得します。
-2. Envoy翻訳レイヤーにて、取得したリソースの状態をEnvoy設定値に変換します。
+1. Istioコントロールプレーンは、リソース取得レイヤーにて、kube-apiserverからKubernetesリソースやIstioカスタムリソースの設定を取得します。
+2. Envoy翻訳レイヤーにて、取得したリソースの設定をEnvoy設定値に変換します。
 3. `istio-proxy`配布レイヤーにて、`istio-proxy`コンテナをPodに配布します。反対に、Podが`istio-proxy`配布レイヤーから`istio-proxy`コンテナを取得しにいくこともあります。
 
 ![istio_envoy_istio-proxy_resource_control-plane](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_istio-proxy_resource_control-plane.png)
@@ -194,7 +242,7 @@ Envoyの処理の流れです。
 
 ![istio_envoy_envoy-flow](https://raw.githubusercontent.com/hiroki-it/tech-notebook-images/master/images/drawio/blog/istio/istio_envoy_envoy-flow.png)
 
-Istioコントロールプレーンは、KubernetesリソースやIstioカスタムリソースの状態をEnvoy設定値に翻訳し、処理の流れに適用します。
+Istioコントロールプレーンは、KubernetesリソースやIstioカスタムリソースの設定をEnvoy設定値に翻訳し、処理の流れに適用します。
 
 以下の通り、各リソースがいずれのEnvoy設定値の抽象化に関わるのかを整理しました。
 
@@ -555,11 +603,11 @@ Istio EgressGatewayを使用しなくとも、ServiceEntryだけでサービス�
 
 この辺になってくると、ほとんどの人にとってはどうでもよくて、自己満です!!
 
-前章では、Envoy設定値に関わる各リソースの状態まで、言及しませんでした。
+前章では、Envoy設定値に関わる各リソースの設定まで、言及しませんでした。
 
 本章では、さらに具体化します。
 
-各リソースの状態の翻訳によって、Envoyの設定値がどのようになっているのかを解説します。
+各リソースの設定の翻訳によって、Envoyの設定値がどのようになっているのかを解説します。
 
 なお、以下のコマンドを実行すると、`istio-proxy`コンテナのEnvoy設定値を確認できます👍
 
