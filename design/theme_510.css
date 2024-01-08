@@ -121,6 +121,14 @@
     position: relative;
 }
 
+/* コードブロック */
+.entry-content pre.code.mermaid{
+    font-size: 1em;
+    /* Googleフォントを使用する */
+    font-family: "Source Code Pro", monospace;
+    background-color: white;
+}
+
 /* コメントアウトの色 */
 /* Zennに合わせる */
 .synComment {
