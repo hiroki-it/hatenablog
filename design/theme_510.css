@@ -91,6 +91,19 @@
     text-underline-offset: 0.6rem;
 }
 
+/*
+decimalで、途中から連番を始められるようにする
+https://www.materialpot.com/html/list_number/
+*/
+.decimal {
+    margin-left: 30px;
+}
+
+.decimal li {
+    list-style-type: decimal;
+}
+
+
 /* 画像 */
 .entry-content img {
     /*画像を中央寄せする*/
