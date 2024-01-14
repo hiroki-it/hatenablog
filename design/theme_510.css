@@ -227,6 +227,14 @@ figure {
     color: #ffa500;
 }
 
+/* 注意書きボックスのタイトル */
+.text-box-title {
+    text-decoration: underline;
+    text-underline-offset: 8px;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
 /* テーブル全体 */
 .entry-content td, th {
     /* 上下中央揃え */
