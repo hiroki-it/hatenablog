@@ -229,9 +229,7 @@ figure {
 
 /* 注意書きボックスのタイトル */
 .text-box-title {
-    text-decoration: underline;
-    text-underline-offset: 8px;
-    font-size: 1.2em;
+    font-size: 1.1em;
     font-weight: bold;
 }
 
