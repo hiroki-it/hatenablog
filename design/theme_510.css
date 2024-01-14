@@ -161,7 +161,8 @@ https://smatech.hatenablog.com/entry/blog-kakomi-waku
 .text-quote {
     background: #F6F6F6;
     padding: 10px;
-    border: none;
+    border: dashed;
+    border-width: thin;
 }
 
 /* 目次 */
