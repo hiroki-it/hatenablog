@@ -154,6 +154,16 @@ https://www.materialpot.com/html/list_number/
     background: #F6F6F6;
 }
 
+/*
+文字だけ引用の編みかけ
+https://smatech.hatenablog.com/entry/blog-kakomi-waku
+*/
+.text-quote {
+    background: #F6F6F6;
+    padding: 10px;
+    border: none;
+}
+
 /* 目次 */
 .table-of-contents, .entry-content ul.table-of-contents {
     /* 枠内の余白(上右下左) */
