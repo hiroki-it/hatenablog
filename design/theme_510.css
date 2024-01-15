@@ -378,6 +378,14 @@ figure {
     text-align: center;
 }
 
+.hatena-asin-detail .hatena-asin-detail-image-link, .hatena-asin-detail>a {
+    height: 150px;
+}
+
+.hatena-asin-detail>a .hatena-asin-detail-image {
+    width: 60%;
+}
+
 /* キーワード */
 /* 下線を消す (URLは残ってしまう) */
 a.keyword {
