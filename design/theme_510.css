@@ -256,6 +256,10 @@ figure {
     color: white;
 }
 
+.entry-content table td {
+    background-color: #f8f8f8
+}
+
 /* HTMLでテーブルを定義した場合 */
 .entry-content table {
     background: white;
