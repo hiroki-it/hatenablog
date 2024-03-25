@@ -11,11 +11,11 @@
 
 ### 経歴
 
-SRE (Microservices Infrastructure / `L4` ~ `L7`)<br>
+SRE/SWE (Microservices Infrastructure, L4 ~ L7)<br>
 ⬆︎<br>
 SWE (DDD)<br>
 ⬆︎<br>
-理学修士 (Data science / R lang)
+理学修士 (Data science, R lang)
 
 詳しくは、[Wantedly](https://www.wantedly.com/id/h_hasegawa) まで🙇🏻‍
 
