@@ -14,7 +14,7 @@ create-draft:
 .PHONY: format
 format:
 	yarn textlint *
-	find ./* -name "*.md" -type f | xargs sed -i '' -e 's/）/) /g'  -e 's/（/ (/g'
+	find ./dist/entry/* -name "*.md" -type f | xargs sed -i '' -e 's/）/) /g'  -e 's/（/ (/g'
 	yarn prettier -w --no-bracket-spacing **/*.md
 
 # 記事をプッシュする。
