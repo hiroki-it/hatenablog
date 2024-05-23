@@ -18,6 +18,7 @@
         ]
       },
       "no-exclamation-question-mark": false,
+      "no-mix-dearu-desumasu": false,
       "no-unmatched-pair": false,
       "sentence-length": false
     }
