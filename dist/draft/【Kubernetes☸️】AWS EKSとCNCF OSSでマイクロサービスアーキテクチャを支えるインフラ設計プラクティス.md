@@ -1,5 +1,5 @@
 ---
-Title: 【K8S☸️】AWS EKSとCNCF OSSでマイクロサービスアーキテクチャを支えるインフラ設計プラクティス
+Title: 【Kubernetes☸️】AWS EKSとCNCF OSSでマイクロサービスアーキテクチャを支えるインフラ設計プラクティス
 Category:
   - AWS
   - Kubernetes
