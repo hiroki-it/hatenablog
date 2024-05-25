@@ -46,15 +46,19 @@ OSSは運用が大変ですが、AWSはCNCFのOSSの代わりになりきれな�
 
 AWSリソースで代替しても不都合のない機能は、AWSリソースを使うことを想定しています。
 
+## アプリ領域の設計
+
+AWS ALBとIstio IngressGatewayを繋ぐ時に、AWS Load Balancer Controllerを使用してもいいですが、なくても良いと考えています。
+
+Istio IngressGatewayにNodePort Serviceを使用すれば、AWS Load Balancer Controllerが不要になります。
+
+Istio IngressGatewayはKubernetesで、ALBはTerraformで管理します。
+
 <br>
 
-## インフラ領域
+## インフラ領域の設計
 
 <br>
-
-## アプリ領域
-
-マイクロサービスアーキテクチャ
 
 <br>
 
