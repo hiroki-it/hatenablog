@@ -1,5 +1,5 @@
 ---
-Title: 【Kubernetes☸️】CNCFとAWSを組み合わせるマイクロサービスアーキテクチャ設計の考察
+Title: 【Kubernetes☸️】CNCFとAWSを組み合わせたマイクロサービスアーキテクチャ設計の考察
 Category:
   - AWS
   - Kubernetes
