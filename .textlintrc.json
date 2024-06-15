@@ -11,6 +11,7 @@
       },
       "ja-no-mixed-period": false,
       "ja-no-weak-phrase": false,
+      "max-kanji-continuous-len": false,
       "no-doubled-joshi": {
         "allow": [
           "が",
