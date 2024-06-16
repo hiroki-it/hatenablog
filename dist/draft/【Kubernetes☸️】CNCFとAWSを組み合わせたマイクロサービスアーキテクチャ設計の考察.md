@@ -68,18 +68,18 @@ Istio IngressGatewayはKubernetesで、ALBはTerraformで管理します。
 title: OIDC (認可コードフロー)
 ---
 sequenceDiagram
-    クライアント (PC、スマホ) ->> Istio IngressGateway: リクエスト
+    クライアント (PC、スマホ) ->> Istio IngressGateway: リクエスト<br>(ホーム画面)
     Istio IngressGateway ->> フロントエンドアプリ (PC、スマホ) : リクエスト
     フロントエンドアプリ (PC、スマホ) ->> OAuth2 Proxy: 認可リクエスト
     OAuth2 Proxy ->> IDプロバイダー (Keycloak、Google) : 転送
     IDプロバイダー (Keycloak、Google) -->> クライアント (PC、スマホ) : コールバックURL宛の認可レスポンス<br>(アカウント連携確認ページ)
-    
+
     クライアント (PC、スマホ) ->> Istio IngressGateway: リダイレクト
     Istio IngressGateway ->> フロントエンドアプリ (PC、スマホ) : リダイレクト
     フロントエンドアプリ (PC、スマホ) ->> OAuth2 Proxy: リダイレクト
     OAuth2 Proxy ->> IDプロバイダー (Keycloak、Google) : リダイレクト
     IDプロバイダー (Keycloak、Google) -->> クライアント (PC、スマホ) : 認可コード<br>レスポンス
-    
+
     クライアント (PC、スマホ) ->> Istio IngressGateway: リダイレクト
     Istio IngressGateway ->> フロントエンドアプリ (PC、スマホ) : リダイレクト
     フロントエンドアプリ (PC、スマホ) ->> OAuth2 Proxy: トークンリクエスト
@@ -89,7 +89,7 @@ sequenceDiagram
     OAuth2 Proxy -->> フロントエンドアプリ (PC、スマホ) : 転送
     フロントエンドアプリ (PC、スマホ) -->> フロントエンドアプリ (PC、スマホ) : IDトークン検証
     フロントエンドアプリ (PC、スマホ) -->> フロントエンドアプリ (PC、スマホ) : 認証完了
-    フロントエンドアプリ (PC、スマホ) ->> OAuth2 Proxy: リクエスト
+    フロントエンドアプリ (PC、スマホ) ->> OAuth2 Proxy: リクエスト<br>(Authorizationヘッダー: "アクセストークン")
     OAuth2 Proxy ->> IDプロバイダー (Keycloak、Google) : リクエスト
     IDプロバイダー (Keycloak、Google) -->> OAuth2 Proxy : レスポンス<br>(ユーザー情報)
     OAuth2 Proxy -->> フロントエンドアプリ (PC、スマホ) : 転送
@@ -98,7 +98,7 @@ sequenceDiagram
     マイクロサービス -->> BFF (PCブラウザ用API Gateway) : レスポンス<br>(ホーム画面情報)
     BFF (PCブラウザ用API Gateway) -->> フロントエンドアプリ (PC、スマホ) : レスポンス<br>(ホーム画面情報)
     フロントエンドアプリ (PC、スマホ) ->> フロントエンドアプリ (PC、スマホ) : HTML生成
-    フロントエンドアプリ (PC、スマホ) --> クライアント (PC、スマホ): レスポンス<br>(HTML)
+    フロントエンドアプリ (PC、スマホ) --> クライアント (PC、スマホ): レスポンス<br>(ホーム画面)
 ```
 
 <br>
