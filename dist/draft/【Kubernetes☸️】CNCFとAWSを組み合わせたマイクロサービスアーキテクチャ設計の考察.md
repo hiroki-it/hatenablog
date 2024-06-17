@@ -126,9 +126,9 @@ sequenceDiagram
 
     istio-proxy ->> マイクロサービス : 転送
 
-    マイクロサービス ->> Aurora : クエリ
+    マイクロサービス ->> DB (Aurora): クエリ
 
-    Aurora -->> マイクロサービス : データ
+    DB (Aurora) -->> マイクロサービス : データ
 
     マイクロサービス --> istio-proxy: レスポンス<br>(データ)
 
