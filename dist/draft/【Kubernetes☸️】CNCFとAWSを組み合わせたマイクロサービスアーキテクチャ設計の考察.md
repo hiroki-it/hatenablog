@@ -68,37 +68,81 @@ Istio IngressGatewayはKubernetesで、ALBはTerraformで管理します。
 title: OIDC (認可コードフロー)
 ---
 sequenceDiagram
-    クライアント (PC、スマホ) ->> Istio IngressGateway: リクエスト<br>(ホーム画面)
+    ブラウザ (PC、スマホ) ->> Istio IngressGateway: リクエスト<br>(ホーム画面)
+
     Istio IngressGateway ->> フロントエンドアプリ (PC、スマホ) : リクエスト
+
     フロントエンドアプリ (PC、スマホ) ->> OAuth2 Proxy: 認可リクエスト
+
     OAuth2 Proxy ->> IDプロバイダー (Keycloak、Google) : 転送
-    IDプロバイダー (Keycloak、Google) -->> クライアント (PC、スマホ) : コールバックURL宛の認可レスポンス<br>(アカウント連携確認ページ)
 
-    クライアント (PC、スマホ) ->> Istio IngressGateway: リダイレクト
+    IDプロバイダー (Keycloak、Google) -->> ブラウザ (PC、スマホ) : コールバックURL宛の認可レスポンス<br>(アカウント連携確認ページ)
+
+    ブラウザ (PC、スマホ) ->> Istio IngressGateway: リダイレクト
+
     Istio IngressGateway ->> フロントエンドアプリ (PC、スマホ) : リダイレクト
+
     フロントエンドアプリ (PC、スマホ) ->> OAuth2 Proxy: リダイレクト
-    OAuth2 Proxy ->> IDプロバイダー (Keycloak、Google) : リダイレクト
-    IDプロバイダー (Keycloak、Google) -->> クライアント (PC、スマホ) : 認可コード<br>レスポンス
 
-    クライアント (PC、スマホ) ->> Istio IngressGateway: リダイレクト
+    OAuth2 Proxy ->> IDプロバイダー (Keycloak、Google) : リダイレクト
+
+    IDプロバイダー (Keycloak、Google) -->> ブラウザ (PC、スマホ) : 認可コード<br>レスポンス
+
+    ブラウザ (PC、スマホ) ->> Istio IngressGateway: リダイレクト
+
     Istio IngressGateway ->> フロントエンドアプリ (PC、スマホ) : リダイレクト
+
     フロントエンドアプリ (PC、スマホ) ->> OAuth2 Proxy: トークンリクエスト
+
     OAuth2 Proxy ->> IDプロバイダー (Keycloak、Google) : 転送
 
     IDプロバイダー (Keycloak、Google) -->> OAuth2 Proxy : アクセストークン、リフレッシュトークン、IDトークン
+
     OAuth2 Proxy -->> フロントエンドアプリ (PC、スマホ) : 転送
-    フロントエンドアプリ (PC、スマホ) -->> フロントエンドアプリ (PC、スマホ) : IDトークン検証
-    フロントエンドアプリ (PC、スマホ) -->> フロントエンドアプリ (PC、スマホ) : 認証完了
+
+    フロントエンドアプリ (PC、スマホ) ->> フロントエンドアプリ (PC、スマホ) : IDトークン検証
+
+    フロントエンドアプリ (PC、スマホ) ->> フロントエンドアプリ (PC、スマホ) : 認証完了
+
     フロントエンドアプリ (PC、スマホ) ->> OAuth2 Proxy: リクエスト<br>(Authorizationヘッダー: "アクセストークン")
+
     OAuth2 Proxy ->> IDプロバイダー (Keycloak、Google) : リクエスト
+
     IDプロバイダー (Keycloak、Google) -->> OAuth2 Proxy : レスポンス<br>(ユーザー情報)
+
     OAuth2 Proxy -->> フロントエンドアプリ (PC、スマホ) : 転送
-    フロントエンドアプリ (PC、スマホ) ->> BFF (PCブラウザ用API Gateway): リクエスト
-    BFF (PCブラウザ用API Gateway) ->> マイクロサービス : リクエスト
-    マイクロサービス -->> BFF (PCブラウザ用API Gateway) : レスポンス<br>(ホーム画面情報)
+
+    フロントエンドアプリ (PC、スマホ) ->> BFF (PCブラウザ用API Gateway): リクエスト<br>(Authorizationヘッダー: "アクセストークン")
+
+    BFF (PCブラウザ用API Gateway) ->> istio-proxy : リクエスト
+
+    istio-proxy -->> IDプロバイダー (Keycloak、Google) : RequestAuthenticationリソースによるリクエスト<br>(アクセストークン検証)
+
+    IDプロバイダー (Keycloak、Google) ->> IDプロバイダー (Keycloak、Google) : アクセストークン検証
+
+    IDプロバイダー (Keycloak、Google) -->> istio-proxy : レスポンス<br>(トークン検証結果)
+
+    istio-proxy ->> istio-proxy : アクセストークン検証結果<br>確認
+
+    istio-proxy ->> マイクロサービス : 転送
+
+    マイクロサービス ->> Aurora : クエリ
+
+    Aurora -->> マイクロサービス : データ
+
+    マイクロサービス --> istio-proxy: レスポンス<br>(データ)
+
+    istio-proxy -->> BFF (PCブラウザ用API Gateway) : レスポンス
+
     BFF (PCブラウザ用API Gateway) -->> フロントエンドアプリ (PC、スマホ) : レスポンス<br>(ホーム画面情報)
+
     フロントエンドアプリ (PC、スマホ) ->> フロントエンドアプリ (PC、スマホ) : HTML生成
-    フロントエンドアプリ (PC、スマホ) --> クライアント (PC、スマホ): レスポンス<br>(ホーム画面)
+
+    フロントエンドアプリ (PC、スマホ) -->> Istio IngressGateway: レスポンス<br>(ホーム画面)
+
+    Istio IngressGateway -->> ブラウザ (PC、スマホ): レスポンス
+
+    ブラウザ (PC、スマホ) ->> ブラウザ (PC、スマホ) : LocalStorage等<br>アクセストークン保存
 ```
 
 <br>
