@@ -71,6 +71,8 @@ title: OIDC (認可コードフロー)
 ---
 sequenceDiagram
 
+autonumber
+
     actor ブラウザ (PC、スマホ)
 
     ブラウザ (PC、スマホ) ->> Istio IngressGateway: リクエスト<br>(ホーム画面)
@@ -107,12 +109,6 @@ sequenceDiagram
 
     フロントエンドアプリ (PC、スマホ) ->> フロントエンドアプリ (PC、スマホ) : IDトークン検証
 
-    フロントエンドアプリ (PC、スマホ) -->> Istio IngressGateway : 
-
-    Istio IngressGateway -->> ブラウザ (PC、スマホ) : 
-
-    ブラウザ (PC、スマホ) ->> ブラウザ (PC、スマホ) : LocalStorage等<br>アクセストークン保存
-
     フロントエンドアプリ (PC、スマホ) ->> OAuth2 Proxy: リクエスト<br>(Authorizationヘッダー: "アクセストークン")
 
     OAuth2 Proxy ->> IDプロバイダー (Keycloak、Google) : 転送
@@ -146,6 +142,11 @@ sequenceDiagram
     フロントエンドアプリ (PC、スマホ) -->> Istio IngressGateway: レスポンス<br>(ホーム画面)
 
     Istio IngressGateway -->> ブラウザ (PC、スマホ): レスポンス
+
+    ブラウザ (PC、スマホ) ->> ブラウザ (PC、スマホ) : LocalStorage等<br>アクセストークン保存
+
+    ブラウザ (PC、スマホ) ->> Istio IngressGateway : アクセストークン再利用
+    
 ```
 
 
