@@ -137,7 +137,7 @@ autonumber
 
     BFF (PCブラウザ用API Gateway) -->> フロントエンドアプリ (PC、スマホ) : レスポンス<br>(ホーム画面情報)
 
-    フロントエンドアプリ (PC、スマホ) ->> フロントエンドアプリ (PC、スマホ) : HTML生成
+    フロントエンドアプリ (PC、スマホ) ->> フロントエンドアプリ (PC、スマホ) : Webページ生成
 
     フロントエンドアプリ (PC、スマホ) -->> Istio IngressGateway: レスポンス<br>(ホーム画面)
 
@@ -146,7 +146,7 @@ autonumber
     ブラウザ (PC、スマホ) ->> ブラウザ (PC、スマホ) : LocalStorage等<br>アクセストークン保存
 
     ブラウザ (PC、スマホ) ->> Istio IngressGateway : アクセストークン再利用
-    
+
 ```
 
 
