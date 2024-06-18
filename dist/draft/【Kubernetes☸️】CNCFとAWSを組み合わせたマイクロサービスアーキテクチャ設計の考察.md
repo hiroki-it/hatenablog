@@ -130,6 +130,8 @@ sequenceDiagram
 
     istio-proxy ->> マイクロサービス : 転送
 
+    マイクロサービス ->> マイクロサービス : 認証処理<br>(インターフェース層など)
+
     マイクロサービス ->> マイクロサービス : 認可処理<br>(ドメイン層など)
 
     マイクロサービス ->> DB (Aurora): クエリ
@@ -147,7 +149,6 @@ sequenceDiagram
     フロントエンドアプリ (PC、スマホ) -->> Istio IngressGateway: レスポンス<br>(ホーム画面)
 
     Istio IngressGateway -->> ブラウザ (PC、スマホ): レスポンス
-
 ```
 
 <br>
