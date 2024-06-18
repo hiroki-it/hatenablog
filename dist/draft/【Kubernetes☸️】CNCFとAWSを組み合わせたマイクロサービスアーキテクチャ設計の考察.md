@@ -61,7 +61,9 @@ Istio IngressGatewayはKubernetesで、ALBはTerraformで管理します。
 <br>
 
 
-### 認証認可
+# 03. 認証認可
+
+## 全体像
 
 ```mermaid
 ---
@@ -102,54 +104,54 @@ sequenceDiagram
 
     フロントエンドアプリ (PC、スマホ) ->> フロントエンドアプリ (PC、スマホ) : IDトークン検証
 
-    フロントエンドアプリ (PC、スマホ) -->> Istio IngressGateway : 
+フロントエンドアプリ (PC、スマホ) -->> Istio IngressGateway : 
 
-    Istio IngressGateway -->> ブラウザ (PC、スマホ) : 
+Istio IngressGateway -->> ブラウザ (PC、スマホ) :
 
-    ブラウザ (PC、スマホ) ->> ブラウザ (PC、スマホ) : LocalStorage等<br>アクセストークン保存
+ブラウザ (PC、スマホ) ->> ブラウザ (PC、スマホ) : LocalStorage等<br>アクセストークン保存
 
-    フロントエンドアプリ (PC、スマホ) ->> OAuth2 Proxy: リクエスト<br>(Authorizationヘッダー: "アクセストークン")
+フロントエンドアプリ (PC、スマホ) ->> OAuth2 Proxy: リクエスト<br>(Authorizationヘッダー: "アクセストークン")
 
-    OAuth2 Proxy ->> IDプロバイダー (Keycloak、Google) : 転送
+OAuth2 Proxy ->> IDプロバイダー (Keycloak、Google) : 転送
 
-    IDプロバイダー (Keycloak、Google) -->> OAuth2 Proxy : レスポンス<br>(ユーザー情報)
+IDプロバイダー (Keycloak、Google) -->> OAuth2 Proxy : レスポンス<br>(ユーザー情報)
 
-    OAuth2 Proxy -->> フロントエンドアプリ (PC、スマホ) : 転送
+OAuth2 Proxy -->> フロントエンドアプリ (PC、スマホ) : 転送
 
-    フロントエンドアプリ (PC、スマホ) ->> BFF (PCブラウザ用API Gateway): リクエスト<br>(Authorizationヘッダー: "アクセストークン")
+フロントエンドアプリ (PC、スマホ) ->> BFF (PCブラウザ用API Gateway): リクエスト<br>(Authorizationヘッダー: "アクセストークン")
 
-    BFF (PCブラウザ用API Gateway) ->> istio-proxy : リクエスト
+BFF (PCブラウザ用API Gateway) ->> マイクロサービス : リクエスト
 
-    istio-proxy -->> IDプロバイダー (Keycloak、Google) : RequestAuthenticationリソースによるリクエスト<br>(アクセストークン検証)
+マイクロサービス -->> IDプロバイダー (Keycloak、Google) : リクエスト<br>(アクセストークン検証)
 
-    IDプロバイダー (Keycloak、Google) ->> IDプロバイダー (Keycloak、Google) : アクセストークン検証
+IDプロバイダー (Keycloak、Google) ->> IDプロバイダー (Keycloak、Google) : アクセストークン検証
 
-    IDプロバイダー (Keycloak、Google) ->> istio-proxy : レスポンス<br>(トークン検証結果)
+IDプロバイダー (Keycloak、Google) ->> マイクロサービス : レスポンス<br>(トークン検証結果)
 
-    istio-proxy ->> istio-proxy : アクセストークン検証結果<br>確認
+マイクロサービス ->> マイクロサービス : 認可実行<br>(ドメイン層など)
 
-    istio-proxy ->> マイクロサービス : 転送
+マイクロサービス ->> DB (Aurora): SQL実行
 
-    マイクロサービス ->> マイクロサービス : 認証処理<br>(インターフェース層など)
+DB (Aurora) -->> マイクロサービス : データ取得
 
-    マイクロサービス ->> マイクロサービス : 認可処理<br>(ドメイン層など)
+マイクロサービス -->> BFF (PCブラウザ用API Gateway) : レスポンス<br>(データ)
 
-    マイクロサービス ->> DB (Aurora): クエリ
+BFF (PCブラウザ用API Gateway) -->> フロントエンドアプリ (PC、スマホ) : レスポンス<br>(ホーム画面情報)
 
-    DB (Aurora) -->> マイクロサービス : データ
+フロントエンドアプリ (PC、スマホ) ->> フロントエンドアプリ (PC、スマホ) : HTML生成
 
-    マイクロサービス -->> istio-proxy: レスポンス<br>(データ)
+フロントエンドアプリ (PC、スマホ) -->> Istio IngressGateway: レスポンス<br>(ホーム画面)
 
-    istio-proxy -->> BFF (PCブラウザ用API Gateway) : レスポンス
-
-    BFF (PCブラウザ用API Gateway) -->> フロントエンドアプリ (PC、スマホ) : レスポンス<br>(ホーム画面情報)
-
-    フロントエンドアプリ (PC、スマホ) ->> フロントエンドアプリ (PC、スマホ) : HTML生成
-
-    フロントエンドアプリ (PC、スマホ) -->> Istio IngressGateway: レスポンス<br>(ホーム画面)
-
-    Istio IngressGateway -->> ブラウザ (PC、スマホ): レスポンス
+Istio IngressGateway -->> ブラウザ (PC、スマホ): レスポンス
 ```
+
+
+
+## マイクロサービス
+
+RequestAuthenticationリソースを使用して、`istio-proxy`コンテナに認証ロジックを切り分けてもよいです。
+
+ただ、アプリチームとしては、`istio-proxy`コンテナ側に認証ロジックがあるよりも、アプリ側にロジックがある方が直感的かと思います。
 
 <br>
 
