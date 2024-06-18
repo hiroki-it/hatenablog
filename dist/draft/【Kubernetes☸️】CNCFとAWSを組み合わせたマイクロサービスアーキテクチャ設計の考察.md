@@ -84,7 +84,7 @@ sequenceDiagram
 
     フロントエンドアプリ (PC、スマホ) ->> OAuth2 Proxy: リダイレクト
 
-    OAuth2 Proxy ->> IDプロバイダー (Keycloak、Google) : リダイレクト
+    OAuth2 Proxy ->> IDプロバイダー (Keycloak、Google) : 転送
 
     IDプロバイダー (Keycloak、Google) -->> ブラウザ (PC、スマホ) : 認可コード<br>レスポンス
 
@@ -102,11 +102,15 @@ sequenceDiagram
 
     フロントエンドアプリ (PC、スマホ) ->> フロントエンドアプリ (PC、スマホ) : IDトークン検証
 
-    フロントエンドアプリ (PC、スマホ) ->> フロントエンドアプリ (PC、スマホ) : 認証完了
+    フロントエンドアプリ (PC、スマホ) -->> Istio IngressGateway : 
+
+    Istio IngressGateway -->> ブラウザ (PC、スマホ) : 
+
+    ブラウザ (PC、スマホ) ->> ブラウザ (PC、スマホ) : LocalStorage等<br>アクセストークン保存
 
     フロントエンドアプリ (PC、スマホ) ->> OAuth2 Proxy: リクエスト<br>(Authorizationヘッダー: "アクセストークン")
 
-    OAuth2 Proxy ->> IDプロバイダー (Keycloak、Google) : リクエスト
+    OAuth2 Proxy ->> IDプロバイダー (Keycloak、Google) : 転送
 
     IDプロバイダー (Keycloak、Google) -->> OAuth2 Proxy : レスポンス<br>(ユーザー情報)
 
@@ -120,17 +124,19 @@ sequenceDiagram
 
     IDプロバイダー (Keycloak、Google) ->> IDプロバイダー (Keycloak、Google) : アクセストークン検証
 
-    IDプロバイダー (Keycloak、Google) -->> istio-proxy : レスポンス<br>(トークン検証結果)
+    IDプロバイダー (Keycloak、Google) ->> istio-proxy : レスポンス<br>(トークン検証結果)
 
     istio-proxy ->> istio-proxy : アクセストークン検証結果<br>確認
 
     istio-proxy ->> マイクロサービス : 転送
 
+    マイクロサービス ->> マイクロサービス : 認可処理<br>(ドメイン層など)
+
     マイクロサービス ->> DB (Aurora): クエリ
 
     DB (Aurora) -->> マイクロサービス : データ
 
-    マイクロサービス --> istio-proxy: レスポンス<br>(データ)
+    マイクロサービス -->> istio-proxy: レスポンス<br>(データ)
 
     istio-proxy -->> BFF (PCブラウザ用API Gateway) : レスポンス
 
@@ -142,7 +148,6 @@ sequenceDiagram
 
     Istio IngressGateway -->> ブラウザ (PC、スマホ): レスポンス
 
-    ブラウザ (PC、スマホ) ->> ブラウザ (PC、スマホ) : LocalStorage等<br>アクセストークン保存
 ```
 
 <br>
