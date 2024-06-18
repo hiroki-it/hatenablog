@@ -70,6 +70,9 @@ Istio IngressGatewayはKubernetesで、ALBはTerraformで管理します。
 title: OIDC (認可コードフロー)
 ---
 sequenceDiagram
+
+    actor ブラウザ (PC、スマホ)
+
     ブラウザ (PC、スマホ) ->> Istio IngressGateway: リクエスト<br>(ホーム画面)
 
     Istio IngressGateway ->> フロントエンドアプリ (PC、スマホ) : リクエスト
@@ -104,45 +107,45 @@ sequenceDiagram
 
     フロントエンドアプリ (PC、スマホ) ->> フロントエンドアプリ (PC、スマホ) : IDトークン検証
 
-フロントエンドアプリ (PC、スマホ) -->> Istio IngressGateway : 
+    フロントエンドアプリ (PC、スマホ) -->> Istio IngressGateway : 
 
-Istio IngressGateway -->> ブラウザ (PC、スマホ) :
+    Istio IngressGateway -->> ブラウザ (PC、スマホ) : 
 
-ブラウザ (PC、スマホ) ->> ブラウザ (PC、スマホ) : LocalStorage等<br>アクセストークン保存
+    ブラウザ (PC、スマホ) ->> ブラウザ (PC、スマホ) : LocalStorage等<br>アクセストークン保存
 
-フロントエンドアプリ (PC、スマホ) ->> OAuth2 Proxy: リクエスト<br>(Authorizationヘッダー: "アクセストークン")
+    フロントエンドアプリ (PC、スマホ) ->> OAuth2 Proxy: リクエスト<br>(Authorizationヘッダー: "アクセストークン")
 
-OAuth2 Proxy ->> IDプロバイダー (Keycloak、Google) : 転送
+    OAuth2 Proxy ->> IDプロバイダー (Keycloak、Google) : 転送
 
-IDプロバイダー (Keycloak、Google) -->> OAuth2 Proxy : レスポンス<br>(ユーザー情報)
+    IDプロバイダー (Keycloak、Google) -->> OAuth2 Proxy : レスポンス<br>(ユーザー情報)
 
-OAuth2 Proxy -->> フロントエンドアプリ (PC、スマホ) : 転送
+    OAuth2 Proxy -->> フロントエンドアプリ (PC、スマホ) : 転送
 
-フロントエンドアプリ (PC、スマホ) ->> BFF (PCブラウザ用API Gateway): リクエスト<br>(Authorizationヘッダー: "アクセストークン")
+    フロントエンドアプリ (PC、スマホ) ->> BFF (PCブラウザ用API Gateway): リクエスト<br>(Authorizationヘッダー: "アクセストークン")
 
-BFF (PCブラウザ用API Gateway) ->> マイクロサービス : リクエスト
+    BFF (PCブラウザ用API Gateway) ->> マイクロサービス : リクエスト
 
-マイクロサービス -->> IDプロバイダー (Keycloak、Google) : リクエスト<br>(アクセストークン検証)
+    マイクロサービス -->> IDプロバイダー (Keycloak、Google) : リクエスト<br>(アクセストークン検証)
 
-IDプロバイダー (Keycloak、Google) ->> IDプロバイダー (Keycloak、Google) : アクセストークン検証
+    IDプロバイダー (Keycloak、Google) ->> IDプロバイダー (Keycloak、Google) : アクセストークン検証
 
-IDプロバイダー (Keycloak、Google) ->> マイクロサービス : レスポンス<br>(トークン検証結果)
+    IDプロバイダー (Keycloak、Google) ->> マイクロサービス : レスポンス<br>(トークン検証結果)
 
-マイクロサービス ->> マイクロサービス : 認可実行<br>(ドメイン層など)
+    マイクロサービス ->> マイクロサービス : 認可実行<br>(ドメイン層など)
 
-マイクロサービス ->> DB (Aurora): SQL実行
+    マイクロサービス ->> DB (Aurora): SQL実行
 
-DB (Aurora) -->> マイクロサービス : データ取得
+    DB (Aurora) -->> マイクロサービス : データ取得
 
-マイクロサービス -->> BFF (PCブラウザ用API Gateway) : レスポンス<br>(データ)
+    マイクロサービス -->> BFF (PCブラウザ用API Gateway) : レスポンス<br>(データ)
 
-BFF (PCブラウザ用API Gateway) -->> フロントエンドアプリ (PC、スマホ) : レスポンス<br>(ホーム画面情報)
+    BFF (PCブラウザ用API Gateway) -->> フロントエンドアプリ (PC、スマホ) : レスポンス<br>(ホーム画面情報)
 
-フロントエンドアプリ (PC、スマホ) ->> フロントエンドアプリ (PC、スマホ) : HTML生成
+    フロントエンドアプリ (PC、スマホ) ->> フロントエンドアプリ (PC、スマホ) : HTML生成
 
-フロントエンドアプリ (PC、スマホ) -->> Istio IngressGateway: レスポンス<br>(ホーム画面)
+    フロントエンドアプリ (PC、スマホ) -->> Istio IngressGateway: レスポンス<br>(ホーム画面)
 
-Istio IngressGateway -->> ブラウザ (PC、スマホ): レスポンス
+    Istio IngressGateway -->> ブラウザ (PC、スマホ): レスポンス
 ```
 
 
