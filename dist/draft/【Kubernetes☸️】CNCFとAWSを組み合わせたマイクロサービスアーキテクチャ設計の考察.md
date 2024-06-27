@@ -78,7 +78,7 @@ title: OIDC (認可コードフロー)
 ---
 sequenceDiagram
 
-autonumber
+    autonumber
 
     actor ブラウザ (PC、スマホ)
 
@@ -86,9 +86,7 @@ autonumber
 
     Istio IngressGateway ->> フロントエンドアプリ (PC、スマホ) : リクエスト
 
-    フロントエンドアプリ (PC、スマホ) ->> OAuth2 Proxy: 認可リクエスト
-
-    OAuth2 Proxy ->> IDプロバイダー (Keycloak、Google) : 転送
+    フロントエンドアプリ (PC、スマホ) ->> IDプロバイダー (Keycloak、Google) : 認可リクエスト
 
     IDプロバイダー (Keycloak、Google) -->> ブラウザ (PC、スマホ) : コールバックURL宛の認可レスポンス<br>(アカウント連携確認ページ)
 
@@ -96,9 +94,7 @@ autonumber
 
     Istio IngressGateway ->> フロントエンドアプリ (PC、スマホ) : リダイレクト
 
-    フロントエンドアプリ (PC、スマホ) ->> OAuth2 Proxy: リダイレクト
-
-    OAuth2 Proxy ->> IDプロバイダー (Keycloak、Google) : 転送
+    フロントエンドアプリ (PC、スマホ) ->> IDプロバイダー (Keycloak、Google) : リダイレクト
 
     IDプロバイダー (Keycloak、Google) -->> ブラウザ (PC、スマホ) : 認可コード<br>レスポンス
 
@@ -106,23 +102,15 @@ autonumber
 
     Istio IngressGateway ->> フロントエンドアプリ (PC、スマホ) : リダイレクト
 
-    フロントエンドアプリ (PC、スマホ) ->> OAuth2 Proxy: トークンリクエスト
+    フロントエンドアプリ (PC、スマホ) ->> IDプロバイダー (Keycloak、Google) : トークンリクエスト
 
-    OAuth2 Proxy ->> IDプロバイダー (Keycloak、Google) : 転送
-
-    IDプロバイダー (Keycloak、Google) -->> OAuth2 Proxy : アクセストークン、リフレッシュトークン、IDトークン
-
-    OAuth2 Proxy -->> フロントエンドアプリ (PC、スマホ) : 転送
+    IDプロバイダー (Keycloak、Google) -->> フロントエンドアプリ (PC、スマホ) : アクセストークン、リフレッシュトークン、IDトークン
 
     フロントエンドアプリ (PC、スマホ) ->> フロントエンドアプリ (PC、スマホ) : IDトークン検証
 
-    フロントエンドアプリ (PC、スマホ) ->> OAuth2 Proxy: リクエスト<br>(Authorizationヘッダー: "アクセストークン")
+    フロントエンドアプリ (PC、スマホ) ->> IDプロバイダー (Keycloak、Google): リクエスト<br>Authorizationヘッダー: "アクセストークン"
 
-    OAuth2 Proxy ->> IDプロバイダー (Keycloak、Google) : 転送
-
-    IDプロバイダー (Keycloak、Google) -->> OAuth2 Proxy : レスポンス<br>(ユーザー情報)
-
-    OAuth2 Proxy -->> フロントエンドアプリ (PC、スマホ) : 転送
+    IDプロバイダー (Keycloak、Google) -->> フロントエンドアプリ (PC、スマホ) : レスポンス<br>(ユーザー情報)
 
     フロントエンドアプリ (PC、スマホ) ->> BFF (PCブラウザ用API Gateway): リクエスト<br>(Authorizationヘッダー: "アクセストークン")
 
@@ -153,7 +141,6 @@ autonumber
     ブラウザ (PC、スマホ) ->> ブラウザ (PC、スマホ) : LocalStorage等<br>アクセストークン保存
 
     ブラウザ (PC、スマホ) ->> Istio IngressGateway : アクセストークン再利用
-
 ```
 
 
