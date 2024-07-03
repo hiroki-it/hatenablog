@@ -41,6 +41,5 @@ jobs:
           if [ -z $DIFF ] ; then
             echo "差分がないため、GitHub Actionsを終了しました。"
             exit 0
-          else
-            ~/go/bin/blogsync push $DIFF
           fi
+            ~/go/bin/blogsync push $DIFF
