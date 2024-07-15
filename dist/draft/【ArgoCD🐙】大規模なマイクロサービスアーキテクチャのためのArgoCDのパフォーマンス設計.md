@@ -3,7 +3,7 @@ Title: 【ArgoCD🐙】大規模なマイクロサービスアーキテクチャ
 Category:
   - ArgoCD
   - Kubernetes
-  - ソフトウェアアーキテクチャ
+  - OSSアーキテクチャ
 Draft: true
 ---
 
