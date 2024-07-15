@@ -6,7 +6,8 @@
       "ja-no-successive-word": {
         "allow": [
           "まあ",
-          "★"
+          "★",
+          "！"
         ]
       },
       "ja-no-mixed-period": false,
