@@ -3,7 +3,7 @@ Title: 【Kubernetes☸️】CNCFとAWSを組み合わせたマイクロサー�
 Category:
   - AWS
   - Kubernetes
-  - OSSアーキテクチャ
+  - マイクロサービスアーキテクチャ
 ---
 
 <br>
