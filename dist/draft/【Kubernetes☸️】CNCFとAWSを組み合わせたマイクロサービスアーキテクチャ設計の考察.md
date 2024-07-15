@@ -143,8 +143,6 @@ sequenceDiagram
     ブラウザ (PC、スマホ) ->> Istio IngressGateway : アクセストークン再利用
 ```
 
-
-
 ## マイクロサービス
 
 RequestAuthenticationリソースを使用して、`istio-proxy`コンテナに認証ロジックを切り分けてもよいです。
