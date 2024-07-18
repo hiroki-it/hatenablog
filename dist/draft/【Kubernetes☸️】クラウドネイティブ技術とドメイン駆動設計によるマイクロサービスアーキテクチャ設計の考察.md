@@ -1,5 +1,5 @@
 ---
-Title: 【Kubernetes☸️】CNCFとAWSを組み合わせたマイクロサービスアーキテクチャ設計の考察
+Title: 【Kubernetes☸️】クラウドネイティブ技術とドメイン駆動設計によるマイクロサービスアーキテクチャ設計の考察
 Category:
   - AWS
   - Kubernetes
