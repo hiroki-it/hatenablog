@@ -266,6 +266,13 @@ figure {
     font-size: 0.8rem;
 }
 
+/* 記事本文の幅を伸ばす */
+@media screen and (min-width: 1280px) {
+    #blog-title-inner, #content-inner, #footer-inner, .breadcrumb-inner, .global-navigation-inner, .main-navigation-inner {
+        max-width: 1200px;
+    }
+}
+
 /* スマホでは無効化し、レスポンシブが壊れないようにする */
 @media(min-width: 767px){
 
