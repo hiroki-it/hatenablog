@@ -8,7 +8,7 @@ SWE (DDD)<br>
 ⬆︎<br>
 理学修士 (Data science, R lang)
 
-詳しくは、[Wantedly](https://www.wantedly.com/id/h_hasegawa) まで
+詳しくは、[Wantedly](https://www.wantedly.com/id/h_hasegawa) または [Linkedin](https://www.linkedin.com/in/%E5%BA%83%E6%A8%B9-%E9%95%B7%E8%B0%B7%E5%B7%9D-21b051175/) まで
 
 <br>
 
