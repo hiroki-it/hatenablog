@@ -16,7 +16,7 @@ jobs:
         continue-on-error: true
         uses: gaurav-nelson/github-action-markdown-link-check@v1
         with:
-          folder-path: dist
+          folder-path: src
           max-depth: -1
           use-quiet-mode: yes
           use-verbose-mode: yes
