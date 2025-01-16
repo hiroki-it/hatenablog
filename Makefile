@@ -14,7 +14,7 @@ create-draft:
 .PHONY: format
 format:
 	yarn textlint *
-	find ./dist/entry/* -name "*.md" -type f | xargs sed -i '' -e 's/）/) /g'  -e 's/（/ (/g'
+	find ./src/entry/* -name "*.md" -type f | xargs sed -i '' -e 's/）/) /g'  -e 's/（/ (/g'
 	yarn prettier -w --no-bracket-spacing **/*.md
 
 # 記事をプッシュする。
@@ -22,7 +22,7 @@ format:
 push-post: format
 	git checkout release/entry
 	git pull
-	git add ./dist
+	git add ./src
 	git commit -m "update 記事を更新した。"
 	git push
 	git checkout main

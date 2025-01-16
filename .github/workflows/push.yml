@@ -36,7 +36,7 @@ jobs:
         env:
           DOMAIN: ${{ secrets.DOMAIN }}
         run: |
-          DIFF=$(git diff origin/main --name-only --relative dist/entry)
+          DIFF=$(git diff origin/main --name-only --relative src/entry)
           echo $DIFF
           if [ -z "$DIFF" ] ; then
             echo "差分がないため、GitHub Actionsを終了しました。"
